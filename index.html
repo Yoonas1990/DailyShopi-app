@@ -231,20 +231,8 @@
       </div>
     </div>
 
-    <!-- Status Bar -->
-    <div id="statusBar" class="theme-transition px-6 pt-3 pb-1.5 flex items-center justify-between text-[11px] font-bold text-gray-800 select-none z-20 shrink-0" style="background-color: var(--active-tint);">
-      <span>12:04</span>
-      <div class="hidden sm:block w-24 h-5 bg-[#1C1819] rounded-full"></div>
-      <div class="flex items-center gap-1.5">
-        <span class="text-[10px] font-extrabold text-[#7A1C24]">5G</span>
-        <div class="w-5 h-2.5 border border-gray-800 rounded-[3px] p-[1px] flex items-center">
-          <div class="w-3.5 h-full bg-gray-800 rounded-[1px]"></div>
-        </div>
-      </div>
-    </div>
-
     <!-- ==================== 2. STICKY HEADER ==================== -->
-    <header id="mainHeader" class="theme-transition px-4 pt-1.5 pb-3 rounded-b-3xl z-20 relative shrink-0" style="background-color: var(--active-tint);">
+    <header id="mainHeader" class="theme-transition px-4 pt-3.5 pb-3 rounded-b-3xl z-20 relative shrink-0" style="background-color: var(--active-tint);">
       <div class="flex items-center justify-between gap-2 mb-2.5">
         <!-- Left: DailyShopi Red DS Bag SVG + Wordmark + Hi, <Name> Switcher -->
         <div class="flex items-center gap-2.5 min-w-0">
@@ -1624,9 +1612,7 @@
         const cat = CATEGORIES.find(c => c.id === catId) || CATEGORIES[0];
         document.documentElement.style.setProperty('--active-accent', cat.accent);
         document.documentElement.style.setProperty('--active-tint', cat.tint);
-        const sb = document.getElementById('statusBar');
         const mh = document.getElementById('mainHeader');
-        if (sb) sb.style.backgroundColor = cat.tint;
         if (mh) mh.style.backgroundColor = cat.tint;
       }
 
