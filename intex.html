@@ -1,0 +1,3366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DailyShopi — Customer App UI Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-maroon: #7A1C24;
+      --brand-maroon-dark: #581118;
+      --brand-red: #D90429;
+      --brand-parrot: #22C55E;
+      --brand-sky: #38BDF8;
+      --active-accent: #7A1C24;
+      --active-tint: #FDF8F8;
+    }
+
+    * {
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at top left, #F6EFEF 0%, #E7DFDF 100%);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 418px;
+      height: 100vh;
+      max-height: 874px;
+      background: #F8F9FA;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (min-width: 520px) {
+      .phone-frame {
+        height: 856px;
+        border-radius: 44px;
+        box-shadow:
+          0 28px 70px -15px rgba(74, 16, 22, 0.28),
+          0 0 0 10px #1C1819,
+          0 0 0 12px #3B3234;
+      }
+    }
+
+    .theme-transition {
+      transition: background-color 0.28s ease, color 0.28s ease, border-color 0.28s ease;
+    }
+
+    .card-shadow {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .glass-cart {
+      background: rgba(122, 28, 36, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 12px 28px -6px rgba(122, 28, 36, 0.45);
+    }
+
+    @keyframes pulseVideoWave {
+      0%, 100% { transform: scaleY(0.42); }
+      50% { transform: scaleY(1); }
+    }
+    .eq-bar {
+      transform-origin: bottom;
+      animation: pulseVideoWave 0.9s ease-in-out infinite;
+    }
+
+    @keyframes dashMove {
+      to { stroke-dashoffset: -24; }
+    }
+    .route-dash {
+      animation: dashMove 1.2s linear infinite;
+    }
+
+    @keyframes popScaleBounce {
+      0% { transform: scale(0.72) translateY(16px); opacity: 0; }
+      65% { transform: scale(1.03) translateY(-2px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .modal-pop-bounce {
+      animation: popScaleBounce 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes checkPulseRing {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.48); }
+      70% { box-shadow: 0 0 0 14px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+    .check-ring-pulse {
+      animation: checkPulseRing 1.8s infinite;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(-16px) rotate(0deg) scale(0.8); opacity: 0; }
+      15% { opacity: 1; }
+      100% { transform: translateY(160px) rotate(320deg) scale(1); opacity: 0; }
+    }
+    .confetti-piece {
+      position: absolute;
+      top: 0;
+      animation: confettiFall 2.4s ease-out infinite;
+    }
+
+    .ad-slot-prominent {
+      height: 164px;
+    }
+
+    .desc-clamp-5 {
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="p-0 sm:p-4">
+
+  <!-- Mobile App Shell -->
+  <div id="appFrame" class="phone-frame">
+
+    <!-- ==================== 1. FIRST-TIME LOGIN & OTP ONBOARDING ==================== -->
+    <div id="screenLoginOnboarding" class="absolute inset-0 z-50 bg-gradient-to-b from-[#FDF8F8] via-white to-[#F8F9FA] flex flex-col justify-between overflow-y-auto no-scrollbar p-6">
+      <div class="pt-3 space-y-4">
+        <!-- Brand Logo Header (NO 10 km text anywhere) -->
+        <div class="flex items-center gap-3">
+          <div class="w-14 h-14 rounded-2xl overflow-hidden shadow-md shrink-0">
+            <svg viewBox="0 0 120 120" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="dsLoginRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#F20505"/>
+                  <stop offset="60%" stop-color="#D40000"/>
+                  <stop offset="100%" stop-color="#A80000"/>
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="120" height="120" rx="26" fill="url(#dsLoginRedGrad)"/>
+              <path d="M0 0 L120 0 L120 55 L0 95 Z" fill="#FFFFFF" opacity="0.06"/>
+              <rect x="14" y="47" width="16" height="6" rx="3" fill="#FFFFFF"/>
+              <rect x="8" y="57" width="22" height="6" rx="3" fill="#FFFFFF"/>
+              <rect x="15" y="67" width="15" height="6" rx="3" fill="#FFFFFF"/>
+              <path d="M46 39 C46 21, 82 21, 82 39" fill="none" stroke="#FFFFFF" stroke-width="7.5" stroke-linecap="round"/>
+              <path d="M35 42 C35 39, 38 37, 41 37 L87 37 C90 37, 93 39, 93 42 L99 90 C100 96, 95 101, 89 101 L39 101 C33 101, 28 96, 29 90 Z" fill="#FFFFFF"/>
+              <text x="64" y="76" text-anchor="middle" fill="#D40000" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="34" letter-spacing="-1.5">DS</text>
+              <path d="M43 83 Q64 96 85 83" fill="none" stroke="#D40000" stroke-width="4.5" stroke-linecap="round"/>
+              <circle cx="42.5" cy="82.5" r="2.2" fill="#D40000"/>
+              <circle cx="85.5" cy="82.5" r="2.2" fill="#D40000"/>
+            </svg>
+          </div>
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#7A1C24]/10 text-[#7A1C24]">EAPPIKKAD ZONE</span>
+            <h1 class="text-xl font-extrabold text-gray-900 mt-1 leading-tight">Welcome to DailyShopi</h1>
+          </div>
+        </div>
+
+        <p class="text-xs text-gray-600 leading-relaxed">
+          Fresh groceries, hot food, meat &amp; fish, and medicines delivered across <span class="font-bold text-[#7A1C24]">Eappikkad Zone</span>. Sign in once to start shopping.
+        </p>
+
+        <!-- Step 1: Full Name & Mobile Number -->
+        <div class="bg-white rounded-3xl p-4 card-shadow border border-gray-100 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#7A1C24]">Step 1 • Your Details</span>
+            <span class="text-[10px] font-semibold text-gray-400">One-Time Login</span>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[11px] font-bold text-gray-700">Full Name *</label>
+            <input id="firstLoginNameInput" type="text" placeholder="Enter your name (e.g. Yoonas)" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:outline-none focus:border-[#7A1C24]" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[11px] font-bold text-gray-700">10-Digit Mobile Number *</label>
+            <div class="flex gap-2">
+              <div class="px-3 py-2.5 rounded-2xl bg-gray-100 text-xs font-extrabold text-gray-700 flex items-center">+91</div>
+              <input id="firstLoginPhoneInput" type="tel" maxlength="10" placeholder="9847012345" class="flex-1 bg-gray-50 border border-gray-200 rounded-2xl px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:outline-none focus:border-[#7A1C24]" />
+            </div>
+          </div>
+
+          <button type="button" onclick="window.requestFirstLoginOtp()" class="w-full py-2.5 rounded-2xl bg-[#FDF8F8] border border-[#7A1C24]/25 text-[#7A1C24] text-xs font-extrabold hover:bg-[#7A1C24] hover:text-white transition-colors">
+            Send OTP
+          </button>
+        </div>
+
+        <!-- Step 2: 4-Digit OTP Verification -->
+        <div class="bg-white rounded-3xl p-4 card-shadow border border-gray-100 space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#7A1C24]">Step 2 • Verify 4-Digit OTP</span>
+            <button type="button" onclick="window.autoFillDemoOtp()" class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 hover:bg-amber-200 transition-colors">
+              Auto-Fill (1234)
+            </button>
+          </div>
+
+          <div class="grid grid-cols-4 gap-2.5">
+            <input id="otpDigit0" type="text" inputmode="numeric" maxlength="1" oninput="window.handleOtpBoxInput(0, this)" onkeydown="window.handleOtpBoxKeydown(0, event)" class="h-11 text-center text-base font-extrabold bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 focus:outline-none focus:border-[#7A1C24]" />
+            <input id="otpDigit1" type="text" inputmode="numeric" maxlength="1" oninput="window.handleOtpBoxInput(1, this)" onkeydown="window.handleOtpBoxKeydown(1, event)" class="h-11 text-center text-base font-extrabold bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 focus:outline-none focus:border-[#7A1C24]" />
+            <input id="otpDigit2" type="text" inputmode="numeric" maxlength="1" oninput="window.handleOtpBoxInput(2, this)" onkeydown="window.handleOtpBoxKeydown(2, event)" class="h-11 text-center text-base font-extrabold bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 focus:outline-none focus:border-[#7A1C24]" />
+            <input id="otpDigit3" type="text" inputmode="numeric" maxlength="1" oninput="window.handleOtpBoxInput(3, this)" onkeydown="window.handleOtpBoxKeydown(3, event)" class="h-11 text-center text-base font-extrabold bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 focus:outline-none focus:border-[#7A1C24]" />
+          </div>
+
+          <button type="button" onclick="window.completeFirstTimeLogin()" class="w-full py-3.5 rounded-2xl bg-[#7A1C24] text-white text-xs font-extrabold shadow-lg active:scale-[0.99] transition-transform">
+            Verify &amp; Start Shopping
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-3 text-center text-[10px] text-gray-400 font-semibold">
+        Eappikkad Franchise Network • DailyShopi
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div id="statusBar" class="theme-transition px-6 pt-3 pb-1.5 flex items-center justify-between text-[11px] font-bold text-gray-800 select-none z-20 shrink-0" style="background-color: var(--active-tint);">
+      <span>12:04</span>
+      <div class="hidden sm:block w-24 h-5 bg-[#1C1819] rounded-full"></div>
+      <div class="flex items-center gap-1.5">
+        <span class="text-[10px] font-extrabold text-[#7A1C24]">5G</span>
+        <div class="w-5 h-2.5 border border-gray-800 rounded-[3px] p-[1px] flex items-center">
+          <div class="w-3.5 h-full bg-gray-800 rounded-[1px]"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 2. STICKY HEADER ==================== -->
+    <header id="mainHeader" class="theme-transition px-4 pt-1.5 pb-3 rounded-b-3xl z-20 relative shrink-0" style="background-color: var(--active-tint);">
+      <div class="flex items-center justify-between gap-2 mb-2.5">
+        <!-- Left: DailyShopi Red DS Bag SVG + Wordmark + Hi, <Name> Switcher -->
+        <div class="flex items-center gap-2.5 min-w-0">
+          <button type="button" onclick="window.goMainHome()" class="w-10 h-10 rounded-xl overflow-hidden shrink-0 shadow-sm active:scale-95 transition-transform" aria-label="DailyShopi Home">
+            <svg viewBox="0 0 120 120" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="dsRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#F20505"/>
+                  <stop offset="60%" stop-color="#D40000"/>
+                  <stop offset="100%" stop-color="#A80000"/>
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="120" height="120" rx="26" fill="url(#dsRedGrad)"/>
+              <path d="M0 0 L120 0 L120 55 L0 95 Z" fill="#FFFFFF" opacity="0.06"/>
+              <rect x="14" y="47" width="16" height="6" rx="3" fill="#FFFFFF"/>
+              <rect x="8" y="57" width="22" height="6" rx="3" fill="#FFFFFF"/>
+              <rect x="15" y="67" width="15" height="6" rx="3" fill="#FFFFFF"/>
+              <path d="M46 39 C46 21, 82 21, 82 39" fill="none" stroke="#FFFFFF" stroke-width="7.5" stroke-linecap="round"/>
+              <path d="M35 42 C35 39, 38 37, 41 37 L87 37 C90 37, 93 39, 93 42 L99 90 C100 96, 95 101, 89 101 L39 101 C33 101, 28 96, 29 90 Z" fill="#FFFFFF"/>
+              <text x="64" y="76" text-anchor="middle" fill="#D40000" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="34" letter-spacing="-1.5">DS</text>
+              <path d="M43 83 Q64 96 85 83" fill="none" stroke="#D40000" stroke-width="4.5" stroke-linecap="round"/>
+              <circle cx="42.5" cy="82.5" r="2.2" fill="#D40000"/>
+              <circle cx="85.5" cy="82.5" r="2.2" fill="#D40000"/>
+            </svg>
+          </button>
+
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[17px] font-extrabold tracking-tight text-[#7A1C24] leading-none">DailyShopi</span>
+            </div>
+            <!-- Personalized Greeting + Profile/Address Quick Switcher -->
+            <button type="button" onclick="window.openHeaderAccountModal()" class="flex items-center gap-1 text-[11px] text-gray-800 font-bold hover:text-[#7A1C24] mt-1 whitespace-nowrap">
+              <span id="headerUserGreeting" class="truncate max-w-[145px]">Hi, Yoonas</span>
+              <span class="text-[10px] text-gray-500">▾</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Controls: Loyalty Coins Pill + Cart Icon Badge + 3-Dot Menu -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button type="button" onclick="window.switchScreen('wallet')" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-gradient-to-r from-[#7A1C24] to-[#9E1F2A] text-white shadow-xs active:scale-95 transition-transform" aria-label="My Wallet">
+            <span class="w-3.5 h-3.5 rounded-full bg-amber-300 text-[#7A1C24] flex items-center justify-center text-[9px] font-black">★</span>
+            <span class="text-[11px] font-bold" id="headerCoinBalance">140</span>
+          </button>
+
+          <button type="button" onclick="window.switchScreen('cart')" class="relative w-8 h-8 rounded-full bg-white/95 border border-gray-200/80 text-gray-800 flex items-center justify-center hover:text-[#7A1C24] active:scale-95 transition-transform" aria-label="Open Cart">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="9" cy="20" r="1.5"/>
+              <circle cx="18" cy="20" r="1.5"/>
+              <path d="M2.5 3.5h3l2.2 11.2a1.5 1.5 0 0 0 1.5 1.3h8.8a1.5 1.5 0 0 0 1.4-1.1L21 7H6.2"/>
+            </svg>
+            <span id="headerCartBadge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-[#D90429] text-white text-[9px] font-black flex items-center justify-center shadow-xs">0</span>
+          </button>
+
+          <!-- 3-Dot Menu Icon -->
+          <div class="relative">
+            <button type="button" id="threeDotBtn" onclick="window.toggleThreeDotMenu(event)" class="w-8 h-8 rounded-full bg-white/95 border border-gray-200/80 text-gray-800 flex items-center justify-center hover:text-[#7A1C24] active:scale-95 transition-transform" aria-label="Menu">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="5" r="2"/>
+                <circle cx="12" cy="12" r="2"/>
+                <circle cx="12" cy="19" r="2"/>
+              </svg>
+            </button>
+
+            <!-- 3-Dot Dropdown Menu -->
+            <div id="threeDotDropdown" class="hidden absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 overflow-hidden" onclick="event.stopPropagation()">
+              <button type="button" onclick="window.handleMenuSelect('profile')" class="w-full px-4 py-2.5 text-left text-xs font-bold text-gray-800 hover:bg-[#FDF8F8] hover:text-[#7A1C24] flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-[#7A1C24]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Profile</span>
+              </button>
+              <button type="button" onclick="window.handleMenuSelect('orders')" class="w-full px-4 py-2.5 text-left text-xs font-bold text-gray-800 hover:bg-[#FDF8F8] hover:text-[#7A1C24] flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-[#7A1C24]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="13" y2="13"/></svg>
+                <span>My Orders</span>
+              </button>
+              <button type="button" onclick="window.handleMenuSelect('categories')" class="w-full px-4 py-2.5 text-left text-xs font-bold text-gray-800 hover:bg-[#FDF8F8] hover:text-[#7A1C24] flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-[#7A1C24]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                <span>Categories</span>
+              </button>
+              <button type="button" onclick="window.handleMenuSelect('wishlist')" class="w-full px-4 py-2.5 text-left text-xs font-bold text-gray-800 hover:bg-[#FDF8F8] hover:text-[#7A1C24] flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-[#7A1C24]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span>Wishlist &amp; Stock Alerts</span>
+              </button>
+              <button type="button" onclick="window.handleMenuSelect('wallet')" class="w-full px-4 py-2.5 text-left text-xs font-bold text-gray-800 hover:bg-[#FDF8F8] hover:text-[#7A1C24] flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-[#7A1C24]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="16" cy="12" r="1.5"/></svg>
+                <span>My Wallet</span>
+              </button>
+              <button type="button" onclick="window.handleMenuSelect('support')" class="w-full px-4 py-2.5 text-left text-xs font-bold text-gray-800 hover:bg-[#FDF8F8] hover:text-[#7A1C24] flex items-center gap-2.5 border-t border-gray-100 mt-1 pt-2">
+                <svg class="w-4 h-4 text-[#7A1C24]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span>Customer Support</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Input (Shown on Home & Category Screens) -->
+      <div id="headerSearchWrap" class="relative mb-2.5">
+        <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          id="searchInput"
+          type="text"
+          oninput="window.handleSearch(this.value)"
+          placeholder="Search DailyShopi groceries, food, fresh fish, medicines..."
+          class="w-full bg-white text-xs text-gray-800 placeholder-gray-400 pl-10 pr-4 py-2.5 rounded-2xl border border-gray-200/70 focus:outline-none focus:border-[#7A1C24]"
+        />
+      </div>
+
+      <!-- Main Category Horizontal Pills (Home Screen ONLY, starting with All) -->
+      <div id="categoryBar" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5"></div>
+
+      <!-- Dynamic Sub-Category Horizontal Pills (Single Category & PDP Screens ONLY) -->
+      <div id="subCategoryBar" class="hidden flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5"></div>
+    </header>
+
+    <!-- ==================== 3. SCREEN 1: HOME & DISCOVERY ==================== -->
+    <div id="screenHome" class="flex-1 overflow-y-auto no-scrollbar px-4 pt-3.5 pb-32 space-y-5">
+
+      <!-- Auto-Hiding First-Order Promo Card -->
+      <div id="homeGreetingBanner" class="bg-white rounded-2xl px-3.5 py-2.5 card-shadow border border-[#7A1C24]/15 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div id="homeGreetingAvatar" class="w-8 h-8 rounded-xl bg-[#FDF8F8] text-[#7A1C24] font-extrabold text-xs flex items-center justify-center shrink-0 overflow-hidden">
+            Y
+          </div>
+          <div class="min-w-0">
+            <div id="homeGreetingTitle" class="text-xs font-extrabold text-gray-900 truncate">Hi, Yoonas!</div>
+            <div class="text-[10px] text-gray-600 truncate">Get your First Order <span class="font-extrabold text-[#7A1C24]">20% OFF</span> + bonus Loyalty Coins</div>
+          </div>
+        </div>
+        <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-[#22C55E]/15 text-emerald-800 shrink-0">First Order</span>
+      </div>
+
+      <!-- HOME-ONLY PROMO SLOTS: Hero Carousel + Commercial Ad Slot + BOGO 1+1 Banner -->
+      <div id="homeBannerWrapper" class="space-y-3">
+        <div id="homeSlot1Container" class="relative rounded-2xl overflow-hidden card-shadow bg-gray-900 ad-slot-prominent"></div>
+        <div id="homeSlot2Container" class="relative rounded-2xl overflow-hidden card-shadow bg-gray-900 ad-slot-prominent"></div>
+
+        <!-- BOGO 1+1 Offer Banner -->
+        <div id="bogoOfferBanner" class="relative rounded-2xl overflow-hidden card-shadow bg-gradient-to-r from-[#7A1C24] via-[#A81C28] to-[#D90429] text-white p-4">
+          <div class="flex items-center justify-between gap-3">
+            <div class="space-y-1">
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-300 text-[#4A0E13] text-[10px] font-black uppercase tracking-wide">
+                <span>BOGO OFFER</span>
+                <span>•</span>
+                <span>BUY 1 GET 1 FREE</span>
+              </div>
+              <h3 class="text-sm font-extrabold leading-snug">Buy One Get One Free on Select Daily Items</h3>
+              <p class="text-[11px] text-white/85">Filter BOGO 1+1 eligible items or add a featured combo directly to your cart.</p>
+            </div>
+            <div class="w-16 h-16 rounded-2xl bg-white/15 border border-white/25 flex flex-col items-center justify-center shrink-0 text-center">
+              <span class="text-lg font-black leading-none">1+1</span>
+              <span class="text-[9px] font-extrabold uppercase tracking-wider text-amber-200 mt-1">FREE</span>
+            </div>
+          </div>
+          <div class="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-between gap-2 text-[11px]">
+            <button type="button" onclick="window.applyBogoFilter()" class="text-white/95 font-bold underline text-left">
+              View All BOGO Items
+            </button>
+            <button type="button" onclick="window.claimFeaturedBogo()" class="px-3 py-1.5 rounded-xl bg-white text-[#7A1C24] font-extrabold shadow-xs active:scale-95 transition-transform">
+              Add BOGO Deal ›
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtered Banner (Search / Store / BOGO) -->
+      <div id="categoryBannerWrapper" class="hidden">
+        <div id="categoryBannerCard" class="relative rounded-2xl overflow-hidden card-shadow bg-gray-900"></div>
+      </div>
+
+      <!-- Today's Offer / 2-Day Flash Deals Spotlight (Max 1 unit/day enforced) -->
+      <section id="todaysOfferSpotlightSection" class="rounded-3xl overflow-hidden card-shadow border border-[#7A1C24]/20 bg-white">
+        <div class="bg-gradient-to-r from-[#7A1C24] via-[#A61C28] to-[#D90429] px-3.5 py-3 text-white">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="w-5 h-5 rounded-lg bg-amber-300 text-[#4A0E13] flex items-center justify-center text-[11px] font-black shrink-0">⚡</span>
+              <h3 class="text-[11px] font-black uppercase tracking-wide truncate">TODAY'S OFFER • 2-DAY FLASH DEALS</h3>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[9px] font-extrabold whitespace-nowrap shrink-0">1/day limit</span>
+          </div>
+          <div class="flex items-center justify-between gap-2 mt-2">
+            <p class="text-[10px] text-white/85 truncate">Max 1 unit per customer per day</p>
+            <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-black/30 text-amber-200 text-[10px] font-extrabold shrink-0">
+              <span>⏱</span>
+              <span id="todaysOfferCountdown">Ends in 04h 32m</span>
+            </div>
+          </div>
+        </div>
+        <div class="p-3 bg-gradient-to-b from-[#FDF8F8] to-white">
+          <div id="todaysOfferStrip" class="flex gap-2.5 overflow-x-auto no-scrollbar pb-0.5"></div>
+        </div>
+      </section>
+
+      <!-- Active Stores in Zone (Vibrant Tinted Cards & Colorful Star Ratings) -->
+      <section>
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-1.5">
+            <h3 class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">Stores in Zone</h3>
+            <span class="text-[10px] font-bold text-[#7A1C24]">• Top Rated</span>
+          </div>
+          <span id="vendorCountLabel" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FDF8F8] text-[#7A1C24]">4 stores</span>
+        </div>
+        <div id="vendorsStrip" class="flex gap-2.5 overflow-x-auto no-scrollbar pb-1"></div>
+      </section>
+
+      <!-- HOME VIEW: Grouped 3-Column Category Grids -->
+      <div id="homeGroupedCatalog" class="space-y-5"></div>
+
+      <!-- FILTERED VIEW: Product Grid (Search / Vendor / BOGO) -->
+      <section id="singleCategoryCatalogSection" class="hidden">
+        <div class="flex items-center justify-between mb-2.5">
+          <div>
+            <h3 id="catalogHeading" class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">Filtered Catalog</h3>
+            <p class="text-[10px] text-gray-400">Tap item for photos, details &amp; variants</p>
+          </div>
+          <button type="button" onclick="window.goMainHome()" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#FDF8F8] text-[#7A1C24]">Reset Filter</button>
+        </div>
+        <div id="productGrid" class="grid grid-cols-3 gap-2"></div>
+      </section>
+    </div>
+
+    <!-- ==================== SCREEN 2: CATEGORY DIRECTORY & SINGLE CATEGORY VIEW ==================== -->
+    <div id="screenCategories" class="hidden flex-1 overflow-y-auto no-scrollbar px-4 pt-3.5 pb-32 space-y-3.5">
+      <!-- 2x2 Illustrated/Photo Category Directory + Full Catalog -->
+      <div id="allCategoriesDirectoryWrap" class="space-y-4">
+        <div class="rounded-2xl p-4 bg-gradient-to-r from-[#7A1C24] to-[#A61C28] text-white card-shadow">
+          <span class="px-2.5 py-0.5 rounded-full bg-white/20 text-[10px] font-extrabold uppercase">Shop By Department</span>
+          <h3 class="text-sm font-extrabold mt-1">All Categories in <span id="dirZoneShort">Eappikkad Zone</span></h3>
+          <p class="text-[11px] text-white/85">Select a department to filter by sub-category or browse all items below</p>
+        </div>
+        <div id="allCategoriesGrid" class="grid grid-cols-2 gap-3"></div>
+        <div class="space-y-2.5 pt-1">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">Full Catalog</h3>
+            <span id="dirFullCount" class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#FDF8F8] text-[#7A1C24]">0 items</span>
+          </div>
+          <div id="dirFullCatalogGrid" class="grid grid-cols-3 gap-2"></div>
+        </div>
+      </div>
+
+      <!-- Single Category View -->
+      <div id="singleCategoryDetailWrap" class="hidden space-y-3.5">
+        <div id="categoryScreenBanner" class="rounded-2xl p-4 text-white card-shadow"></div>
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h3 id="categorySubHeading" class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">All Items</h3>
+            <span id="categoryScreenCount" class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#FDF8F8] text-[#7A1C24]">0 items</span>
+          </div>
+          <div id="categoryScreenProductGrid" class="grid grid-cols-3 gap-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 4. SCREEN 3: PRODUCT DETAIL PAGE (PDP) ==================== -->
+    <div id="screenPDP" class="hidden flex-1 flex flex-col overflow-hidden bg-[#F8F9FA]">
+      <div id="pdpContent" class="flex-1 overflow-y-auto no-scrollbar px-4 pt-3.5 pb-6 space-y-3.5"></div>
+      <!-- Sticky Bottom Purchase Bar Pinned Directly Above 5-Tab Navigation Bar -->
+      <div id="pdpStickyActionBar" class="bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-4 py-2.5 shrink-0 z-20"></div>
+    </div>
+
+    <!-- ==================== 5. SCREEN 4: COMBINED CART & CHECKOUT ==================== -->
+    <div id="screenCart" class="hidden flex-1 flex flex-col overflow-hidden bg-[#F8F9FA]">
+      <div class="bg-white px-4 py-3.5 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <button type="button" onclick="window.goBack()" class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center text-gray-700 font-bold">‹</button>
+          <div>
+            <h2 class="text-sm font-extrabold text-gray-900">Cart &amp; Checkout</h2>
+            <p id="cartZoneSubtitle" class="text-[11px] text-gray-500">Eappikkad Zone</p>
+          </div>
+        </div>
+        <button type="button" onclick="window.clearCart()" class="text-[11px] font-bold text-[#7A1C24] hover:underline">Clear All</button>
+      </div>
+      <div id="cartContent" class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-3.5 pb-32"></div>
+    </div>
+
+    <!-- ==================== SCREEN 5: ORDERS & LIVE TRACKING ==================== -->
+    <div id="screenOrders" class="hidden flex-1 overflow-y-auto no-scrollbar px-4 pt-4 pb-32 space-y-4">
+      <div class="flex items-center gap-2.5">
+        <button type="button" onclick="window.goBack()" class="w-8 h-8 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-800 font-bold">‹</button>
+        <div>
+          <h2 class="text-base font-extrabold text-gray-900">My Orders &amp; Tracking</h2>
+          <p class="text-xs text-gray-500">Live dispatch &amp; past order history</p>
+        </div>
+      </div>
+      <div id="ordersListContainer" class="space-y-3.5"></div>
+    </div>
+
+    <!-- ==================== SCREEN 6: MY WALLET ==================== -->
+    <div id="screenWallet" class="hidden flex-1 overflow-y-auto no-scrollbar px-4 pt-4 pb-32 space-y-4">
+      <div class="flex items-center gap-2.5">
+        <button type="button" onclick="window.goBack()" class="w-8 h-8 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-800 font-bold">‹</button>
+        <div>
+          <h2 class="text-base font-extrabold text-gray-900">My Wallet</h2>
+          <p class="text-xs text-gray-500">Loyalty coins balance, rewards &amp; referral program</p>
+        </div>
+      </div>
+
+      <!-- Coin Balance Hero Card -->
+      <div class="rounded-3xl p-5 bg-gradient-to-br from-[#7A1C24] to-[#A61C28] text-white card-shadow space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-white/80">Available Loyalty Coins</span>
+          <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-white/15">1 Coin = ₹0.25</span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <div class="text-3xl font-extrabold tracking-tight">★ <span id="walletCoinBalance">140</span></div>
+          <div class="text-xs font-bold text-amber-300">Redeemable Value: ₹<span id="walletRupeeValue">35.00</span></div>
+        </div>
+        <p class="text-[11px] text-white/80">Earn coins automatically on your First Order, every purchase, and when friends join DailyShopi using your referral code.</p>
+      </div>
+
+      <!-- Refer & Earn Card -->
+      <div class="bg-white rounded-2xl p-4 card-shadow border border-[#7A1C24]/15 space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-[#FDF8F8] text-[#7A1C24]">Refer &amp; Earn</span>
+            <h3 class="text-sm font-extrabold text-gray-900 mt-1">Invite Friends &amp; Earn 100 Coins</h3>
+          </div>
+          <span class="text-xs font-extrabold text-emerald-700 bg-[#22C55E]/15 px-2.5 py-1 rounded-full">+100 ★</span>
+        </div>
+        <p class="text-xs text-gray-500">Share your DailyShopi referral code. When your friend places their first order in Eappikkad Zone, both of you earn bonus coins.</p>
+        <div class="flex items-center justify-between bg-gray-50 border border-dashed border-gray-300 rounded-xl px-3.5 py-2.5">
+          <div>
+            <span class="text-[10px] text-gray-400 block font-semibold">YOUR REFERRAL CODE</span>
+            <span id="referralCodeText" class="text-sm font-extrabold tracking-wider text-[#7A1C24]">DS-EAP100</span>
+          </div>
+          <button type="button" onclick="window.copyReferralCode()" class="px-3 py-1.5 rounded-xl bg-[#7A1C24] text-white text-xs font-bold active:scale-95 transition-transform">
+            Copy &amp; Share
+          </button>
+        </div>
+      </div>
+
+      <!-- Coin Transactions History -->
+      <div class="bg-white rounded-2xl p-4 card-shadow space-y-3">
+        <h3 class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">Coin Activity</h3>
+        <div id="coinTransactionsList" class="divide-y divide-gray-100"></div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 7: STREAMLINED PROFILE ==================== -->
+    <div id="screenProfile" class="hidden flex-1 overflow-y-auto no-scrollbar px-4 pt-4 pb-32 space-y-4">
+      <div id="profileMainCard" class="bg-white rounded-2xl p-4 card-shadow space-y-3"></div>
+
+      <!-- Saved Addresses -->
+      <div class="bg-white rounded-2xl p-4 card-shadow space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">Saved Addresses</h3>
+          <button type="button" onclick="window.addSampleAddress()" class="text-[11px] font-bold text-[#7A1C24]">+ Add Address</button>
+        </div>
+        <div id="profileAddressList" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Log Out / Switch User -->
+      <button type="button" onclick="window.logoutUserSession()" class="w-full py-3 rounded-2xl bg-white border border-gray-200 text-xs font-extrabold text-[#7A1C24] card-shadow hover:bg-[#FDF8F8] transition-colors">
+        Logout / Switch User
+      </button>
+    </div>
+
+    <!-- ==================== SCREEN 8: WISHLIST & STOCK ALERTS ==================== -->
+    <div id="screenWishlist" class="hidden flex-1 overflow-y-auto no-scrollbar px-4 pt-4 pb-32 space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <button type="button" onclick="window.goBack()" class="w-8 h-8 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-800 font-bold">‹</button>
+          <div>
+            <h2 class="text-base font-extrabold text-gray-900">Wishlist &amp; Stock Alerts</h2>
+            <p class="text-xs text-gray-500">Saved out-of-stock products &amp; restock notifications</p>
+          </div>
+        </div>
+        <span id="wishlistCountBadge" class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-[#FDF8F8] text-[#7A1C24]">2 saved</span>
+      </div>
+
+      <div id="wishlistItemsContainer" class="space-y-2.5"></div>
+    </div>
+
+    <!-- ==================== SCREEN 9: CUSTOMER SUPPORT ==================== -->
+    <div id="screenSupport" class="hidden flex-1 flex flex-col overflow-hidden bg-[#F8F9FA]">
+      <div class="bg-white px-4 py-3.5 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <button type="button" onclick="window.goBack()" class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center text-gray-800 font-bold">‹</button>
+          <div>
+            <h2 class="text-sm font-extrabold text-gray-900">Customer Support</h2>
+            <p class="text-[11px] text-emerald-700 font-semibold">● Live In-App Chat &amp; Call Helplines</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-3.5 pb-32">
+        <div class="bg-white rounded-2xl p-4 card-shadow border border-[#7A1C24]/15 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#7A1C24]">Direct Call Support</span>
+            <span class="text-[10px] font-semibold text-gray-400">Eappikkad Zone</span>
+          </div>
+          <div class="flex items-center justify-between text-xs py-1.5 border-b border-gray-100">
+            <div>
+              <div class="font-bold text-gray-900">Franchise Customer Desk</div>
+              <div class="text-[10px] text-gray-500">8:00 AM – 10:00 PM Daily</div>
+            </div>
+            <a href="tel:+914952201000" class="px-3 py-1.5 rounded-xl bg-[#FDF8F8] text-[#7A1C24] font-extrabold">
+              +91 495 220 1000
+            </a>
+          </div>
+          <div class="flex items-center justify-between text-xs pt-1">
+            <div>
+              <div class="font-bold text-gray-900">24/7 Medicine &amp; Order Helpline</div>
+              <div class="text-[10px] text-gray-500">Toll-Free Priority Line</div>
+            </div>
+            <a href="tel:18001023456" class="px-3 py-1.5 rounded-xl bg-[#FDF8F8] text-[#7A1C24] font-extrabold">
+              1800-102-3456
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 card-shadow space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold text-gray-900">Direct Support Chat</span>
+            <span class="text-[10px] font-bold text-emerald-700 bg-[#22C55E]/15 px-2 py-0.5 rounded-full">Agent Online</span>
+          </div>
+          <div id="supportChatMessages" class="space-y-2 max-h-60 overflow-y-auto no-scrollbar bg-gray-50 rounded-2xl p-3"></div>
+          <div class="flex items-center gap-2">
+            <input id="supportChatInput" type="text" placeholder="Type your message to support..." class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-800 focus:outline-none focus:border-[#7A1C24]" onkeydown="if(event.key==='Enter') window.sendSupportMessage()" />
+            <button type="button" onclick="window.sendSupportMessage()" class="px-3.5 py-2 rounded-xl bg-[#7A1C24] text-white text-xs font-extrabold active:scale-95 transition-transform">
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 10: ORDER CONFIRMED & LIVE TRACKING ==================== -->
+    <div id="screenOrderConfirmed" class="hidden flex-1 overflow-y-auto no-scrollbar px-4 pt-4 pb-32 space-y-4">
+      <div class="flex items-center gap-2.5">
+        <button type="button" onclick="window.goMainHome()" class="w-8 h-8 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-800 font-bold">‹</button>
+        <div>
+          <h2 class="text-base font-extrabold text-gray-900">Order Confirmed &amp; Live Tracking</h2>
+          <p class="text-xs text-gray-500">Franchise Hub Live Dispatch</p>
+        </div>
+      </div>
+      <div id="orderConfirmedContent" class="space-y-3.5"></div>
+    </div>
+
+    <!-- ==================== FLOATING CART BAR (NO 10 km text) ==================== -->
+    <div id="floatingCartBar" class="hidden absolute bottom-[66px] left-4 right-4 z-30">
+      <button type="button" onclick="window.switchScreen('cart')" class="w-full glass-cart text-white rounded-2xl px-4 py-2.5 flex items-center justify-between active:scale-[0.99] transition-transform">
+        <div class="flex items-center gap-2.5">
+          <span id="cartBadgeCount" class="w-6 h-6 rounded-lg bg-white text-[#7A1C24] text-xs font-extrabold flex items-center justify-center">1</span>
+          <div class="text-left">
+            <div id="cartBarTitle" class="text-xs font-extrabold leading-tight">View Cart</div>
+            <div id="cartBarSub" class="text-[10px] text-white/80">Eappikkad Zone Delivery</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span id="cartBarTotal" class="text-sm font-extrabold">₹0</span>
+          <span class="text-sm font-bold">›</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- ==================== BOTTOM NAVIGATION BAR (5 TABS) ==================== -->
+    <nav id="bottomNavBar" class="bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-1.5 py-2 flex items-center justify-around z-30 shrink-0">
+      <button id="navBtnHome" type="button" onclick="window.handleBottomNav('home')" class="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-[#7A1C24] transition-colors">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/>
+        </svg>
+        <span class="text-[10px] font-extrabold">Home</span>
+      </button>
+
+      <button id="navBtnCategories" type="button" onclick="window.handleBottomNav('categories')" class="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-gray-500 hover:text-[#7A1C24] transition-colors">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+        </svg>
+        <span class="text-[10px] font-bold">Category</span>
+      </button>
+
+      <button id="navBtnOrders" type="button" onclick="window.handleBottomNav('orders')" class="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-gray-500 hover:text-[#7A1C24] transition-colors">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="4" y="4" width="16" height="16" rx="2"/>
+          <line x1="8" y1="9" x2="16" y2="9"/>
+          <line x1="8" y1="13" x2="14" y2="13"/>
+        </svg>
+        <span class="text-[10px] font-bold">Orders</span>
+      </button>
+
+      <button id="navBtnWallet" type="button" onclick="window.handleBottomNav('wallet')" class="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-gray-500 hover:text-[#7A1C24] transition-colors">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="2" y="6" width="20" height="13" rx="2.5"/>
+          <path d="M16 12.5h.01"/>
+        </svg>
+        <span class="text-[10px] font-bold">Wallet</span>
+      </button>
+
+      <button id="navBtnProfile" type="button" onclick="window.handleBottomNav('profile')" class="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-gray-500 hover:text-[#7A1C24] transition-colors">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span class="text-[10px] font-bold">Profile</span>
+      </button>
+    </nav>
+
+    <!-- ==================== HEADER PROFILE & ADDRESS QUICK SWITCHER MODAL ==================== -->
+    <div id="headerAccountModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="window.closeHeaderAccountModal()">
+      <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-3.5" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="modalAccountTitle" class="text-sm font-extrabold text-gray-900">Hi, Yoonas</h3>
+            <p id="modalAccountSubtitle" class="text-[11px] text-gray-500">Eappikkad Zone • Active Delivery Address</p>
+          </div>
+          <button type="button" onclick="window.closeHeaderAccountModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold text-xs">✕</button>
+        </div>
+        <div id="headerModalAddressList" class="space-y-2"></div>
+        <div class="flex gap-2 pt-1">
+          <button type="button" onclick="window.closeHeaderAccountModal(); window.switchScreen('profile');" class="flex-1 py-2.5 rounded-xl bg-[#FDF8F8] text-[#7A1C24] text-xs font-extrabold">
+            Edit Profile &amp; Addresses
+          </button>
+          <button type="button" onclick="window.closeHeaderAccountModal(); window.logoutUserSession();" class="px-3.5 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-xs font-extrabold">
+            Switch User
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== CHECKOUT ADDRESS CHANGE MODAL ==================== -->
+    <div id="addressPickerModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="window.closeAddressModal()">
+      <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-3.5" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-extrabold text-gray-900">Change Delivery Address</h3>
+            <p class="text-[11px] text-gray-500">Choose Primary/Secondary address or add a new one</p>
+          </div>
+          <button type="button" onclick="window.closeAddressModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold text-xs">✕</button>
+        </div>
+        <div id="modalAddressList" class="space-y-2 max-h-56 overflow-y-auto no-scrollbar"></div>
+        <div class="flex items-center gap-2 pt-1">
+          <input id="newCheckoutAddrInput" type="text" placeholder="Enter new Eappikkad address..." class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#7A1C24]" />
+          <button type="button" onclick="window.saveNewCheckoutAddress()" class="px-3 py-2 rounded-xl bg-[#7A1C24] text-white text-xs font-extrabold">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SHARE PRODUCT MODAL ==================== -->
+    <div id="shareProductModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="window.closeShareModal()">
+      <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-3.5" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-extrabold text-gray-900">Share Product Link</h3>
+            <p id="shareProductSubtitle" class="text-[11px] text-gray-500">Send a direct link to open this item in DailyShopi</p>
+          </div>
+          <button type="button" onclick="window.closeShareModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold text-xs">✕</button>
+        </div>
+        <div class="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-3 flex items-center justify-between gap-2">
+          <input id="shareLinkInput" type="text" readonly class="w-full bg-transparent text-xs font-bold text-[#7A1C24] focus:outline-none" />
+          <button type="button" onclick="window.copyShareLinkInput()" class="px-3 py-1.5 rounded-xl bg-[#7A1C24] text-white text-xs font-extrabold shrink-0">
+            Copy Link
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== CONGRATULATIONS! ORDER PLACED MODAL ==================== -->
+    <div id="orderCongratsModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4" onclick="window.closeOrderCongratsToHome()">
+      <div class="modal-pop-bounce relative bg-white w-full max-w-[368px] rounded-[32px] overflow-hidden shadow-2xl border border-amber-200/70" onclick="event.stopPropagation()">
+        <!-- Celebratory Confetti Layer -->
+        <div class="pointer-events-none absolute inset-0 overflow-hidden z-10">
+          <span class="confetti-piece w-2.5 h-2.5 rounded-xs bg-amber-400" style="left: 10%; animation-delay: 0s;"></span>
+          <span class="confetti-piece w-2 h-3 rounded-full bg-[#22C55E]" style="left: 24%; animation-delay: 0.35s;"></span>
+          <span class="confetti-piece w-2.5 h-2.5 rounded-full bg-[#D90429]" style="left: 42%; animation-delay: 0.15s;"></span>
+          <span class="confetti-piece w-2 h-3 rounded-xs bg-[#38BDF8]" style="left: 60%; animation-delay: 0.5s;"></span>
+          <span class="confetti-piece w-2.5 h-2.5 rounded-full bg-amber-300" style="left: 76%; animation-delay: 0.25s;"></span>
+          <span class="confetti-piece w-2 h-3 rounded-xs bg-rose-500" style="left: 88%; animation-delay: 0.45s;"></span>
+        </div>
+
+        <!-- Festive Header Banner -->
+        <div class="bg-gradient-to-br from-[#7A1C24] via-[#9E1F2A] to-[#D90429] px-5 pt-6 pb-8 text-center text-white relative">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 border border-white/25 text-[10px] font-black uppercase tracking-wider text-amber-200 mb-3">
+            <span>✨</span>
+            <span>Order Placed Successfully</span>
+            <span>✨</span>
+          </div>
+
+          <!-- Pulsing Emerald & Gold Checkmark -->
+          <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#22C55E] to-emerald-600 ring-4 ring-amber-300/90 check-ring-pulse flex items-center justify-center shadow-lg">
+            <svg class="w-9 h-9 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+
+          <h3 class="text-xl font-black tracking-tight mt-3.5">Congratulations!</h3>
+          <p class="text-xs text-white/90 mt-1">Thank you, <span id="congratsUserName" class="font-extrabold text-amber-200">Yoonas</span>! Your order is confirmed and being prepared.</p>
+        </div>
+
+        <!-- Order Summary Receipt Body -->
+        <div class="p-5 -mt-4 bg-white rounded-t-3xl relative z-20 space-y-3.5">
+          <!-- Earned Loyalty Coins Highlight Pill -->
+          <div class="rounded-2xl p-3 bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border border-amber-300/80 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white font-black text-sm flex items-center justify-center shadow-2xs">★</span>
+              <div>
+                <div class="text-[10px] font-extrabold uppercase text-amber-900">Loyalty Reward Unlocked</div>
+                <div class="text-xs font-extrabold text-[#7A1C24]">Added to My Wallet</div>
+              </div>
+            </div>
+            <span id="congratsEarnedCoins" class="px-2.5 py-1 rounded-full bg-[#7A1C24] text-amber-200 text-xs font-black shadow-2xs">+25 ★</span>
+          </div>
+
+          <!-- Order ID, Total Paid & ETA -->
+          <div class="bg-gray-50 rounded-2xl p-3.5 border border-gray-100 space-y-2 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-gray-500 font-semibold">Order ID</span>
+              <span id="congratsOrderId" class="font-extrabold text-gray-900">#DS-8124</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-500 font-semibold">Total Paid</span>
+              <span id="congratsTotalPaid" class="font-extrabold text-[#7A1C24]">₹0</span>
+            </div>
+            <div class="flex items-center justify-between pt-1.5 border-t border-gray-200/70">
+              <span class="text-gray-500 font-semibold">Estimated Delivery</span>
+              <span id="congratsEta" class="font-extrabold text-emerald-700">15–20 mins</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="space-y-2 pt-1">
+            <button type="button" onclick="window.trackFromCongratsModal()" class="w-full py-3.5 rounded-2xl bg-[#7A1C24] text-white text-xs font-extrabold shadow-lg active:scale-[0.99] transition-transform flex items-center justify-center gap-1.5">
+              <span>Track Live Order</span>
+              <span>›</span>
+            </button>
+            <button type="button" onclick="window.closeOrderCongratsToHome()" class="w-full py-3 rounded-2xl bg-[#FDF8F8] text-[#7A1C24] text-xs font-extrabold hover:bg-[#7A1C24]/10 transition-colors">
+              Continue Shopping
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div id="toastBanner" class="hidden fixed top-14 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg z-50 whitespace-nowrap"></div>
+
+  </div>
+
+  <script>
+    (function () {
+      const SESSION_STORAGE_KEY = 'dailyshopi_user_session_v6';
+
+      function loadSavedSession() {
+        try {
+          const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+          if (!raw) return null;
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.name && parsed.phone) return parsed;
+        } catch (e) {}
+        return null;
+      }
+
+      const savedSession = loadSavedSession();
+
+      const state = {
+        isLoggedIn: Boolean(savedSession),
+        zone: 'Eappikkad Zone',
+        activeCategory: 'all',
+        browseCategory: 'groceries',
+        categoryDirectoryMode: true,
+        activeSubCategory: 'all',
+        activeVendor: 'all',
+        bogoOnly: false,
+        searchQuery: '',
+        activeScreen: 'home',
+        screenStack: ['home'],
+        lastExitTapTime: 0,
+        coins: 140,
+        isFirstOrder: true,
+        redeemCoins: false,
+        paymentMethod: 'online',
+        rxFileName: '',
+        rxApproved: false,
+        userName: savedSession ? savedSession.name : 'Yoonas',
+        userPhone: savedSession ? savedSession.phone : '+91 98470 12345',
+        userPhotoUrl: savedSession && savedSession.photoUrl ? savedSession.photoUrl : '',
+        isEditingProfile: false,
+        offerSecondsRemaining: 4 * 3600 + 32 * 60 + 18,
+        bannerSlide: 0,
+        pdpProductId: 'p_tomato',
+        pdpVariantIdx: 0,
+        pdpQty: 1,
+        pdpSlideIdx: 0,
+        pdpDescExpanded: false,
+        cart: [],
+        wishlist: [
+          { prodId: 'p10', notify: true },
+          { prodId: 'p11', notify: true }
+        ],
+        addresses: [
+          { id: 'addr1', tag: 'Primary Home', line: 'Near Eappikkad Junction, Kozhikode District, Kerala', active: true },
+          { id: 'addr2', tag: 'Secondary Store', line: 'CEE YEM Building, Eappikkad Main Road, Kerala', active: false }
+        ],
+        orders: [
+          {
+            id: 'DS-8042',
+            date: 'Today, 11:40 AM',
+            status: 'Out for Delivery',
+            eta: '12 mins',
+            total: 265,
+            paymentLabel: 'Online Payment (UPI)',
+            items: ['Kerala Matta Rice (5 kg Bag)', 'Farm Fresh Eggs (12 pcs Tray)'],
+            rider: 'Arjun K. • Bike KL-11-XX-4021',
+            step: 3
+          },
+          {
+            id: 'DS-7991',
+            date: 'Yesterday, 06:15 PM',
+            status: 'Delivered',
+            eta: 'Delivered',
+            total: 410,
+            paymentLabel: 'Cash on Delivery (COD)',
+            items: ['Seer Fish (Neymeen) Slices (500 g Steaks)', 'Pure Coconut Oil (1 Litre Pouch)'],
+            rider: 'Completed',
+            step: 4
+          }
+        ],
+        latestConfirmedOrderId: 'DS-8042',
+        coinHistory: [
+          { id: 1, title: 'Welcome Bonus Coins', date: 'Nov 2026', delta: '+140 ★' }
+        ],
+        supportMessages: [
+          { sender: 'agent', text: 'Welcome to DailyShopi Support (Eappikkad Zone). How can we help you today?', time: '12:01 PM' }
+        ]
+      };
+
+      const CATEGORIES = [
+        {
+          id: 'all',
+          name: 'All',
+          accent: '#7A1C24',
+          tint: '#FDF8F8',
+          pillBg: '#7A1C24',
+          subs: ['All'],
+          thumbUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=160&q=80',
+          iconSvg: `<svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>`
+        },
+        {
+          id: 'groceries',
+          name: 'Groceries',
+          accent: '#15803D',
+          tint: '#F0FDF4',
+          pillBg: '#22C55E',
+          cardGradient: 'from-[#ECFDF5] via-[#F0FDF4] to-white',
+          borderTint: 'border-emerald-200/80',
+          subs: ['All', 'Fresh Vegetables & Fruits', 'Rice & Grains', 'Oils & Dairy'],
+          thumbUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80',
+          coverUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=640&q=80',
+          fallbackEmoji: '🥬'
+        },
+        {
+          id: 'food',
+          name: 'Food',
+          accent: '#7A1C24',
+          tint: '#FDF8F8',
+          pillBg: '#7A1C24',
+          cardGradient: 'from-[#FFF1F2] via-[#FDF8F8] to-white',
+          borderTint: 'border-rose-200/80',
+          subs: ['All', 'Meals & Biriyani', 'Snacks & Tea', 'Bakery'],
+          thumbUrl: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=400&q=80',
+          coverUrl: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=640&q=80',
+          fallbackEmoji: '🍛'
+        },
+        {
+          id: 'meat_fish',
+          name: 'Fresh Meat & Fish',
+          accent: '#0284C7',
+          tint: '#EFF6FF',
+          pillBg: '#38BDF8',
+          cardGradient: 'from-[#E0F2FE] via-[#EFF6FF] to-white',
+          borderTint: 'border-sky-200/80',
+          subs: ['All', 'Fresh Fish', 'Country Chicken', 'Mutton & Beef'],
+          thumbUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=400&q=80',
+          coverUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=640&q=80',
+          fallbackEmoji: '🐟'
+        },
+        {
+          id: 'medicines',
+          name: 'Medicines',
+          accent: '#0F766E',
+          tint: '#F0FDFA',
+          pillBg: '#0D9488',
+          cardGradient: 'from-[#CCFBF1] via-[#F0FDFA] to-white',
+          borderTint: 'border-teal-200/80',
+          subs: ['All', 'OTC & Wellness', 'Prescription Rx'],
+          thumbUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=400&q=80',
+          coverUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=640&q=80',
+          fallbackEmoji: '💊'
+        }
+      ];
+
+      const VENDORS = [
+        {
+          id: 'v1',
+          name: 'Eappikkad Mart',
+          dist: '1.2 km',
+          cat: 'groceries',
+          tag: 'Groceries',
+          rating: '4.8',
+          cardBg: 'from-[#ECFDF5] to-white',
+          borderCls: 'border-emerald-200/90',
+          iconBg: 'bg-[#22C55E] text-white',
+          ratingCls: 'bg-amber-400 text-gray-950',
+          emoji: '🛒'
+        },
+        {
+          id: 'v2',
+          name: 'Malabar Kitchen',
+          dist: '2.1 km',
+          cat: 'food',
+          tag: 'Hot Food',
+          rating: '4.7',
+          cardBg: 'from-[#FFF1F2] to-white',
+          borderCls: 'border-rose-200/90',
+          iconBg: 'bg-[#7A1C24] text-white',
+          ratingCls: 'bg-amber-400 text-gray-950',
+          emoji: '🍛'
+        },
+        {
+          id: 'v3',
+          name: 'Harbour Catch',
+          dist: '3.4 km',
+          cat: 'meat_fish',
+          tag: 'Fresh Fish',
+          rating: '4.9',
+          cardBg: 'from-[#E0F2FE] to-white',
+          borderCls: 'border-sky-200/90',
+          iconBg: 'bg-[#38BDF8] text-gray-950',
+          ratingCls: 'bg-[#22C55E] text-white',
+          emoji: '🐟'
+        },
+        {
+          id: 'v4',
+          name: 'GreenCare Pharmacy',
+          dist: '1.8 km',
+          cat: 'medicines',
+          tag: '24/7 Rx',
+          rating: '4.9',
+          cardBg: 'from-[#CCFBF1] to-white',
+          borderCls: 'border-teal-200/90',
+          iconBg: 'bg-teal-700 text-white',
+          ratingCls: 'bg-[#22C55E] text-white',
+          emoji: '💊'
+        }
+      ];
+
+      const PRODUCTS = [
+        {
+          id: 'p_tomato',
+          title: 'Fresh Red Tomatoes',
+          category: 'groceries',
+          sub: 'Fresh Vegetables & Fruits',
+          vendor: 'Eappikkad Mart',
+          todaysOffer: true,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🍅',
+          imageUrl: 'https://images.unsplash.com/photo-1546470427-227c7369a9b9?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1546470427-227c7369a9b9?auto=format&fit=crop&w=800&q=85', icon: '🍅', label: 'Farm-Picked Vine Tomatoes' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=800&q=85', icon: '🍅', label: 'Firm Juicy Nadan Selection' }
+          ],
+          variants: [
+            { label: '500 g Pack', price: 24, mrp: 35, detail: 'Fresh morning harvest • Net 500g' },
+            { label: '1 kg Pack', price: 45, mrp: 65, detail: 'Family value pack • Net 1000g' }
+          ],
+          highlights: ['Hand-sorted firm red tomatoes', 'Harvested fresh every morning', 'Hygienic ventilated mesh pack'],
+          desc: 'Farm-fresh ripe red tomatoes sorted for vibrant color, firm texture, and rich tangy flavor. Ideal for everyday curries, rasam, salads, and gravies. Cleaned and packed carefully so they arrive undamaged at your doorstep.'
+        },
+        {
+          id: 'p_potato',
+          title: 'Farm Fresh Potatoes',
+          category: 'groceries',
+          sub: 'Fresh Vegetables & Fruits',
+          vendor: 'Eappikkad Mart',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🥔',
+          imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=800&q=85', icon: '🥔', label: 'Clean Golden Potatoes' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1508313880080-c4bef0730395?auto=format&fit=crop&w=800&q=85', icon: '🥔', label: 'Even-Sized Cooking Tubers' }
+          ],
+          variants: [
+            { label: '1 kg Pack', price: 38, mrp: 48, detail: 'Graded golden tubers • Net 1kg' },
+            { label: '2 kg Family Pack', price: 72, mrp: 92, detail: 'Saver pack • Net 2kg' }
+          ],
+          highlights: ['Thin-skinned, low-moisture tubers', 'Soil-brushed & graded by size', 'Long pantry shelf life'],
+          desc: 'Fresh, firm golden potatoes graded for even cooking in masala dosa fillings, stews, fries, and roasts. Stored in cool ventilated crates to preserve natural sweetness and freshness.'
+        },
+        {
+          id: 'p_ginger',
+          title: 'Organic Fresh Ginger',
+          category: 'groceries',
+          sub: 'Fresh Vegetables & Fruits',
+          vendor: 'Eappikkad Mart',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🫚',
+          imageUrl: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=85', icon: '🫚', label: 'Aromatic Wayanad Ginger' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=800&q=85', icon: '🫚', label: 'Juicy Young Rhizomes' }
+          ],
+          variants: [
+            { label: '250 g Pack', price: 36, mrp: 45, detail: 'Washed young roots • Net 250g' },
+            { label: '500 g Pack', price: 68, mrp: 85, detail: 'Kitchen bulk pack • Net 500g' }
+          ],
+          highlights: ['High essential-oil aroma & pungency', 'Washed and air-dried roots', 'Ideal for ginger tea & marinades'],
+          desc: 'Freshly harvested aromatic ginger roots sourced from local Kerala farms. Packed with natural zing and essential oils for morning chai, ginger-garlic paste, and traditional curries.'
+        },
+        {
+          id: 'p_papaya',
+          title: 'Ripe Red Papaya',
+          category: 'groceries',
+          sub: 'Fresh Vegetables & Fruits',
+          vendor: 'Eappikkad Mart',
+          todaysOffer: false,
+          bogo: true,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🥭',
+          imageUrl: 'https://images.unsplash.com/photo-1517282009859-f000ec3b26fe?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1517282009859-f000ec3b26fe?auto=format&fit=crop&w=800&q=85', icon: '🥭', label: 'Sweet Tree-Ripened Papaya' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1526318472351-c75fcf070305?auto=format&fit=crop&w=800&q=85', icon: '🥭', label: 'Rich Orange Flesh' }
+          ],
+          variants: [
+            { label: '1 Whole Fruit', price: 58, mrp: 75, detail: 'Approx. 1.1–1.3 kg • BOGO 1+1' },
+            { label: '2 Fruits Combo', price: 110, mrp: 145, detail: 'Approx. 2.4 kg • Twin Pack' }
+          ],
+          highlights: ['Naturally tree-ripened & sweet', 'Rich in Vitamin A, C & digestive enzymes', 'Protective foam net sleeve'],
+          desc: 'Naturally ripened red-fleshed papaya picked at peak sweetness. Soft, juicy, and rich in antioxidants—ready to slice for breakfast bowls, smoothies, or fresh fruit salads.'
+        },
+        {
+          id: 'p_apple',
+          title: 'Kashmiri Red Apples',
+          category: 'groceries',
+          sub: 'Fresh Vegetables & Fruits',
+          vendor: 'Eappikkad Mart',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🍎',
+          imageUrl: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=800&q=85', icon: '🍎', label: 'Crisp Orchard Red Apples' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?auto=format&fit=crop&w=800&q=85', icon: '🍎', label: 'Hand-Selected Juicy Crunch' }
+          ],
+          variants: [
+            { label: '500 g Pack', price: 85, mrp: 105, detail: '3–4 crisp apples • Net 500g' },
+            { label: '1 kg Pack', price: 165, mrp: 205, detail: '6–8 crisp apples • Net 1kg' }
+          ],
+          highlights: ['Crisp, sweet & aromatic bite', 'Cold-chain stored for crunch', 'Individually cushioned in tray'],
+          desc: 'Crunchy, naturally sweet Kashmiri red apples selected for firm flesh and glossy skin. Stored under chilled conditions so every bite stays crisp and juicy.'
+        },
+        {
+          id: 'p1',
+          title: 'Kerala Matta Rice',
+          category: 'groceries',
+          sub: 'Rice & Grains',
+          vendor: 'Eappikkad Mart',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🌾',
+          imageUrl: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=85', icon: '🌾', label: 'Palakkad Matta Grains' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=800&q=85', icon: '🍚', label: 'Steamed Red Matta Rice' }
+          ],
+          variants: [
+            { label: '5 kg Bag', price: 290, mrp: 340, detail: 'Sortex cleaned • 5 kg sack' },
+            { label: '10 kg Bag', price: 560, mrp: 650, detail: 'Monthly household sack • 10 kg' }
+          ],
+          highlights: ['Farm-graded Palakkad Matta grains', 'Moisture-sealed hygienic pack', 'Same-day local zone dispatch'],
+          desc: 'Premium Palakkad matta rice sourced directly for daily household meals with rich grain texture and clean sorting. Ideal for steamed meals, pathiri, and traditional dishes. Carefully cleaned to remove husk and stones before packing. Stored in cool dry conditions for consistent cooking results across every batch and family meal.'
+        },
+        {
+          id: 'p2',
+          title: 'Pure Coconut Oil',
+          category: 'groceries',
+          sub: 'Oils & Dairy',
+          vendor: 'Eappikkad Mart',
+          todaysOffer: true,
+          bogo: true,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🥥',
+          imageUrl: 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=800&q=85', icon: '🥥', label: 'Cold-Pressed Coconut Oil' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=800&q=85', icon: '🫙', label: 'Sun-Dried Copra Harvest' }
+          ],
+          variants: [
+            { label: '1 Litre Pouch', price: 215, mrp: 250, detail: '100% pure copra • BOGO 1+1' },
+            { label: '500 ml Bottle', price: 115, mrp: 135, detail: 'Flip-cap bottle • 500 ml' }
+          ],
+          highlights: ['100% pure roasted coconut aroma', 'Buy 1 Get 1 Free promo eligible', 'Zero preservatives or mineral oil'],
+          desc: 'Cold-pressed coconut oil extracted from sun-dried copra for authentic aroma and everyday cooking. Naturally rich in medium-chain fatty acids. Eligible for Buy One Get One Free promotions on selected batches. Sealed for leak-free doorstep delivery within the Eappikkad franchise zone.'
+        },
+        {
+          id: 'p4',
+          title: 'Chicken Dum Biriyani',
+          category: 'food',
+          sub: 'Meals & Biriyani',
+          vendor: 'Malabar Kitchen',
+          todaysOffer: true,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🍛',
+          imageUrl: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=85', icon: '🍛', label: 'Malabar Dum Biriyani' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=800&q=85', icon: '🍗', label: 'Served Hot with Raita & Pickle' }
+          ],
+          variants: [
+            { label: 'Full Plate', price: 160, mrp: 190, detail: '2 chicken pcs + egg + raita' },
+            { label: 'Half Plate', price: 110, mrp: 130, detail: '1 chicken pc + raita & pickle' }
+          ],
+          highlights: ['Aromatic short-grain Kaima rice', 'Served hot with raita & pickle', 'Prepared fresh on order'],
+          desc: 'Fragrant Kaima rice biriyani slow-cooked on dum with tender chicken pieces, caramelized onions, roasted cashews, raita, and tangy lime pickle.'
+        },
+        {
+          id: 'p5',
+          title: 'Crispy Banana Fritters & Tea',
+          category: 'food',
+          sub: 'Snacks & Tea',
+          vendor: 'Malabar Kitchen',
+          todaysOffer: false,
+          bogo: true,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🍌',
+          imageUrl: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=85', icon: '🍌', label: 'Golden Evening Snacks' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=800&q=85', icon: '☕', label: 'Hot Cardamom Tea Flask' }
+          ],
+          variants: [
+            { label: '2 pcs + 2 Tea', price: 65, mrp: 80, detail: 'Evening tea combo • BOGO 1+1' },
+            { label: '4 pcs Snack Box', price: 75, mrp: 90, detail: 'Hot Pazham Pori box' }
+          ],
+          highlights: ['Ripe Nendran banana batter fry', 'BOGO 1+1 evening tea deal', 'Dispatched hot in foil pouch'],
+          desc: 'Golden crispy ripe Nendran plantain fritters paired with hot cardamom tea. Eligible for Buy One Get One Free evening snack deals.'
+        },
+        {
+          id: 'p6',
+          title: 'Seer Fish (Neymeen) Slices',
+          category: 'meat_fish',
+          sub: 'Fresh Fish',
+          vendor: 'Harbour Catch',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🐟',
+          imageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=85', icon: '🐟', label: 'Cleaned Center Steaks' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1534943441045-1009d7cb0bb9?auto=format&fit=crop&w=800&q=85', icon: '❄️', label: 'Chilled Morning Coastal Catch' }
+          ],
+          variants: [
+            { label: '500 g Steaks', price: 420, mrp: 480, detail: 'Cleaned center cuts • Net 500g' },
+            { label: '1 kg Steaks', price: 810, mrp: 920, detail: 'Cleaned family pack • Net 1kg' }
+          ],
+          highlights: ['Chemical-free coastal catch', 'Cleaned, sliced & chilled at 0–4°C', 'Net weight measured after cleaning'],
+          desc: 'Cleaned, iced, and ready-to-cook fresh seer fish steaks sourced from morning coastal landings and packed hygienically for quick frying or curry.'
+        },
+        {
+          id: 'p7',
+          title: 'Tender Country Chicken',
+          category: 'meat_fish',
+          sub: 'Country Chicken',
+          vendor: 'Harbour Catch',
+          todaysOffer: true,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '🍗',
+          imageUrl: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=800&q=85', icon: '🍗', label: 'Fresh Curry Cut Chicken' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=800&q=85', icon: '🥩', label: 'Skinless Hygienic Pack' }
+          ],
+          variants: [
+            { label: '500 g Curry Cut', price: 240, mrp: 270, detail: 'Skinless medium pieces • 500g' },
+            { label: '1 kg Curry Cut', price: 465, mrp: 520, detail: 'Skinless family pack • 1kg' }
+          ],
+          highlights: ['Freshly dressed to order', 'Hygienic vacuum-sealed pack', 'Ideal for roast & Nadan curry'],
+          desc: 'Freshly dressed tender country chicken cut to order into medium curry pieces and delivered chilled within Eappikkad Zone.'
+        },
+        {
+          id: 'p9',
+          title: 'Amoxicillin 500mg Capsules',
+          category: 'medicines',
+          sub: 'Prescription Rx',
+          vendor: 'GreenCare Pharmacy',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: true,
+          outOfStock: false,
+          emoji: '🩺',
+          imageUrl: 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?auto=format&fit=crop&w=800&q=85', icon: '🩺', label: 'Rx Prescription Capsule Strip' }
+          ],
+          variants: [
+            { label: '10 Capsules Strip', price: 115, mrp: 130, detail: 'Rx required • 1 Strip (10 caps)' }
+          ],
+          highlights: ['Doctor prescription required', 'Auto-split into Rx cart group', 'Pharmacist verification before dispatch'],
+          desc: 'Prescription antibiotic medicine. Automatically separated into a dedicated Rx fulfillment group at checkout and unlocked once a valid prescription is uploaded and approved.'
+        },
+        {
+          id: 'p8',
+          title: 'Paracetamol 650mg',
+          category: 'medicines',
+          sub: 'OTC & Wellness',
+          vendor: 'GreenCare Pharmacy',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '💊',
+          imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=85', icon: '💊', label: '15 Tablets Blister Strip' }
+          ],
+          variants: [
+            { label: '15 Tablets Strip', price: 32, mrp: 38, detail: 'OTC Fever Relief • 15 Tabs' }
+          ],
+          highlights: ['Over-the-counter fever & pain relief', 'Verified batch & long expiry', 'No prescription needed'],
+          desc: 'Standard over-the-counter fever and mild pain relief tablets supplied by licensed neighborhood partner GreenCare Pharmacy.'
+        },
+        {
+          id: 'p10',
+          title: 'Organic Jaggery Block',
+          category: 'groceries',
+          sub: 'Oils & Dairy',
+          vendor: 'Eappikkad Mart',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: true,
+          emoji: '🍯',
+          imageUrl: 'https://images.unsplash.com/photo-1604480132736-44c188fe4d20?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1604480132736-44c188fe4d20?auto=format&fit=crop&w=800&q=85', icon: '🍯', label: '1 kg Marayoor Jaggery' }
+          ],
+          variants: [
+            { label: '1 kg Pack', price: 95, mrp: 110, detail: 'Unrefined cane jaggery • 1 kg' }
+          ],
+          highlights: ['Unrefined traditional cane jaggery', 'Wishlist restock notification ready'],
+          desc: 'Traditional dark cane jaggery blocks sourced without bleaching agents. Currently out of stock — save to Wishlist to receive an instant back-in-stock alert.'
+        },
+        {
+          id: 'p11',
+          title: 'Wild Honey & Ginger Jar',
+          category: 'medicines',
+          sub: 'OTC & Wellness',
+          vendor: 'GreenCare Pharmacy',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: true,
+          emoji: '🫙',
+          imageUrl: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=800&q=85', icon: '🫙', label: '250 g Herbal Immunity Jar' }
+          ],
+          variants: [
+            { label: '250 g Glass Jar', price: 185, mrp: 220, detail: 'Herbal immunity jar • 250g' }
+          ],
+          highlights: ['Raw forest honey infused with dry ginger', 'Wishlist restock notification ready'],
+          desc: 'Raw forest honey infused with dry ginger for throat soothing and daily wellness. Save to Wishlist for immediate restock alerts.'
+        }
+      ];
+
+      const PROMO_SLIDES = [
+        {
+          tag: 'EXPRESS DELIVERY',
+          title: 'Fast Local Delivery in Eappikkad',
+          sub: 'Groceries, fresh fish, hot food & pharmacy under one roof',
+          bg: 'from-[#7A1C24] via-[#9B2226] to-[#4A0E13]'
+        },
+        {
+          tag: 'FIRST ORDER DEAL',
+          title: 'Flat 20% OFF + Loyalty Coins',
+          sub: 'Save on your opening order & earn coins on every checkout',
+          bg: 'from-[#15803D] via-[#22C55E] to-[#064E3B]'
+        },
+        {
+          tag: '2-DAY FLASH DEALS',
+          title: "Today's Offer • Max 1 Unit/Day",
+          sub: 'Grab limited-stock daily deals before evening rush',
+          bg: 'from-[#0284C7] via-[#38BDF8] to-[#0C4A6E]'
+        }
+      ];
+
+      // ==================== SCROLL RESET HELPER ====================
+      function resetAllScrollContainers() {
+        const scrollIds = [
+          'screenHome',
+          'screenCategories',
+          'pdpContent',
+          'cartContent',
+          'screenOrders',
+          'screenWallet',
+          'screenProfile',
+          'screenWishlist',
+          'screenOrderConfirmed'
+        ];
+        scrollIds.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.scrollTop = 0;
+        });
+        const supportScroll = document.querySelector('#screenSupport .overflow-y-auto');
+        if (supportScroll) supportScroll.scrollTop = 0;
+      }
+
+      // ==================== SESSION & ONBOARDING ====================
+      function persistSession() {
+        try {
+          if (state.isLoggedIn) {
+            localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
+              name: state.userName,
+              phone: state.userPhone,
+              photoUrl: state.userPhotoUrl
+            }));
+          } else {
+            localStorage.removeItem(SESSION_STORAGE_KEY);
+          }
+        } catch (e) {}
+      }
+
+      function syncUserIdentityUI() {
+        const headerGreeting = document.getElementById('headerUserGreeting');
+        const firstOrderCard = document.getElementById('homeGreetingBanner');
+        const homeTitle = document.getElementById('homeGreetingTitle');
+        const homeAvatar = document.getElementById('homeGreetingAvatar');
+
+        if (headerGreeting) headerGreeting.textContent = `Hi, ${state.userName}`;
+        if (firstOrderCard) firstOrderCard.classList.toggle('hidden', !state.isFirstOrder);
+        if (homeTitle) homeTitle.textContent = `Hi, ${state.userName}!`;
+        if (homeAvatar) {
+          homeAvatar.innerHTML = state.userPhotoUrl
+            ? `<img src="${state.userPhotoUrl}" alt="User" class="w-full h-full object-cover" />`
+            : state.userName.charAt(0).toUpperCase();
+        }
+      }
+
+      function syncOnboardingOverlay() {
+        const loginScreen = document.getElementById('screenLoginOnboarding');
+        if (!loginScreen) return;
+        loginScreen.classList.toggle('hidden', state.isLoggedIn);
+        if (!state.isLoggedIn) loginScreen.scrollTop = 0;
+      }
+
+      window.requestFirstLoginOtp = function () {
+        const nameEl = document.getElementById('firstLoginNameInput');
+        const phoneEl = document.getElementById('firstLoginPhoneInput');
+        const nameVal = nameEl ? nameEl.value.trim() : '';
+        const phoneDigits = phoneEl ? phoneEl.value.replace(/\D/g, '') : '';
+        if (!nameVal) {
+          showToast('Please enter your Full Name');
+          if (nameEl) nameEl.focus();
+          return;
+        }
+        if (phoneDigits.length < 10) {
+          showToast('Please enter a valid 10-digit Mobile Number');
+          if (phoneEl) phoneEl.focus();
+          return;
+        }
+        const d0 = document.getElementById('otpDigit0');
+        if (d0) d0.focus();
+        showToast(`OTP sent to +91 ${phoneDigits}`);
+      };
+
+      window.autoFillDemoOtp = function () {
+        ['1', '2', '3', '4'].forEach((d, idx) => {
+          const box = document.getElementById(`otpDigit${idx}`);
+          if (box) box.value = d;
+        });
+        showToast('Demo OTP 1234 filled');
+      };
+
+      window.handleOtpBoxInput = function (idx, el) {
+        el.value = el.value.replace(/\D/g, '').slice(0, 1);
+        if (el.value && idx < 3) {
+          const next = document.getElementById(`otpDigit${idx + 1}`);
+          if (next) next.focus();
+        }
+      };
+
+      window.handleOtpBoxKeydown = function (idx, e) {
+        if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+          const prev = document.getElementById(`otpDigit${idx - 1}`);
+          if (prev) prev.focus();
+        }
+      };
+
+      window.completeFirstTimeLogin = function () {
+        const nameEl = document.getElementById('firstLoginNameInput');
+        const phoneEl = document.getElementById('firstLoginPhoneInput');
+        const nameVal = nameEl ? nameEl.value.trim() : '';
+        const phoneDigits = phoneEl ? phoneEl.value.replace(/\D/g, '') : '';
+        const otpVal = [0, 1, 2, 3].map(i => {
+          const b = document.getElementById(`otpDigit${i}`);
+          return b ? b.value.trim() : '';
+        }).join('');
+
+        if (!nameVal) {
+          showToast('Please enter your Full Name');
+          if (nameEl) nameEl.focus();
+          return;
+        }
+        if (phoneDigits.length < 10) {
+          showToast('Please enter a valid 10-digit Mobile Number');
+          if (phoneEl) phoneEl.focus();
+          return;
+        }
+        if (otpVal.length < 4) {
+          showToast('Please enter the 4-digit OTP');
+          const d0 = document.getElementById('otpDigit0');
+          if (d0) d0.focus();
+          return;
+        }
+
+        state.userName = nameVal;
+        state.userPhone = `+91 ${phoneDigits.slice(0, 5)} ${phoneDigits.slice(5, 10)}`;
+        state.isLoggedIn = true;
+        persistSession();
+        syncOnboardingOverlay();
+        syncUserIdentityUI();
+        window.goMainHome();
+        showToast(`Welcome to DailyShopi, ${state.userName}!`);
+      };
+
+      window.logoutUserSession = function () {
+        state.isLoggedIn = false;
+        state.isEditingProfile = false;
+        persistSession();
+        const nameEl = document.getElementById('firstLoginNameInput');
+        const phoneEl = document.getElementById('firstLoginPhoneInput');
+        if (nameEl) nameEl.value = state.userName;
+        if (phoneEl) phoneEl.value = state.userPhone.replace(/^\+91\s*/, '').replace(/\s+/g, '');
+        [0, 1, 2, 3].forEach(i => {
+          const b = document.getElementById(`otpDigit${i}`);
+          if (b) b.value = '';
+        });
+        syncOnboardingOverlay();
+        showToast('Logged out • Sign in to continue');
+      };
+
+      function showToast(msg) {
+        const el = document.getElementById('toastBanner');
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.remove('hidden');
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => el.classList.add('hidden'), 2400);
+      }
+
+      function applyThemeForCategory(catId) {
+        const cat = CATEGORIES.find(c => c.id === catId) || CATEGORIES[0];
+        document.documentElement.style.setProperty('--active-accent', cat.accent);
+        document.documentElement.style.setProperty('--active-tint', cat.tint);
+        const sb = document.getElementById('statusBar');
+        const mh = document.getElementById('mainHeader');
+        if (sb) sb.style.backgroundColor = cat.tint;
+        if (mh) mh.style.backgroundColor = cat.tint;
+      }
+
+      function updateBottomNavActive(screenName) {
+        const navMap = {
+          home: 'navBtnHome',
+          categories: 'navBtnCategories',
+          orders: 'navBtnOrders',
+          orderConfirmed: 'navBtnOrders',
+          wallet: 'navBtnWallet',
+          profile: 'navBtnProfile'
+        };
+        const activeBtnId = navMap[screenName] || '';
+        ['navBtnHome', 'navBtnCategories', 'navBtnOrders', 'navBtnWallet', 'navBtnProfile'].forEach(btnId => {
+          const btn = document.getElementById(btnId);
+          if (!btn) return;
+          const isActive = btnId === activeBtnId;
+          btn.classList.toggle('text-[#7A1C24]', isActive);
+          btn.classList.toggle('text-gray-500', !isActive);
+          const span = btn.querySelector('span');
+          if (span) {
+            span.classList.toggle('font-extrabold', isActive);
+            span.classList.toggle('font-bold', !isActive);
+          }
+        });
+      }
+
+      function updateConditionalHeaderBars(screenName) {
+        const mainCatBar = document.getElementById('categoryBar');
+        const subCatBar = document.getElementById('subCategoryBar');
+        const searchWrap = document.getElementById('headerSearchWrap');
+        if (!mainCatBar || !subCatBar || !searchWrap) return;
+
+        if (screenName === 'home') {
+          mainCatBar.classList.remove('hidden');
+          subCatBar.classList.add('hidden');
+          searchWrap.classList.remove('hidden');
+          applyThemeForCategory(state.activeCategory);
+        } else if (screenName === 'categories') {
+          mainCatBar.classList.add('hidden');
+          searchWrap.classList.remove('hidden');
+          if (state.categoryDirectoryMode) {
+            subCatBar.classList.add('hidden');
+            applyThemeForCategory('all');
+          } else {
+            applyThemeForCategory(state.browseCategory);
+            renderSubCategoryBar(state.browseCategory);
+          }
+        } else if (screenName === 'pdp') {
+          mainCatBar.classList.add('hidden');
+          searchWrap.classList.add('hidden');
+          const prod = PRODUCTS.find(x => x.id === state.pdpProductId);
+          const targetCatId = prod ? prod.category : state.browseCategory;
+          applyThemeForCategory(targetCatId);
+          renderSubCategoryBar(targetCatId);
+        } else {
+          mainCatBar.classList.add('hidden');
+          subCatBar.classList.add('hidden');
+          searchWrap.classList.add('hidden');
+          applyThemeForCategory('all');
+        }
+      }
+
+      // ==================== NAVIGATION & BACK STACK ====================
+      function activateScreenDOM(screenName) {
+        state.activeScreen = screenName;
+        const map = {
+          home: 'screenHome',
+          categories: 'screenCategories',
+          pdp: 'screenPDP',
+          cart: 'screenCart',
+          orders: 'screenOrders',
+          wallet: 'screenWallet',
+          profile: 'screenProfile',
+          wishlist: 'screenWishlist',
+          support: 'screenSupport',
+          orderConfirmed: 'screenOrderConfirmed'
+        };
+        Object.entries(map).forEach(([key, domId]) => {
+          const el = document.getElementById(domId);
+          if (el) el.classList.toggle('hidden', key !== screenName);
+        });
+
+        updateBottomNavActive(screenName);
+        updateConditionalHeaderBars(screenName);
+
+        if (screenName === 'home') renderBannersAndCatalog();
+        if (screenName === 'categories') renderCategoryScreen();
+        if (screenName === 'pdp') renderPDP();
+        if (screenName === 'cart') renderCart();
+        if (screenName === 'orders') renderOrders();
+        if (screenName === 'wallet') renderWallet();
+        if (screenName === 'profile') renderProfile();
+        if (screenName === 'wishlist') renderWishlistScreen();
+        if (screenName === 'support') renderSupportChatMessages();
+        if (screenName === 'orderConfirmed') renderOrderConfirmedScreen();
+
+        updateFloatingCartBar();
+        window.closeThreeDotMenu();
+        resetAllScrollContainers();
+      }
+
+      window.switchScreen = function (screenName) {
+        if (state.screenStack[state.screenStack.length - 1] !== screenName) {
+          state.screenStack.push(screenName);
+          if (window.history && window.history.pushState) {
+            window.history.pushState({ screen: screenName }, '');
+          }
+        }
+        activateScreenDOM(screenName);
+      };
+
+      window.goMainHome = function () {
+        state.activeCategory = 'all';
+        state.activeSubCategory = 'all';
+        state.activeVendor = 'all';
+        state.bogoOnly = false;
+        state.searchQuery = '';
+        state.screenStack = ['home'];
+        const searchEl = document.getElementById('searchInput');
+        if (searchEl) searchEl.value = '';
+        renderCategoryBar();
+        activateScreenDOM('home');
+      };
+
+      window.goBack = function () {
+        if (state.screenStack.length > 1) {
+          state.screenStack.pop();
+          const prev = state.screenStack[state.screenStack.length - 1] || 'home';
+          activateScreenDOM(prev);
+        } else if (state.activeScreen !== 'home') {
+          window.goMainHome();
+        } else {
+          const now = Date.now();
+          if (now - state.lastExitTapTime < 2000) {
+            showToast('Exiting DailyShopi...');
+          } else {
+            state.lastExitTapTime = now;
+            showToast('Press back again to exit DailyShopi');
+          }
+        }
+      };
+
+      window.addEventListener('popstate', function () {
+        window.goBack();
+      });
+
+      window.handleBottomNav = function (target) {
+        if (target === 'home') {
+          window.goMainHome();
+        } else if (target === 'categories') {
+          state.categoryDirectoryMode = true;
+          state.activeSubCategory = 'all';
+          window.switchScreen('categories');
+        } else {
+          window.switchScreen(target);
+        }
+      };
+
+      // ==================== 3-DOT MENU ====================
+      window.toggleThreeDotMenu = function (e) {
+        if (e) e.stopPropagation();
+        const dd = document.getElementById('threeDotDropdown');
+        if (dd) dd.classList.toggle('hidden');
+      };
+
+      window.closeThreeDotMenu = function () {
+        const dd = document.getElementById('threeDotDropdown');
+        if (dd) dd.classList.add('hidden');
+      };
+
+      document.addEventListener('click', window.closeThreeDotMenu);
+
+      window.handleMenuSelect = function (target) {
+        window.closeThreeDotMenu();
+        if (target === 'categories') {
+          state.categoryDirectoryMode = true;
+          state.activeSubCategory = 'all';
+        }
+        window.switchScreen(target);
+      };
+
+      // ==================== HEADER ACCOUNT / ADDRESS SWITCHER MODAL ====================
+      window.openHeaderAccountModal = function () {
+        const titleEl = document.getElementById('modalAccountTitle');
+        const listEl = document.getElementById('headerModalAddressList');
+        if (titleEl) titleEl.textContent = `Hi, ${state.userName}`;
+        if (listEl) {
+          listEl.innerHTML = state.addresses.map(a => `
+            <button type="button" onclick="window.selectAddress('${a.id}'); window.closeHeaderAccountModal();" class="w-full p-3 rounded-2xl border text-left flex items-center justify-between ${a.active ? 'border-[#7A1C24] bg-[#FDF8F8]' : 'border-gray-200 bg-white'}">
+              <div>
+                <span class="text-[10px] font-extrabold uppercase text-[#7A1C24]">${a.tag}</span>
+                <div class="text-xs font-semibold text-gray-800">${a.line}</div>
+              </div>
+              <span class="text-xs font-extrabold ${a.active ? 'text-[#7A1C24]' : 'text-gray-400'}">${a.active ? 'Active' : 'Use'}</span>
+            </button>
+          `).join('');
+        }
+        document.getElementById('headerAccountModal').classList.remove('hidden');
+      };
+
+      window.closeHeaderAccountModal = function () {
+        document.getElementById('headerAccountModal').classList.add('hidden');
+      };
+
+      // ==================== CATEGORIES & SUB-CATEGORIES ====================
+      function renderCategoryBar() {
+        const bar = document.getElementById('categoryBar');
+        if (!bar) return;
+        bar.innerHTML = CATEGORIES.map(cat => {
+          const active = state.activeCategory === cat.id && state.activeScreen === 'home';
+          const thumbHtml = cat.id === 'all'
+            ? `<span class="w-5 h-5 rounded-full flex items-center justify-center ${active ? 'bg-white/20 text-white' : ''}" style="${!active ? `background-color: ${cat.tint}; color: ${cat.accent};` : ''}">${cat.iconSvg}</span>`
+            : `<img src="${cat.thumbUrl}" alt="${cat.name}" onerror="this.style.display='none'" class="w-5 h-5 rounded-full object-cover shrink-0 ring-1 ${active ? 'ring-white/60' : 'ring-black/10'}" />`;
+          return `
+            <button
+              type="button"
+              onclick="window.selectCategory('${cat.id}')"
+              style="${active ? `background-color: ${cat.pillBg}; color: #fff;` : ''}"
+              class="inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap shrink-0 transition-all ${active ? 'shadow-xs' : 'bg-white/95 text-gray-700 border border-gray-200/80 hover:border-gray-300'}"
+            >
+              ${thumbHtml}
+              <span>${cat.name}</span>
+            </button>
+          `;
+        }).join('');
+        bar.scrollLeft = 0;
+      }
+
+      function renderSubCategoryBar(catId) {
+        const subBar = document.getElementById('subCategoryBar');
+        if (!subBar) return;
+        const cat = CATEGORIES.find(c => c.id === catId);
+        if (!cat || cat.id === 'all' || !cat.subs || cat.subs.length <= 1) {
+          subBar.classList.add('hidden');
+          return;
+        }
+        subBar.classList.remove('hidden');
+        subBar.innerHTML = cat.subs.map(sub => {
+          const active = (sub.toLowerCase() === 'all' && state.activeSubCategory === 'all') ||
+                         (state.activeSubCategory.toLowerCase() === sub.toLowerCase());
+          return `
+            <button
+              type="button"
+              onclick="window.selectSubCategory('${sub.replace(/'/g, "\\'")}')"
+              style="${active ? `background-color: ${cat.pillBg}; color: #fff;` : ''}"
+              class="px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap transition-all ${active ? 'shadow-xs' : 'bg-white text-gray-700 border border-gray-200/70'}"
+            >${sub}</button>
+          `;
+        }).join('');
+      }
+
+      window.selectCategory = function (catId) {
+        if (catId === 'all') {
+          window.goMainHome();
+          return;
+        }
+        state.activeCategory = catId;
+        state.browseCategory = catId;
+        state.categoryDirectoryMode = false;
+        state.activeSubCategory = 'all';
+        state.bogoOnly = false;
+        renderCategoryBar();
+        window.switchScreen('categories');
+      };
+
+      window.selectSubCategory = function (sub) {
+        state.activeSubCategory = sub.toLowerCase() === 'all' ? 'all' : sub;
+        if (state.activeScreen === 'pdp') {
+          const prod = PRODUCTS.find(x => x.id === state.pdpProductId);
+          if (prod) state.browseCategory = prod.category;
+          state.categoryDirectoryMode = false;
+          window.switchScreen('categories');
+        } else {
+          state.categoryDirectoryMode = false;
+          renderSubCategoryBar(state.browseCategory);
+          renderCategoryScreen();
+          resetAllScrollContainers();
+        }
+      };
+
+      window.handleSearch = function (val) {
+        state.searchQuery = val.trim().toLowerCase();
+        if (state.activeScreen === 'categories') {
+          renderCategoryScreen();
+        } else {
+          if (state.activeScreen !== 'home') window.switchScreen('home');
+          renderBannersAndCatalog();
+        }
+      };
+
+      // ==================== HOME BANNERS, BOGO & TODAY'S OFFER ====================
+      function renderBannersAndCatalog() {
+        const isHomeDefault = state.activeCategory === 'all' && !state.searchQuery && state.activeVendor === 'all' && !state.bogoOnly;
+        const homeBannerWrap = document.getElementById('homeBannerWrapper');
+        const catBannerWrap = document.getElementById('categoryBannerWrapper');
+        const offerSpotlight = document.getElementById('todaysOfferSpotlightSection');
+
+        if (homeBannerWrap) homeBannerWrap.classList.toggle('hidden', !isHomeDefault);
+        if (catBannerWrap) catBannerWrap.classList.toggle('hidden', isHomeDefault);
+        if (offerSpotlight) offerSpotlight.classList.toggle('hidden', !isHomeDefault);
+
+        if (isHomeDefault) {
+          const slide = PROMO_SLIDES[state.bannerSlide % PROMO_SLIDES.length];
+          document.getElementById('homeSlot1Container').innerHTML = `
+            <div class="w-full h-full bg-gradient-to-r ${slide.bg} p-4 flex flex-col justify-between text-white relative">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-full bg-white/20 text-[10px] font-extrabold tracking-wide">${slide.tag}</span>
+                <div class="flex items-end gap-0.5 h-3">
+                  <span class="w-1 h-2 bg-white/80 rounded-full eq-bar" style="animation-delay:0s"></span>
+                  <span class="w-1 h-3 bg-white/80 rounded-full eq-bar" style="animation-delay:0.2s"></span>
+                  <span class="w-1 h-1.5 bg-white/80 rounded-full eq-bar" style="animation-delay:0.4s"></span>
+                </div>
+              </div>
+              <div>
+                <h2 class="text-base font-extrabold leading-snug">${slide.title}</h2>
+                <p class="text-[11px] text-white/85 mt-0.5">${slide.sub}</p>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex gap-1">
+                  ${PROMO_SLIDES.map((_, i) => `<button type="button" onclick="window.setBannerSlide(${i})" class="h-1.5 rounded-full transition-all ${i === state.bannerSlide ? 'w-5 bg-white' : 'w-1.5 bg-white/40'}"></button>`).join('')}
+                </div>
+                <button type="button" onclick="window.selectCategory('groceries')" class="px-3 py-1 rounded-xl bg-white text-[#7A1C24] text-[11px] font-extrabold">Shop Now</button>
+              </div>
+            </div>
+          `;
+
+          document.getElementById('homeSlot2Container').innerHTML = `
+            <div class="w-full h-full bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#0369A1] p-4 flex items-center justify-between text-white">
+              <div class="space-y-1 max-w-[70%]">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#38BDF8]">Commercial Ad Spotlight</span>
+                <h3 class="text-sm font-extrabold">Fresh Catch &amp; Daily Essentials</h3>
+                <p class="text-[11px] text-gray-200">Order before 2 PM for rapid Eappikkad Zone dispatch.</p>
+              </div>
+              <button type="button" onclick="window.selectCategory('meat_fish')" class="px-3 py-2 rounded-xl bg-[#38BDF8] text-gray-950 text-[11px] font-extrabold shrink-0">Explore</button>
+            </div>
+          `;
+        } else {
+          const title = state.bogoOnly ? 'BOGO 1+1 Free Deals' : (state.searchQuery ? `Search: "${state.searchQuery}"` : 'Store Filter Active');
+          document.getElementById('categoryBannerCard').innerHTML = `
+            <div class="w-full p-4 bg-gradient-to-r from-[#7A1C24] to-[#A61C28] flex items-center justify-between text-white">
+              <div>
+                <span class="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-extrabold uppercase">Active Filter</span>
+                <h3 class="text-sm font-extrabold mt-1">${title}</h3>
+              </div>
+              <button type="button" onclick="window.goMainHome()" class="px-3 py-1.5 rounded-xl bg-white text-[#7A1C24] text-[11px] font-extrabold">Show All</button>
+            </div>
+          `;
+        }
+
+        renderTodaysOffer();
+        renderVendors();
+        renderCatalogSections(isHomeDefault);
+      }
+
+      window.setBannerSlide = function (i) {
+        state.bannerSlide = i;
+        renderBannersAndCatalog();
+      };
+
+      window.applyBogoFilter = function () {
+        state.bogoOnly = true;
+        renderBannersAndCatalog();
+        resetAllScrollContainers();
+      };
+
+      window.claimFeaturedBogo = function () {
+        const bogoProd = PRODUCTS.find(p => p.bogo && !p.outOfStock);
+        if (bogoProd) {
+          window.addToCart(bogoProd.id, false, 0);
+          showToast(`Added BOGO 1+1 Deal: ${bogoProd.title}`);
+        }
+      };
+
+      function renderTodaysOffer() {
+        const strip = document.getElementById('todaysOfferStrip');
+        if (!strip) return;
+        const deals = PRODUCTS.filter(p => p.todaysOffer);
+        strip.innerHTML = deals.map(p => {
+          const v0 = p.variants[0];
+          const discountPct = Math.max(5, Math.round(((v0.mrp - v0.price) / v0.mrp) * 100));
+          const inCart = state.cart.find(c => c.id === p.id);
+          const qty = inCart ? inCart.qty : 0;
+          return `
+            <div class="min-w-[172px] bg-white border border-[#7A1C24]/15 rounded-2xl p-2.5 shadow-xs flex flex-col justify-between shrink-0">
+              <div onclick="window.openPDP('${p.id}')" class="cursor-pointer">
+                <div class="relative h-20 rounded-xl overflow-hidden bg-gradient-to-br from-[#FDF8F8] to-[#FFF7ED] flex items-center justify-center mb-2">
+                  <img src="${p.imageUrl}" alt="${p.title}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover" />
+                  <span class="hidden text-3xl">${p.emoji}</span>
+                  <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-[#22C55E] text-white text-[9px] font-black shadow-2xs">
+                    ${discountPct}% OFF
+                  </span>
+                </div>
+                <div class="text-xs font-extrabold text-gray-900 line-clamp-1">${p.title}</div>
+                <div class="mt-1">
+                  <span class="inline-block text-[11px] font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded-md truncate max-w-full">${v0.label} • ${p.vendor}</span>
+                </div>
+                <div class="flex items-baseline gap-1.5 mt-1.5">
+                  <span class="text-sm font-black text-[#7A1C24]">₹${v0.price}</span>
+                  <span class="text-[11px] font-semibold text-gray-500 line-through">₹${v0.mrp}</span>
+                </div>
+              </div>
+              <div class="mt-2.5">
+                ${qty === 0
+                  ? `<button type="button" onclick="window.addToCart('${p.id}', true, 0)" class="w-full py-1.5 rounded-xl bg-gradient-to-r from-[#7A1C24] to-[#B91C1C] text-white text-[11px] font-extrabold shadow-2xs active:scale-95 transition-transform">Add Offer (Max 1)</button>`
+                  : `<div class="text-center py-1.5 rounded-xl bg-[#22C55E]/20 text-emerald-900 text-[11px] font-extrabold">Added (1/1 Max)</div>`
+                }
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // ==================== ATTRACTIVE STORES IN ZONE CARDS ====================
+      function renderVendors() {
+        const strip = document.getElementById('vendorsStrip');
+        if (!strip) return;
+        strip.innerHTML = VENDORS.map(v => {
+          const active = state.activeVendor === v.id;
+          return `
+            <button
+              type="button"
+              onclick="window.toggleVendorFilter('${v.id}')"
+              class="min-w-[158px] p-2.5 rounded-2xl border text-left shrink-0 transition-all card-shadow ${active ? 'bg-gradient-to-br from-[#7A1C24] to-[#991B1B] text-white border-[#7A1C24] scale-[1.01]' : `bg-gradient-to-br ${v.cardBg} text-gray-900 ${v.borderCls}`}"
+            >
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="w-7 h-7 rounded-xl flex items-center justify-center text-sm shadow-2xs ${active ? 'bg-white/20 text-white' : v.iconBg}">
+                  ${v.emoji}
+                </span>
+                <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-black shadow-2xs ${active ? 'bg-amber-300 text-[#4A0E13]' : v.ratingCls}">
+                  <span>★</span>
+                  <span>${v.rating}</span>
+                </span>
+              </div>
+              <div class="text-xs font-extrabold whitespace-nowrap truncate">${v.name}</div>
+              <div class="flex items-center justify-between gap-1.5 mt-1">
+                <span class="text-[10px] font-bold ${active ? 'text-white/85' : 'text-gray-500'}">${v.dist}</span>
+                <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-md ${active ? 'bg-white/15 text-white' : 'bg-white/90 text-gray-700 border border-gray-200/60'}">${v.tag}</span>
+              </div>
+            </button>
+          `;
+        }).join('');
+      }
+
+      window.toggleVendorFilter = function (vendorId) {
+        state.activeVendor = state.activeVendor === vendorId ? 'all' : vendorId;
+        renderBannersAndCatalog();
+      };
+
+      function getFilteredProducts() {
+        return PRODUCTS.filter(p => {
+          const catMatch = state.activeCategory === 'all' || p.category === state.activeCategory;
+          const vendorObj = VENDORS.find(v => v.id === state.activeVendor);
+          const vendorMatch = state.activeVendor === 'all' || (vendorObj && p.vendor === vendorObj.name);
+          const bogoMatch = !state.bogoOnly || p.bogo;
+          const qMatch = !state.searchQuery ||
+            p.title.toLowerCase().includes(state.searchQuery) ||
+            p.vendor.toLowerCase().includes(state.searchQuery) ||
+            p.category.toLowerCase().includes(state.searchQuery);
+          return catMatch && vendorMatch && bogoMatch && qMatch;
+        });
+      }
+
+      function renderProductCard(p) {
+        const v0 = p.variants[0];
+        const inCart = state.cart.find(c => c.id === p.id && c.variantIdx === 0);
+        const qty = inCart ? inCart.qty : 0;
+        const isSaved = state.wishlist.some(w => w.prodId === p.id);
+
+        return `
+          <div class="bg-white rounded-2xl p-2 card-shadow border border-gray-100 flex flex-col justify-between">
+            <div onclick="window.openPDP('${p.id}')" class="cursor-pointer">
+              <div class="relative h-20 rounded-xl overflow-hidden bg-[#FDF8F8] flex items-center justify-center mb-1.5">
+                <img src="${p.imageUrl}" alt="${p.title}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover" />
+                <span class="hidden text-3xl">${p.emoji}</span>
+                ${p.bogo ? `<span class="absolute top-1 left-1 text-[8px] font-black px-1.5 py-0.5 rounded bg-amber-300 text-[#4A0E13] shadow-2xs">1+1</span>` : ''}
+                ${p.rxRequired ? `<span class="absolute top-1 right-1 text-[8px] font-extrabold px-1.5 py-0.5 rounded bg-teal-100 text-teal-800 shadow-2xs">Rx</span>` : ''}
+                ${p.outOfStock ? `<span class="absolute top-1 right-1 text-[8px] font-extrabold px-1.5 py-0.5 rounded bg-gray-800 text-white shadow-2xs">Out</span>` : ''}
+              </div>
+              <div class="text-[11px] font-extrabold text-gray-900 line-clamp-2 leading-tight min-h-[28px]">${p.title}</div>
+              <div class="mt-1 flex items-center justify-between gap-1">
+                <span class="text-[11px] font-extrabold text-gray-900 bg-gray-100 px-1.5 py-0.5 rounded-md truncate">${v0.label}</span>
+                <button type="button" onclick="event.stopPropagation(); window.openShareModal('${p.id}')" class="text-[10px] font-extrabold text-[#7A1C24] hover:underline shrink-0">Share</button>
+              </div>
+            </div>
+            <div class="mt-2 pt-1.5 border-t border-gray-50 flex items-center justify-between gap-1">
+              <div class="text-xs font-extrabold text-gray-900">₹${v0.price}</div>
+              ${p.outOfStock
+                ? `<button type="button" onclick="window.toggleWishlistItem('${p.id}')" class="px-2 py-1 rounded-lg ${isSaved ? 'bg-amber-100 text-amber-900' : 'bg-gray-100 text-gray-700'} text-[9px] font-extrabold">${isSaved ? 'Alert On' : 'Notify'}</button>`
+                : (qty === 0
+                    ? `<button type="button" onclick="window.addToCart('${p.id}', ${p.todaysOffer}, 0)" class="px-2 py-1 rounded-lg bg-[#FDF8F8] text-[#7A1C24] text-[10px] font-extrabold hover:bg-[#7A1C24] hover:text-white transition-colors">+ ADD</button>`
+                    : `<div class="flex items-center gap-1 bg-[#7A1C24] text-white rounded-lg px-1.5 py-0.5 text-[10px] font-extrabold">
+                         <button type="button" onclick="window.changeQty('${p.id}', -1, 0)">-</button>
+                         <span>${qty}</span>
+                         <button type="button" onclick="window.changeQty('${p.id}', 1, 0)">+</button>
+                       </div>`
+                  )
+              }
+            </div>
+          </div>
+        `;
+      }
+
+      function renderCatalogSections(isHomeDefault) {
+        const groupedEl = document.getElementById('homeGroupedCatalog');
+        const singleEl = document.getElementById('singleCategoryCatalogSection');
+        if (!groupedEl || !singleEl) return;
+
+        if (isHomeDefault) {
+          groupedEl.classList.remove('hidden');
+          singleEl.classList.add('hidden');
+
+          const domainCats = CATEGORIES.filter(c => c.id !== 'all');
+          groupedEl.innerHTML = domainCats.map((cat, idx) => {
+            const items = PRODUCTS.filter(p => p.category === cat.id).slice(0, 6);
+            const midAd = idx === 1 ? `
+              <div class="rounded-2xl bg-gradient-to-r from-[#FDF8F8] to-[#FFF7ED] border border-[#7A1C24]/15 p-3.5 flex items-center justify-between">
+                <div>
+                  <span class="text-[9px] font-extrabold uppercase text-[#7A1C24]">DailyShopi Coins</span>
+                  <div class="text-xs font-extrabold text-gray-900">Redeem Loyalty Coins at Checkout</div>
+                  <div class="text-[10px] text-gray-500">1 Coin = ₹0.25 • Instant savings</div>
+                </div>
+                <button type="button" onclick="window.switchScreen('wallet')" class="px-3 py-1.5 rounded-xl bg-[#7A1C24] text-white text-[11px] font-bold">Wallet</button>
+              </div>
+            ` : '';
+
+            return `
+              <section class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">${cat.name}</h3>
+                  <button type="button" onclick="window.selectCategory('${cat.id}')" class="text-[11px] font-bold text-[#7A1C24]">View All ›</button>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                  ${items.map(renderProductCard).join('')}
+                </div>
+              </section>
+              ${midAd}
+            `;
+          }).join('');
+        } else {
+          groupedEl.classList.add('hidden');
+          singleEl.classList.remove('hidden');
+          const items = getFilteredProducts();
+          document.getElementById('productGrid').innerHTML = items.length
+            ? items.map(renderProductCard).join('')
+            : `<div class="col-span-3 bg-white rounded-2xl p-6 text-center text-xs text-gray-500">No items match your filter.</div>`;
+        }
+      }
+
+      // ==================== CATEGORY DIRECTORY & SINGLE CATEGORY SCREEN ====================
+      function renderCategoryScreen() {
+        const dirWrap = document.getElementById('allCategoriesDirectoryWrap');
+        const singleWrap = document.getElementById('singleCategoryDetailWrap');
+        const dirZoneEl = document.getElementById('dirZoneShort');
+        if (dirZoneEl) dirZoneEl.textContent = state.zone;
+
+        if (state.categoryDirectoryMode) {
+          if (dirWrap) dirWrap.classList.remove('hidden');
+          if (singleWrap) singleWrap.classList.add('hidden');
+
+          const domainCats = CATEGORIES.filter(c => c.id !== 'all');
+          const dirGrid = document.getElementById('allCategoriesGrid');
+          if (dirGrid) {
+            dirGrid.innerHTML = domainCats.map(cat => {
+              const count = PRODUCTS.filter(p => p.category === cat.id).length;
+              return `
+                <button
+                  type="button"
+                  onclick="window.openSingleCategory('${cat.id}')"
+                  class="p-2.5 rounded-2xl border text-left transition-all bg-gradient-to-br ${cat.cardGradient} ${cat.borderTint} card-shadow hover:scale-[1.01] active:scale-[0.99]"
+                >
+                  <div class="relative w-full h-24 rounded-xl overflow-hidden bg-white shadow-2xs mb-2">
+                    <img src="${cat.coverUrl}" alt="${cat.name}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover" />
+                    <div class="hidden w-full h-full flex items-center justify-center text-3xl bg-white/80">${cat.fallbackEmoji}</div>
+                    <span class="absolute top-1.5 right-1.5 text-[9px] font-black px-2 py-0.5 rounded-full bg-white/95 text-gray-900 shadow-2xs">
+                      ${count} items
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs font-extrabold text-gray-900 truncate">${cat.name}</span>
+                    <span class="text-xs font-extrabold" style="color: ${cat.accent};">›</span>
+                  </div>
+                  <div class="text-[10px] font-medium text-gray-600 line-clamp-1 mt-0.5">${cat.subs.slice(1).join(', ')}</div>
+                </button>
+              `;
+            }).join('');
+          }
+
+          const allItems = PRODUCTS.filter(p => {
+            if (!state.searchQuery) return true;
+            return p.title.toLowerCase().includes(state.searchQuery) ||
+                   p.vendor.toLowerCase().includes(state.searchQuery) ||
+                   p.sub.toLowerCase().includes(state.searchQuery);
+          });
+          const fullCount = document.getElementById('dirFullCount');
+          const fullGrid = document.getElementById('dirFullCatalogGrid');
+          if (fullCount) fullCount.textContent = `${allItems.length} items`;
+          if (fullGrid) {
+            fullGrid.innerHTML = allItems.length
+              ? allItems.map(renderProductCard).join('')
+              : `<div class="col-span-3 bg-white rounded-2xl p-6 text-center text-xs text-gray-500">No items match your search.</div>`;
+          }
+          return;
+        }
+
+        if (dirWrap) dirWrap.classList.add('hidden');
+        if (singleWrap) singleWrap.classList.remove('hidden');
+
+        const activeCat = CATEGORIES.find(c => c.id === state.browseCategory) || CATEGORIES[1];
+        const items = PRODUCTS.filter(p => {
+          const catMatch = p.category === activeCat.id;
+          const subMatch = state.activeSubCategory === 'all' || p.sub.toLowerCase() === state.activeSubCategory.toLowerCase();
+          const qMatch = !state.searchQuery ||
+            p.title.toLowerCase().includes(state.searchQuery) ||
+            p.vendor.toLowerCase().includes(state.searchQuery) ||
+            p.sub.toLowerCase().includes(state.searchQuery);
+          return catMatch && subMatch && qMatch;
+        });
+
+        const bannerEl = document.getElementById('categoryScreenBanner');
+        if (bannerEl) {
+          bannerEl.style.background = `linear-gradient(135deg, ${activeCat.accent}, #1F2937)`;
+          bannerEl.innerHTML = `
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <span class="px-2.5 py-0.5 rounded-full bg-white/20 text-[10px] font-extrabold uppercase">${activeCat.name}</span>
+                <h3 class="text-sm font-extrabold mt-1">${activeCat.name} in ${state.zone}</h3>
+                <p class="text-[11px] text-white/85">Verified neighborhood suppliers &amp; transparent pricing</p>
+              </div>
+              <img src="${activeCat.thumbUrl}" alt="${activeCat.name}" onerror="this.style.display='none'" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-white/40 shrink-0" />
+            </div>
+          `;
+        }
+
+        const subHeading = document.getElementById('categorySubHeading');
+        if (subHeading) {
+          subHeading.textContent = state.activeSubCategory === 'all' ? `All ${activeCat.name}` : state.activeSubCategory;
+        }
+
+        const countBadge = document.getElementById('categoryScreenCount');
+        if (countBadge) countBadge.textContent = `${items.length} items`;
+
+        const gridEl = document.getElementById('categoryScreenProductGrid');
+        if (gridEl) {
+          gridEl.innerHTML = items.length
+            ? items.map(renderProductCard).join('')
+            : `<div class="col-span-3 bg-white rounded-2xl p-6 text-center text-xs text-gray-500">No items match this sub-category filter.</div>`;
+        }
+      }
+
+      window.openSingleCategory = function (catId) {
+        state.browseCategory = catId;
+        state.categoryDirectoryMode = false;
+        state.activeSubCategory = 'all';
+        applyThemeForCategory(catId);
+        renderSubCategoryBar(catId);
+        renderCategoryScreen();
+        resetAllScrollContainers();
+      };
+
+      // ==================== PRODUCT DETAIL PAGE (PDP) ====================
+      window.openPDP = function (prodId) {
+        state.pdpProductId = prodId;
+        state.pdpVariantIdx = 0;
+        state.pdpQty = 1;
+        state.pdpSlideIdx = 0;
+        state.pdpDescExpanded = false;
+        window.switchScreen('pdp');
+      };
+
+      window.setPdpSlide = function (idx) {
+        const p = PRODUCTS.find(x => x.id === state.pdpProductId);
+        if (!p) return;
+        const total = p.slides.length;
+        state.pdpSlideIdx = (idx + total) % total;
+        renderPDP();
+      };
+
+      window.selectPdpVariant = function (idx) {
+        state.pdpVariantIdx = idx;
+        renderPDP();
+      };
+
+      window.adjustPdpQty = function (delta) {
+        const p = PRODUCTS.find(x => x.id === state.pdpProductId);
+        if (!p) return;
+        const next = state.pdpQty + delta;
+        if (next < 1) return;
+        if (p.todaysOffer && next > 1) {
+          showToast("Today's Offer is capped at 1 unit per day");
+          return;
+        }
+        state.pdpQty = next;
+        renderPDP();
+      };
+
+      window.togglePdpDesc = function () {
+        state.pdpDescExpanded = !state.pdpDescExpanded;
+        renderPDP();
+      };
+
+      window.buyNowFromPDP = function () {
+        const p = PRODUCTS.find(x => x.id === state.pdpProductId);
+        if (!p || p.outOfStock) return;
+        for (let i = 0; i < state.pdpQty; i++) {
+          window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, true);
+        }
+        window.switchScreen('cart');
+      };
+
+      window.downloadActiveProductImage = function () {
+        const p = PRODUCTS.find(x => x.id === state.pdpProductId);
+        if (!p) return;
+        const slide = p.slides[state.pdpSlideIdx] || p.slides[0];
+        const imgUrl = slide.url || p.imageUrl;
+        if (!imgUrl) {
+          showToast('No image available to download');
+          return;
+        }
+        showToast(`Downloading ${p.title} photo...`);
+        fetch(imgUrl)
+          .then(res => res.blob())
+          .then(blob => {
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = `${p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 2500);
+          })
+          .catch(() => {
+            const a = document.createElement('a');
+            a.href = imgUrl;
+            a.target = '_blank';
+            a.download = `${p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          });
+      };
+
+      window.uploadCustomProductPhoto = function (e) {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const p = PRODUCTS.find(x => x.id === state.pdpProductId);
+        if (!p) return;
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const dataUrl = ev.target.result;
+          p.imageUrl = dataUrl;
+          if (p.slides[state.pdpSlideIdx]) {
+            p.slides[state.pdpSlideIdx].url = dataUrl;
+          }
+          renderPDP();
+          showToast(`Updated original photo for ${p.title}`);
+        };
+        reader.readAsDataURL(file);
+      };
+
+      function renderPDP() {
+        const p = PRODUCTS.find(x => x.id === state.pdpProductId);
+        const wrap = document.getElementById('pdpContent');
+        const stickyBar = document.getElementById('pdpStickyActionBar');
+        if (!p || !wrap || !stickyBar) return;
+
+        const v = p.variants[state.pdpVariantIdx] || p.variants[0];
+        const slide = p.slides[state.pdpSlideIdx] || p.slides[0];
+        const isSaved = state.wishlist.some(w => w.prodId === p.id);
+        const suggested = PRODUCTS.filter(item => item.id !== p.id && !item.outOfStock).slice(0, 3);
+
+        wrap.innerHTML = `
+          <div class="bg-white rounded-3xl p-4 card-shadow space-y-3">
+            <!-- Top Back Button + Photo Tools + Wishlist + Share -->
+            <div class="flex items-center justify-between gap-1.5 flex-wrap">
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="window.goBack()" class="w-8 h-8 rounded-xl bg-gray-100 text-gray-800 font-extrabold flex items-center justify-center" aria-label="Back">‹</button>
+                <span class="text-[10px] font-extrabold px-2 py-1 rounded-full bg-gray-100 text-gray-700">
+                  ${state.pdpSlideIdx + 1}/${p.slides.length}
+                </span>
+              </div>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <button type="button" onclick="window.downloadActiveProductImage()" class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-[#22C55E]/15 text-emerald-800 border border-[#22C55E]/30 hover:bg-[#22C55E] hover:text-white transition-colors">
+                  ⬇ Download Image
+                </button>
+                <label class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-[#38BDF8]/15 text-sky-900 border border-[#38BDF8]/40 hover:bg-[#38BDF8] hover:text-gray-950 transition-colors cursor-pointer">
+                  ⬆ Upload Photo
+                  <input type="file" accept="image/*" onchange="window.uploadCustomProductPhoto(event)" class="hidden" />
+                </label>
+                <button type="button" onclick="window.toggleWishlistItem('${p.id}')" class="w-7 h-7 rounded-full ${isSaved ? 'bg-rose-100 text-[#D90429]' : 'bg-gray-100 text-gray-600'} flex items-center justify-center text-xs font-extrabold" aria-label="Wishlist">
+                  ${isSaved ? '♥' : '♡'}
+                </button>
+                <button type="button" onclick="window.openShareModal('${p.id}')" class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-[#FDF8F8] text-[#7A1C24] border border-[#7A1C24]/20">
+                  Share
+                </button>
+              </div>
+            </div>
+
+            <!-- Interactive Gallery Slider -->
+            <div class="relative h-52 rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDF8F8] to-[#FFF7ED] flex flex-col items-center justify-center">
+              <img src="${slide.url || p.imageUrl}" alt="${p.title}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover" />
+              <div class="hidden text-6xl">${slide.icon || p.emoji}</div>
+              <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-xs text-white text-[10px] font-extrabold whitespace-nowrap">
+                ${slide.label}
+              </div>
+              ${p.slides.length > 1 ? `
+                <button type="button" onclick="window.setPdpSlide(${state.pdpSlideIdx - 1})" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/95 shadow-sm text-gray-800 font-extrabold text-sm">‹</button>
+                <button type="button" onclick="window.setPdpSlide(${state.pdpSlideIdx + 1})" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/95 shadow-sm text-gray-800 font-extrabold text-sm">›</button>
+              ` : ''}
+            </div>
+
+            <div class="flex justify-center gap-1.5">
+              ${p.slides.map((_, i) => `
+                <button type="button" onclick="window.setPdpSlide(${i})" class="h-1.5 rounded-full transition-all ${i === state.pdpSlideIdx ? 'w-5 bg-[#7A1C24]' : 'w-1.5 bg-gray-300'}"></button>
+              `).join('')}
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-xs font-bold text-gray-700">${p.vendor} • ${p.sub}</span>
+              <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${p.outOfStock ? 'bg-gray-100 text-gray-600' : 'bg-[#22C55E]/15 text-emerald-800'}">
+                ${p.outOfStock ? 'Out of Stock' : 'In Stock'}
+              </span>
+            </div>
+
+            <div>
+              <h2 class="text-lg font-extrabold text-gray-900">${p.title}</h2>
+              <div class="flex items-baseline gap-2 mt-0.5">
+                <span class="text-xl font-extrabold text-[#7A1C24]">₹${v.price}</span>
+                <span class="text-xs font-semibold text-gray-500 line-through">₹${v.mrp}</span>
+                <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-[#22C55E]/15 text-emerald-800">Save ₹${v.mrp - v.price}</span>
+              </div>
+            </div>
+
+            <!-- High-Contrast Variant Selector Cards -->
+            <div class="pt-2.5 border-t border-gray-100 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-gray-800">Select Variant (${p.variants.length})</span>
+                <span class="text-[11px] font-semibold text-gray-500">Live price update</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2.5">
+                ${p.variants.map((vr, idx) => `
+                  <button type="button" onclick="window.selectPdpVariant(${idx})" class="p-3 rounded-2xl border-2 text-left transition-all ${idx === state.pdpVariantIdx ? 'border-[#7A1C24] bg-[#FDF8F8] shadow-2xs' : 'border-gray-200 bg-white'}">
+                    <div class="text-sm font-extrabold text-gray-900 leading-snug">${vr.label}</div>
+                    <div class="flex items-center gap-1.5 mt-1">
+                      <span class="text-sm font-extrabold text-[#7A1C24]">₹${vr.price}</span>
+                      <span class="text-xs font-semibold text-gray-500 line-through">₹${vr.mrp}</span>
+                    </div>
+                    ${vr.detail ? `<div class="text-[11px] font-semibold text-gray-600 mt-1">${vr.detail}</div>` : ''}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Description (5-Line Clamp + Show more / Show less) -->
+          <div class="bg-white rounded-3xl p-4 card-shadow space-y-2.5">
+            <h3 class="text-[11px] font-extrabold uppercase tracking-wider text-gray-800">Product Description</h3>
+            <p class="text-xs text-gray-600 leading-relaxed ${state.pdpDescExpanded ? '' : 'desc-clamp-5'}">${p.desc}</p>
+            <button type="button" onclick="window.togglePdpDesc()" class="text-xs font-extrabold text-[#7A1C24] hover:underline">
+              ${state.pdpDescExpanded ? 'Show less' : 'Show more'}
+            </button>
+            <ul class="pt-2 border-t border-gray-100 space-y-1">
+              ${p.highlights.map(h => `<li class="text-[11px] text-gray-600 font-medium">• ${h}</li>`).join('')}
+            </ul>
+          </div>
+
+          <!-- Suggested Products Section -->
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">Suggested Products</h3>
+              <span class="text-[10px] font-semibold text-gray-400">Frequently bought together</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              ${suggested.map(renderProductCard).join('')}
+            </div>
+          </div>
+        `;
+
+        if (p.outOfStock) {
+          stickyBar.innerHTML = `
+            <button type="button" onclick="window.toggleWishlistItem('${p.id}')" class="w-full py-3 rounded-2xl ${isSaved ? 'bg-amber-100 text-amber-900' : 'bg-gray-900 text-white'} text-xs font-extrabold">
+              ${isSaved ? 'Saved in Wishlist • Restock Alert Active' : 'Save to Wishlist & Notify When Back in Stock'}
+            </button>
+          `;
+        } else {
+          stickyBar.innerHTML = `
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2.5 bg-gray-100 rounded-2xl px-3 py-2.5 text-xs font-extrabold text-gray-900 shrink-0">
+                <button type="button" onclick="window.adjustPdpQty(-1)">−</button>
+                <span>${state.pdpQty}</span>
+                <button type="button" onclick="window.adjustPdpQty(1)">+</button>
+              </div>
+              <button type="button" onclick="window.addBulkFromPDP()" class="flex-1 py-3 rounded-2xl bg-[#FDF8F8] border border-[#7A1C24]/25 text-[#7A1C24] text-xs font-extrabold active:scale-[0.99] transition-transform">
+                Add to Cart
+              </button>
+              <button type="button" onclick="window.buyNowFromPDP()" class="flex-1 py-3 rounded-2xl bg-[#7A1C24] text-white text-xs font-extrabold shadow-md active:scale-[0.99] transition-transform">
+                Buy Now • ₹${v.price * state.pdpQty}
+              </button>
+            </div>
+          `;
+        }
+      }
+
+      window.addBulkFromPDP = function () {
+        const p = PRODUCTS.find(x => x.id === state.pdpProductId);
+        if (!p || p.outOfStock) return;
+        for (let i = 0; i < state.pdpQty; i++) {
+          window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, i > 0);
+        }
+      };
+
+      // ==================== SHARE PRODUCT MODAL ====================
+      window.openShareModal = function (prodId) {
+        const p = PRODUCTS.find(x => x.id === prodId);
+        if (!p) return;
+        document.getElementById('shareProductSubtitle').textContent = `Share "${p.title}" with friends`;
+        document.getElementById('shareLinkInput').value = `https://dailyshopi.app/eappikkad/item/${p.id}`;
+        document.getElementById('shareProductModal').classList.remove('hidden');
+      };
+
+      window.closeShareModal = function () {
+        document.getElementById('shareProductModal').classList.add('hidden');
+      };
+
+      window.copyShareLinkInput = function () {
+        const input = document.getElementById('shareLinkInput');
+        if (input) {
+          input.select();
+          try { document.execCommand('copy'); } catch (e) {}
+          if (navigator.clipboard) navigator.clipboard.writeText(input.value).catch(() => {});
+        }
+        window.closeShareModal();
+        showToast('Product link copied to clipboard!');
+      };
+
+      // ==================== WISHLIST & BACK-IN-STOCK ALERTS ====================
+      window.toggleWishlistItem = function (prodId) {
+        const idx = state.wishlist.findIndex(w => w.prodId === prodId);
+        const prod = PRODUCTS.find(x => x.id === prodId);
+        if (idx >= 0) {
+          state.wishlist.splice(idx, 1);
+          showToast(`Removed ${prod ? prod.title : 'item'} from Wishlist`);
+        } else {
+          state.wishlist.push({ prodId, notify: true });
+          showToast('Saved to Wishlist • Back-in-stock alert enabled');
+        }
+        if (state.activeScreen === 'pdp') renderPDP();
+        if (state.activeScreen === 'wishlist') renderWishlistScreen();
+        if (state.activeScreen === 'home') renderBannersAndCatalog();
+        if (state.activeScreen === 'categories') renderCategoryScreen();
+      };
+
+      window.simulateRestockNotification = function (prodId) {
+        const prod = PRODUCTS.find(p => p.id === prodId);
+        if (!prod) return;
+        prod.outOfStock = false;
+        showToast(`Back in Stock Alert: ${prod.title} is now available!`);
+        if (state.activeScreen === 'wishlist') renderWishlistScreen();
+        if (state.activeScreen === 'pdp') renderPDP();
+        if (state.activeScreen === 'home') renderBannersAndCatalog();
+        if (state.activeScreen === 'categories') renderCategoryScreen();
+      };
+
+      function renderWishlistScreen() {
+        const wishBadge = document.getElementById('wishlistCountBadge');
+        const container = document.getElementById('wishlistItemsContainer');
+        if (wishBadge) wishBadge.textContent = `${state.wishlist.length} saved`;
+        if (!container) return;
+
+        if (!state.wishlist.length) {
+          container.innerHTML = `
+            <div class="bg-white rounded-3xl p-8 text-center card-shadow space-y-2">
+              <div class="text-4xl">🤍</div>
+              <h3 class="text-sm font-extrabold text-gray-900">Your Wishlist is Empty</h3>
+              <p class="text-xs text-gray-500">Save products from any item page to get instant restock alerts.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = state.wishlist.map(w => {
+          const prod = PRODUCTS.find(p => p.id === w.prodId) || { id: w.prodId, title: 'Saved Item', emoji: '★', imageUrl: '', vendor: 'Eappikkad Mart', variants: [{ label: 'Standard', price: 150 }], outOfStock: true };
+          const v0 = prod.variants[0];
+          return `
+            <div class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 flex items-center justify-between gap-2.5">
+              <div onclick="window.openPDP('${prod.id}')" class="flex items-center gap-3 min-w-0 cursor-pointer">
+                <div class="w-12 h-12 rounded-2xl overflow-hidden bg-[#FDF8F8] flex items-center justify-center text-2xl shrink-0">
+                  <img src="${prod.imageUrl}" alt="${prod.title}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover" />
+                  <span class="hidden">${prod.emoji}</span>
+                </div>
+                <div class="min-w-0">
+                  <div class="text-xs font-extrabold text-gray-900 truncate">${prod.title}</div>
+                  <div class="text-[10px] text-gray-500">${prod.vendor} • ₹${v0.price}</div>
+                  <div class="text-[10px] mt-0.5 ${prod.outOfStock ? 'text-amber-800' : 'text-emerald-700'} font-bold">
+                    ${prod.outOfStock ? 'Out of Stock • Restock Alert Active' : 'Back in Stock!'}
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col items-end gap-1.5 shrink-0">
+                ${prod.outOfStock
+                  ? `<button type="button" onclick="window.simulateRestockNotification('${prod.id}')" class="px-2.5 py-1.5 rounded-xl bg-[#22C55E]/15 text-emerald-800 text-[10px] font-extrabold">
+                       Test Restock Alert
+                     </button>`
+                  : `<button type="button" onclick="window.addToCart('${prod.id}', false, 0)" class="px-3 py-1.5 rounded-xl bg-[#7A1C24] text-white text-[10px] font-extrabold">
+                       + Add to Cart
+                     </button>`
+                }
+                <button type="button" onclick="window.toggleWishlistItem('${prod.id}')" class="text-[10px] font-bold text-gray-400 hover:text-red-600">
+                  Remove
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // ==================== CART, RX GATE & CHECKOUT ====================
+      window.addToCart = function (prodId, isDailyCap, variantIdx = 0, silent = false) {
+        const p = PRODUCTS.find(x => x.id === prodId);
+        if (!p || p.outOfStock) return;
+        const v = p.variants[variantIdx] || p.variants[0];
+        const existing = state.cart.find(c => c.id === prodId && c.variantIdx === variantIdx);
+        if (isDailyCap && existing && existing.qty >= 1) {
+          if (!silent) showToast("Today's Offer is limited to 1 unit per day");
+          return;
+        }
+        if (existing) {
+          existing.qty += 1;
+        } else {
+          state.cart.push({
+            id: p.id,
+            title: p.title,
+            emoji: p.emoji,
+            imageUrl: p.imageUrl,
+            vendor: p.vendor,
+            rxRequired: p.rxRequired,
+            variantIdx,
+            variantLabel: v.label,
+            price: v.price,
+            qty: 1,
+            isDailyCap: Boolean(isDailyCap)
+          });
+        }
+        updateFloatingCartBar();
+        if (state.activeScreen === 'home') renderBannersAndCatalog();
+        if (state.activeScreen === 'categories') renderCategoryScreen();
+        if (!silent) showToast(`Added ${p.title}`);
+      };
+
+      window.changeQty = function (prodId, delta, variantIdx = 0) {
+        const idx = state.cart.findIndex(c => c.id === prodId && c.variantIdx === variantIdx);
+        if (idx === -1) return;
+        const item = state.cart[idx];
+        if (delta > 0 && item.isDailyCap && item.qty >= 1) {
+          showToast("Max 1 unit per day for Today's Offer");
+          return;
+        }
+        item.qty += delta;
+        if (item.qty <= 0) state.cart.splice(idx, 1);
+        updateFloatingCartBar();
+        if (state.activeScreen === 'home') renderBannersAndCatalog();
+        if (state.activeScreen === 'categories') renderCategoryScreen();
+        if (state.activeScreen === 'cart') renderCart();
+      };
+
+      window.clearCart = function () {
+        state.cart = [];
+        state.redeemCoins = false;
+        state.rxFileName = '';
+        state.rxApproved = false;
+        updateFloatingCartBar();
+        renderBannersAndCatalog();
+        renderCart();
+        showToast('Cart cleared');
+      };
+
+      function getCartTotals() {
+        const subtotal = state.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+        const firstOrderDiscount = state.isFirstOrder && subtotal > 0 ? Math.round(subtotal * 0.2) : 0;
+        const afterFirstOrder = Math.max(0, subtotal - firstOrderDiscount);
+        const maxCoinDiscount = Math.min(afterFirstOrder, Math.floor(state.coins * 0.25));
+        const coinDiscount = state.redeemCoins ? maxCoinDiscount : 0;
+        const deliveryFee = subtotal > 0 ? 25 : 0;
+        const payable = Math.max(0, afterFirstOrder - coinDiscount + deliveryFee);
+        return { subtotal, firstOrderDiscount, coinDiscount, maxCoinDiscount, deliveryFee, payable };
+      }
+
+      function updateFloatingCartBar() {
+        const bar = document.getElementById('floatingCartBar');
+        const headerBadge = document.getElementById('headerCartBadge');
+        const count = state.cart.reduce((s, i) => s + i.qty, 0);
+
+        if (headerBadge) {
+          headerBadge.textContent = count;
+          headerBadge.classList.toggle('hidden', count === 0);
+        }
+
+        if (!bar) return;
+        const hideBarScreens = ['cart', 'pdp'];
+        if (count === 0 || hideBarScreens.includes(state.activeScreen)) {
+          bar.classList.add('hidden');
+          return;
+        }
+        const { payable } = getCartTotals();
+        bar.classList.remove('hidden');
+        document.getElementById('cartBadgeCount').textContent = count;
+        document.getElementById('cartBarTitle').textContent = `View Cart • ${count} ${count === 1 ? 'item' : 'items'}`;
+        document.getElementById('cartBarTotal').textContent = `₹${payable}`;
+      }
+
+      window.openAddressModal = function () {
+        const list = document.getElementById('modalAddressList');
+        if (!list) return;
+        list.innerHTML = state.addresses.map(a => `
+          <button type="button" onclick="window.selectAddress('${a.id}'); window.closeAddressModal();" class="w-full p-3 rounded-2xl border text-left flex items-center justify-between ${a.active ? 'border-[#7A1C24] bg-[#FDF8F8]' : 'border-gray-200 bg-white'}">
+            <div>
+              <span class="text-[10px] font-extrabold uppercase text-[#7A1C24]">${a.tag}</span>
+              <div class="text-xs font-semibold text-gray-800">${a.line}</div>
+            </div>
+            <span class="text-xs font-extrabold ${a.active ? 'text-[#7A1C24]' : 'text-gray-400'}">${a.active ? 'Primary' : 'Select'}</span>
+          </button>
+        `).join('');
+        document.getElementById('addressPickerModal').classList.remove('hidden');
+      };
+
+      window.closeAddressModal = function () {
+        document.getElementById('addressPickerModal').classList.add('hidden');
+      };
+
+      window.saveNewCheckoutAddress = function () {
+        const inp = document.getElementById('newCheckoutAddrInput');
+        if (!inp || !inp.value.trim()) return;
+        state.addresses.forEach(a => a.active = false);
+        state.addresses.push({
+          id: 'addr' + Date.now(),
+          tag: 'Primary',
+          line: inp.value.trim(),
+          active: true
+        });
+        inp.value = '';
+        window.closeAddressModal();
+        renderCart();
+        renderProfile();
+        showToast('Delivery address updated');
+      };
+
+      window.selectAddress = function (id) {
+        state.addresses.forEach(a => a.active = a.id === id);
+        if (state.activeScreen === 'cart') renderCart();
+        if (state.activeScreen === 'profile') renderProfile();
+      };
+
+      window.addSampleAddress = function () {
+        const nextNum = state.addresses.length + 1;
+        state.addresses.forEach(a => a.active = false);
+        state.addresses.push({
+          id: 'addr' + Date.now(),
+          tag: `Secondary ${nextNum}`,
+          line: `Eappikkad South Road #${nextNum * 12}, Kozhikode, Kerala`,
+          active: true
+        });
+        renderProfile();
+        showToast('New address added & set as Active');
+      };
+
+      window.handleRxFileUpload = function (e) {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        state.rxFileName = file.name;
+        state.rxApproved = false;
+        renderCart();
+        showToast('Prescription uploaded • Click Approve Rx to verify');
+      };
+
+      window.useQuickSampleRx = function () {
+        state.rxFileName = 'Dr_Menon_Rx_Eappikkad.pdf';
+        state.rxApproved = true;
+        renderCart();
+        showToast('Quick Sample Rx verified & approved!');
+      };
+
+      window.toggleDemoRxApproval = function () {
+        if (!state.rxFileName) {
+          state.rxFileName = 'Dr_Menon_Rx_Eappikkad.pdf';
+        }
+        state.rxApproved = !state.rxApproved;
+        renderCart();
+        showToast(state.rxApproved ? 'Pharmacist Status: Approved' : 'Pharmacist Status: Approval Pending');
+      };
+
+      window.selectPaymentMethod = function (mode) {
+        state.paymentMethod = mode;
+        renderCart();
+      };
+
+      window.toggleCoinRedeem = function (checked) {
+        state.redeemCoins = checked;
+        renderCart();
+      };
+
+      function renderCart() {
+        const wrap = document.getElementById('cartContent');
+        if (!wrap) return;
+        if (state.cart.length === 0) {
+          wrap.innerHTML = `
+            <div class="bg-white rounded-3xl p-8 text-center card-shadow space-y-3">
+              <div class="text-4xl">🛒</div>
+              <h3 class="text-sm font-extrabold text-gray-900">Your Cart is Empty</h3>
+              <p class="text-xs text-gray-500">Add groceries, food, fresh meat &amp; fish, or medicines from Eappikkad Zone.</p>
+              <button type="button" onclick="window.goMainHome()" class="px-4 py-2.5 rounded-xl bg-[#7A1C24] text-white text-xs font-extrabold">Browse Items</button>
+            </div>
+          `;
+          return;
+        }
+
+        const regularItems = state.cart.filter(i => !i.rxRequired);
+        const rxItems = state.cart.filter(i => i.rxRequired);
+        const hasRx = rxItems.length > 0;
+        const rxBlocked = hasRx && !state.rxApproved;
+        const primaryAddr = state.addresses.find(a => a.active) || state.addresses[0];
+        const { subtotal, firstOrderDiscount, coinDiscount, maxCoinDiscount, deliveryFee, payable } = getCartTotals();
+
+        const renderGroup = (title, badgeText, list, isRx) => !list.length ? '' : `
+          <div class="bg-white rounded-2xl p-3.5 card-shadow space-y-2.5 ${isRx ? 'border border-teal-200' : ''}">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-extrabold text-gray-900">${title}</span>
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full shrink-0 ${isRx ? 'bg-teal-50 text-teal-700' : 'bg-[#FDF8F8] text-[#7A1C24]'}">${badgeText}</span>
+            </div>
+            ${list.map(item => `
+              <div class="flex items-center justify-between gap-2 py-2 border-t border-gray-100 first:border-t-0">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-11 h-11 rounded-xl overflow-hidden bg-[#FDF8F8] flex items-center justify-center text-lg shrink-0">
+                    <img src="${item.imageUrl || ''}" alt="${item.title}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover" />
+                    <span class="hidden">${item.emoji}</span>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-[13px] font-extrabold text-gray-900 truncate">${item.title}</div>
+                    <div class="flex items-center gap-1.5 flex-wrap mt-1">
+                      <span class="text-xs font-extrabold text-gray-900 bg-gray-100 px-2 py-0.5 rounded-md">${item.variantLabel}</span>
+                      <span class="text-xs font-extrabold text-[#7A1C24]">₹${item.price} each</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2.5 bg-gray-100 rounded-xl px-2.5 py-1.5 text-xs font-extrabold text-gray-900 shrink-0">
+                  <button type="button" onclick="window.changeQty('${item.id}', -1, ${item.variantIdx})">-</button>
+                  <span>${item.qty}</span>
+                  <button type="button" onclick="window.changeQty('${item.id}', 1, ${item.variantIdx})">+</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+        wrap.innerHTML = `
+          <!-- Primary / Secondary Delivery Address Card -->
+          <div class="bg-white rounded-2xl p-3.5 card-shadow flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-[#FDF8F8] text-[#7A1C24]">${primaryAddr.tag}</span>
+              </div>
+              <div class="text-xs font-bold text-gray-900 mt-1.5">${primaryAddr.line}</div>
+            </div>
+            <button type="button" onclick="window.openAddressModal()" class="px-3 py-1.5 rounded-xl bg-[#FDF8F8] text-[#7A1C24] text-xs font-extrabold shrink-0">
+              Change
+            </button>
+          </div>
+
+          ${renderGroup('Standard Order', `${regularItems.length} items`, regularItems, false)}
+          ${renderGroup('Prescription Medicine Group (Rx Required)', 'Auto-Split Rx', rxItems, true)}
+
+          <!-- Prescription Upload & Approval Gate -->
+          ${hasRx ? `
+            <div class="bg-white rounded-2xl p-3.5 card-shadow border border-teal-200 space-y-2.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-extrabold text-gray-900">Prescription Upload &amp; Approval Gate</span>
+                <button type="button" onclick="window.toggleDemoRxApproval()" class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${state.rxApproved ? 'bg-[#22C55E]/20 text-emerald-900' : 'bg-amber-100 text-amber-900'}">
+                  ${state.rxApproved ? 'Approved ✓' : 'Approval Pending ↻'}
+                </button>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-2.5 flex items-center justify-between gap-2">
+                <span class="text-[11px] font-semibold text-gray-600 truncate">${state.rxFileName || 'No prescription uploaded'}</span>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button type="button" onclick="window.useQuickSampleRx()" class="px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-gray-800 text-[10px] font-extrabold">Quick Sample Rx</button>
+                  <label class="px-2.5 py-1 rounded-lg bg-[#7A1C24] text-white text-[10px] font-extrabold cursor-pointer">
+                    Upload Rx
+                    <input type="file" accept="image/*,.pdf" onchange="window.handleRxFileUpload(event)" class="hidden" />
+                  </label>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Payment Method Selector -->
+          <div class="bg-white rounded-2xl p-3.5 card-shadow space-y-2">
+            <span class="text-[11px] font-extrabold text-gray-800 uppercase tracking-wider">Payment Method</span>
+            <div class="space-y-1.5">
+              ${[
+                { id: 'online', label: 'Online Payment (UPI / Cards)' },
+                { id: 'netbanking', label: 'Net Banking' },
+                { id: 'cod', label: 'Cash on Delivery (COD)' }
+              ].map(pm => {
+                const active = state.paymentMethod === pm.id;
+                return `
+                  <button type="button" onclick="window.selectPaymentMethod('${pm.id}')" class="w-full p-2.5 rounded-xl border text-left flex items-center justify-between ${active ? 'border-[#7A1C24] bg-[#FDF8F8]' : 'border-gray-100 bg-white'}">
+                    <span class="text-xs font-bold text-gray-900">${pm.label}</span>
+                    <span class="text-xs font-extrabold ${active ? 'text-[#7A1C24]' : 'text-gray-300'}">${active ? '●' : '○'}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Colorful Loyalty Coins Redemption Card -->
+          <label class="rounded-2xl p-3.5 card-shadow bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border border-amber-300 flex items-center justify-between gap-3 cursor-pointer">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 via-yellow-500 to-orange-500 text-white shadow-sm flex items-center justify-center text-base font-black shrink-0 ring-2 ring-amber-200">
+                ★
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="text-xs font-extrabold text-[#7A1C24]">Use Loyalty Coins</span>
+                  <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-gradient-to-r from-[#7A1C24] to-[#D90429] text-amber-200 shadow-2xs">
+                    ${state.coins} ★
+                  </span>
+                </div>
+                <div class="text-[11px] font-bold text-emerald-700 mt-0.5">Save up to ₹${maxCoinDiscount} on this order</div>
+              </div>
+            </div>
+            <input type="checkbox" ${state.redeemCoins ? 'checked' : ''} onchange="window.toggleCoinRedeem(this.checked)" class="w-5 h-5 accent-[#7A1C24] rounded shrink-0 cursor-pointer" />
+          </label>
+
+          <!-- Bill Summary -->
+          <div class="bg-white rounded-2xl p-3.5 card-shadow space-y-2 text-xs">
+            <div class="flex justify-between text-gray-600"><span>Item Subtotal</span><span>₹${subtotal}</span></div>
+            ${firstOrderDiscount > 0 ? `<div class="flex justify-between text-emerald-700 font-bold"><span>First Order (20% OFF)</span><span>-₹${firstOrderDiscount}</span></div>` : ''}
+            ${coinDiscount > 0 ? `<div class="flex justify-between text-[#7A1C24] font-bold"><span>Loyalty Coins Redeemed</span><span>-₹${coinDiscount}</span></div>` : ''}
+            <div class="flex justify-between text-gray-600"><span>Zone Delivery</span><span>₹${deliveryFee}</span></div>
+            <div class="pt-2 border-t border-gray-100 flex justify-between text-sm font-extrabold text-gray-900">
+              <span>Total Payable</span>
+              <span>₹${payable}</span>
+            </div>
+          </div>
+
+          <button type="button" onclick="window.placeOrder(${payable})" class="w-full py-3.5 rounded-2xl ${rxBlocked ? 'bg-gray-300 text-gray-600' : 'bg-[#7A1C24] text-white shadow-lg'} text-xs font-extrabold active:scale-[0.99] transition-transform">
+            ${rxBlocked ? 'Approve Prescription to Unlock Place Order' : `Place Order • ₹${payable}`}
+          </button>
+        `;
+      }
+
+      window.placeOrder = function (payable) {
+        const hasRx = state.cart.some(i => i.rxRequired);
+        if (hasRx && !state.rxApproved) {
+          showToast('Upload and approve prescription before placing order');
+          return;
+        }
+        const paymentMap = {
+          online: 'Online Payment (UPI / Cards)',
+          netbanking: 'Net Banking',
+          cod: 'Cash on Delivery (COD)'
+        };
+        const earnedCoins = Math.max(15, Math.round(payable * 0.1));
+        const newId = 'DS-' + Math.floor(8100 + Math.random() * 899);
+        const newOrder = {
+          id: newId,
+          date: 'Just now',
+          status: 'Out for Delivery',
+          eta: '15–20 mins',
+          total: payable,
+          paymentLabel: paymentMap[state.paymentMethod] || 'Online Payment',
+          items: state.cart.map(i => `${i.title} (${i.variantLabel}) x${i.qty}`),
+          rider: 'Arjun K. • Bike KL-11-XX-4021',
+          step: 3
+        };
+        state.orders.unshift(newOrder);
+        state.latestConfirmedOrderId = newId;
+        state.coins += earnedCoins;
+        state.isFirstOrder = false;
+        state.coinHistory.unshift({
+          id: Date.now(),
+          title: `Earned on Order #${newId}`,
+          date: 'Just now',
+          delta: `+${earnedCoins} ★`
+        });
+        state.cart = [];
+        state.redeemCoins = false;
+        state.rxFileName = '';
+        state.rxApproved = false;
+        document.getElementById('headerCoinBalance').textContent = state.coins;
+        syncUserIdentityUI();
+        updateFloatingCartBar();
+        renderCart();
+        window.openOrderCongratsModal(newOrder, earnedCoins);
+      };
+
+      window.openOrderCongratsModal = function (order, earnedCoins) {
+        const modal = document.getElementById('orderCongratsModal');
+        if (!modal) return;
+        const userEl = document.getElementById('congratsUserName');
+        const idEl = document.getElementById('congratsOrderId');
+        const paidEl = document.getElementById('congratsTotalPaid');
+        const etaEl = document.getElementById('congratsEta');
+        const coinsEl = document.getElementById('congratsEarnedCoins');
+
+        if (userEl) userEl.textContent = state.userName;
+        if (idEl) idEl.textContent = `#${order.id}`;
+        if (paidEl) paidEl.textContent = `₹${order.total}`;
+        if (etaEl) etaEl.textContent = order.eta;
+        if (coinsEl) coinsEl.textContent = `+${earnedCoins} ★`;
+
+        modal.classList.remove('hidden');
+      };
+
+      window.trackFromCongratsModal = function () {
+        const modal = document.getElementById('orderCongratsModal');
+        if (modal) modal.classList.add('hidden');
+        window.switchScreen('orderConfirmed');
+      };
+
+      window.closeOrderCongratsToHome = function () {
+        const modal = document.getElementById('orderCongratsModal');
+        if (modal) modal.classList.add('hidden');
+        window.goMainHome();
+      };
+
+      // ==================== ORDER CONFIRMED & LIVE TRACKING ====================
+      function renderLiveTrackerCard(order) {
+        const steps = ['Order Confirmed', 'Store Packing', 'Out for Delivery', 'Delivered'];
+        return `
+          <div class="bg-white rounded-3xl p-4 card-shadow border border-[#7A1C24]/15 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-[#22C55E]/20 text-emerald-900">Order Confirmed</span>
+                <h3 class="text-sm font-extrabold text-gray-900 mt-1">Order #${order.id}</h3>
+              </div>
+              <div class="text-right">
+                <div class="text-[10px] text-gray-400 font-semibold">ESTIMATED ARRIVAL</div>
+                <div class="text-sm font-extrabold text-[#7A1C24]">${order.eta}</div>
+              </div>
+            </div>
+
+            <div class="rounded-2xl bg-[#FDF8F8] p-3 border border-[#7A1C24]/10">
+              <svg viewBox="0 0 320 96" class="w-full h-24" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="320" height="96" rx="14" fill="#FFF8F8"/>
+                <path d="M 36 68 Q 115 18, 175 54 T 284 30" fill="none" stroke="#E5E7EB" stroke-width="6" stroke-linecap="round"/>
+                <path d="M 36 68 Q 115 18, 175 54 T 284 30" fill="none" stroke="#7A1C24" stroke-width="3.5" stroke-dasharray="6 6" stroke-linecap="round" class="route-dash"/>
+                <circle cx="36" cy="68" r="10" fill="#7A1C24"/>
+                <text x="36" y="72" text-anchor="middle" fill="#FFF" font-size="10" font-weight="800">S</text>
+                <text x="36" y="89" text-anchor="middle" fill="#4B5563" font-size="8" font-weight="700">Zone Hub</text>
+                <circle cx="175" cy="54" r="12" fill="#D90429"/>
+                <text x="175" y="58" text-anchor="middle" fill="#FFF" font-size="10" font-weight="800">🛵</text>
+                <circle cx="284" cy="30" r="10" fill="#22C55E"/>
+                <text x="284" y="34" text-anchor="middle" fill="#FFF" font-size="10" font-weight="800">H</text>
+                <text x="284" y="51" text-anchor="middle" fill="#4B5563" font-size="8" font-weight="700">Your Home</text>
+              </svg>
+              <div class="flex items-center justify-between text-[11px] pt-1">
+                <span class="font-bold text-gray-800">${order.rider}</span>
+                <span class="font-extrabold text-[#7A1C24]">Live GPS</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-1.5 pt-1">
+              ${steps.map((st, idx) => {
+                const done = idx + 1 <= (order.step || 3);
+                return `
+                  <div class="space-y-1">
+                    <div class="h-1.5 rounded-full ${done ? 'bg-[#7A1C24]' : 'bg-gray-200'}"></div>
+                    <div class="text-[9px] font-bold leading-tight ${done ? 'text-gray-900' : 'text-gray-400'}">${st}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <div class="pt-2 border-t border-gray-100 text-xs space-y-1">
+              <div class="text-gray-600">${order.items.join(' • ')}</div>
+              <div class="flex justify-between font-extrabold text-gray-900 pt-1">
+                <span>${order.paymentLabel || 'Online Payment'}</span>
+                <span>₹${order.total}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderOrderConfirmedScreen() {
+        const order = state.orders.find(o => o.id === state.latestConfirmedOrderId) || state.orders[0];
+        const wrap = document.getElementById('orderConfirmedContent');
+        if (!wrap || !order) return;
+        wrap.innerHTML = `
+          ${renderLiveTrackerCard(order)}
+          <div class="flex gap-2.5">
+            <button type="button" onclick="window.switchScreen('orders')" class="flex-1 py-3 rounded-2xl bg-white border border-gray-200 text-gray-800 text-xs font-extrabold">Track Order Live</button>
+            <button type="button" onclick="window.goMainHome()" class="flex-1 py-3 rounded-2xl bg-[#7A1C24] text-white text-xs font-extrabold">Continue Shopping</button>
+          </div>
+        `;
+      }
+
+      function renderOrders() {
+        const el = document.getElementById('ordersListContainer');
+        if (!el) return;
+        const activeOrder = state.orders[0];
+        el.innerHTML = `
+          ${activeOrder ? renderLiveTrackerCard(activeOrder) : ''}
+          <div class="space-y-2.5">
+            <h3 class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">Order History</h3>
+            ${state.orders.map(o => `
+              <div class="bg-white rounded-2xl p-3.5 card-shadow space-y-2 border border-gray-100">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-xs font-extrabold text-gray-900">Order #${o.id}</span>
+                    <span class="text-[11px] text-gray-400 ml-1.5">${o.date}</span>
+                  </div>
+                  <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#FDF8F8] text-[#7A1C24]">${o.status}</span>
+                </div>
+                <div class="text-xs text-gray-700">${o.items.join(' • ')}</div>
+                <div class="pt-2 border-t border-gray-50 flex items-center justify-between text-xs">
+                  <button type="button" onclick="window.trackSpecificOrder('${o.id}')" class="font-extrabold text-[#7A1C24]">Track Live ›</button>
+                  <span class="font-extrabold text-gray-900">₹${o.total}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      window.trackSpecificOrder = function (orderId) {
+        state.latestConfirmedOrderId = orderId;
+        window.switchScreen('orderConfirmed');
+      };
+
+      // ==================== WALLET, PROFILE & SUPPORT ====================
+      function renderWallet() {
+        document.getElementById('walletCoinBalance').textContent = state.coins;
+        document.getElementById('headerCoinBalance').textContent = state.coins;
+        document.getElementById('walletRupeeValue').textContent = (state.coins * 0.25).toFixed(2);
+        document.getElementById('coinTransactionsList').innerHTML = state.coinHistory.map(t => `
+          <div class="py-2.5 flex items-center justify-between text-xs first:pt-0 last:pb-0">
+            <div>
+              <div class="font-bold text-gray-900">${t.title}</div>
+              <div class="text-[10px] text-gray-400">${t.date}</div>
+            </div>
+            <span class="font-extrabold text-emerald-700">${t.delta}</span>
+          </div>
+        `).join('');
+      }
+
+      window.copyReferralCode = function () {
+        const code = document.getElementById('referralCodeText').textContent;
+        try { document.execCommand('copy'); } catch (e) {}
+        if (navigator.clipboard) navigator.clipboard.writeText(code).catch(() => {});
+        showToast(`Referral code ${code} copied!`);
+      };
+
+      window.handleProfilePhotoUpload = function (e) {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          state.userPhotoUrl = ev.target.result;
+          persistSession();
+          syncUserIdentityUI();
+          renderProfile();
+          showToast('Profile photo updated!');
+        };
+        reader.readAsDataURL(file);
+      };
+
+      window.toggleEditProfileMode = function (editing) {
+        state.isEditingProfile = editing;
+        renderProfile();
+      };
+
+      window.saveInlineProfileChanges = function () {
+        const nameInput = document.getElementById('editProfileNameInput');
+        const phoneInput = document.getElementById('editProfilePhoneInput');
+        const newName = nameInput ? nameInput.value.trim() : '';
+        const newPhone = phoneInput ? phoneInput.value.trim() : '';
+        if (!newName) {
+          showToast('Name cannot be empty');
+          if (nameInput) nameInput.focus();
+          return;
+        }
+        if (!newPhone) {
+          showToast('Mobile number cannot be empty');
+          if (phoneInput) phoneInput.focus();
+          return;
+        }
+        state.userName = newName;
+        state.userPhone = newPhone;
+        state.isEditingProfile = false;
+        persistSession();
+        syncUserIdentityUI();
+        renderProfile();
+        showToast('Profile details updated!');
+      };
+
+      function renderProfile() {
+        const mainCard = document.getElementById('profileMainCard');
+        if (mainCard) {
+          const avatarHtml = state.userPhotoUrl
+            ? `<img src="${state.userPhotoUrl}" alt="Profile Photo" class="w-full h-full object-cover" />`
+            : state.userName.charAt(0).toUpperCase();
+
+          if (state.isEditingProfile) {
+            mainCard.innerHTML = `
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#7A1C24]">Edit Profile Details</span>
+                <button type="button" onclick="window.toggleEditProfileMode(false)" class="text-xs font-bold text-gray-400 hover:text-gray-700">Cancel</button>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-14 h-14 rounded-2xl bg-[#7A1C24] text-white font-extrabold flex items-center justify-center text-lg overflow-hidden shrink-0 border border-gray-200">
+                  ${avatarHtml}
+                </div>
+                <label class="inline-flex items-center gap-1 text-xs font-extrabold text-[#7A1C24] cursor-pointer bg-[#FDF8F8] px-3 py-1.5 rounded-xl">
+                  <span>Change Photo</span>
+                  <input type="file" accept="image/*" onchange="window.handleProfilePhotoUpload(event)" class="hidden" />
+                </label>
+              </div>
+              <div class="space-y-2.5">
+                <div>
+                  <label class="text-[10px] font-extrabold uppercase text-gray-500">Full Name</label>
+                  <input id="editProfileNameInput" type="text" value="${state.userName.replace(/"/g, '&quot;')}" class="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#7A1C24]" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-extrabold uppercase text-gray-500">Mobile Number</label>
+                  <input id="editProfilePhoneInput" type="tel" value="${state.userPhone.replace(/"/g, '&quot;')}" class="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#7A1C24]" />
+                </div>
+              </div>
+              <div class="flex gap-2 pt-1">
+                <button type="button" onclick="window.toggleEditProfileMode(false)" class="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-xs font-extrabold">Cancel</button>
+                <button type="button" onclick="window.saveInlineProfileChanges()" class="flex-1 py-2.5 rounded-xl bg-[#7A1C24] text-white text-xs font-extrabold">Save Changes</button>
+              </div>
+            `;
+          } else {
+            mainCard.innerHTML = `
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-14 h-14 rounded-2xl bg-[#7A1C24] text-white font-extrabold flex items-center justify-center text-lg overflow-hidden shrink-0 border border-gray-200">
+                    ${avatarHtml}
+                  </div>
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <h3 class="text-sm font-extrabold text-gray-900 truncate">${state.userName}</h3>
+                      <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-[#22C55E]/15 text-emerald-800 shrink-0">Verified</span>
+                    </div>
+                    <p class="text-xs text-gray-500 truncate mt-0.5">${state.userPhone} • Eappikkad, Kerala</p>
+                    <label class="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#7A1C24] cursor-pointer mt-1 hover:underline">
+                      <span>Upload / Change Photo</span>
+                      <input type="file" accept="image/*" onchange="window.handleProfilePhotoUpload(event)" class="hidden" />
+                    </label>
+                  </div>
+                </div>
+                <button type="button" onclick="window.toggleEditProfileMode(true)" class="px-3 py-1.5 rounded-xl bg-[#FDF8F8] text-[#7A1C24] text-xs font-extrabold shrink-0 active:scale-95 transition-transform">
+                  Edit Profile
+                </button>
+              </div>
+            `;
+          }
+        }
+
+        const list = document.getElementById('profileAddressList');
+        if (!list) return;
+        list.innerHTML = state.addresses.map(a => `
+          <div onclick="window.selectAddress('${a.id}')" class="p-3 rounded-2xl border cursor-pointer flex items-center justify-between ${a.active ? 'border-[#7A1C24] bg-[#FDF8F8]' : 'border-gray-100'}">
+            <div>
+              <span class="text-[10px] font-extrabold uppercase text-[#7A1C24]">${a.tag}</span>
+              <div class="text-xs font-semibold text-gray-800">${a.line}</div>
+            </div>
+            <span class="text-[11px] font-extrabold ${a.active ? 'text-[#7A1C24]' : 'text-gray-400'}">${a.active ? 'Primary' : 'Set'}</span>
+          </div>
+        `).join('');
+      }
+
+      function renderSupportChatMessages() {
+        const box = document.getElementById('supportChatMessages');
+        if (!box) return;
+        box.innerHTML = state.supportMessages.map(m => `
+          <div class="flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}">
+            <div class="max-w-[82%] px-3 py-2 rounded-2xl text-xs ${m.sender === 'user' ? 'bg-[#7A1C24] text-white' : 'bg-white border border-gray-200 text-gray-800'}">
+              ${m.text}
+            </div>
+            <span class="text-[9px] text-gray-400 mt-0.5 px-1">${m.time}</span>
+          </div>
+        `).join('');
+        box.scrollTop = box.scrollHeight;
+      }
+
+      window.sendSupportMessage = function () {
+        const input = document.getElementById('supportChatInput');
+        if (!input || !input.value.trim()) return;
+        const msg = input.value.trim();
+        input.value = '';
+        state.supportMessages.push({ sender: 'user', text: msg, time: 'Now' });
+        renderSupportChatMessages();
+        setTimeout(() => {
+          state.supportMessages.push({
+            sender: 'agent',
+            text: 'Thank you! Our Eappikkad Franchise Support team has received your message and is checking your request right away.',
+            time: 'Now'
+          });
+          renderSupportChatMessages();
+        }, 600);
+      };
+
+      // ==================== INIT ====================
+      function updateOfferCountdownDisplay() {
+        const el = document.getElementById('todaysOfferCountdown');
+        if (!el) return;
+        if (state.offerSecondsRemaining > 0) state.offerSecondsRemaining -= 1;
+        const hrs = String(Math.floor(state.offerSecondsRemaining / 3600)).padStart(2, '0');
+        const mins = String(Math.floor((state.offerSecondsRemaining % 3600) / 60)).padStart(2, '0');
+        el.textContent = `Ends in ${hrs}h ${mins}m`;
+      }
+
+      function initApp() {
+        syncOnboardingOverlay();
+        syncUserIdentityUI();
+        renderCategoryBar();
+        activateScreenDOM('home');
+      }
+
+      setInterval(() => {
+        updateOfferCountdownDisplay();
+      }, 1000);
+
+      setInterval(() => {
+        state.bannerSlide = (state.bannerSlide + 1) % PROMO_SLIDES.length;
+        if (state.activeScreen === 'home' && state.activeCategory === 'all' && !state.searchQuery && state.activeVendor === 'all' && !state.bogoOnly) {
+          renderBannersAndCatalog();
+        }
+      }, 5000);
+
+      initApp();
+    })();
+  </script>
+</body>
+</html>
