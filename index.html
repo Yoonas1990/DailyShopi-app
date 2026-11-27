@@ -361,7 +361,7 @@
           id="searchInput"
           type="text"
           oninput="window.handleSearch(this.value)"
-          placeholder="Search DailyShopi groceries, food, fresh fish, medicines..."
+          placeholder="Search DailyShopi groceries, food, fashion, medicines..."
           class="w-full bg-white text-xs text-gray-800 placeholder-gray-400 pl-10 pr-4 py-2.5 rounded-2xl border border-gray-200/70 focus:outline-none focus:border-[#7A1C24]"
         />
       </div>
@@ -504,6 +504,8 @@
       <!-- Single Category View -->
       <div id="singleCategoryDetailWrap" class="hidden space-y-3.5">
         <div id="categoryScreenBanner" class="rounded-2xl p-4 text-white card-shadow"></div>
+        <!-- Exclusive Fashion Offers Container (Rendered ONLY when Fashion category is open) -->
+        <div id="categoryScreenOffersWrapper" class="hidden space-y-2.5"></div>
         <div class="space-y-2.5">
           <div class="flex items-center justify-between">
             <h3 id="categorySubHeading" class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">All Items</h3>
@@ -1460,6 +1462,7 @@
         bannerSlide: 0,
         pdpProductId: 'p_tomato',
         pdpVariantIdx: 0,
+        pdpSelectedColor: '',
         pdpQty: 1,
         pdpSlideIdx: 0,
         pdpDescExpanded: false,
@@ -1541,6 +1544,19 @@
           thumbUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=400&q=80',
           coverUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=640&q=80',
           fallbackEmoji: '💊'
+        },
+        {
+          id: 'fashion',
+          name: 'Fashion',
+          accent: '#7C3AED',
+          tint: '#FAF5FF',
+          pillBg: '#8B5CF6',
+          cardGradient: 'from-[#F3E8FF] via-[#FAF5FF] to-white',
+          borderTint: 'border-purple-200/80',
+          subs: ['All', 'Footwear', 'Dress / Apparel', 'Fancy Items', 'Bags & Wallets (Accessories)'],
+          thumbUrl: 'https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=400&q=80',
+          coverUrl: 'https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=640&q=80',
+          fallbackEmoji: '👗'
         }
       ];
 
@@ -1596,6 +1612,19 @@
           iconBg: 'bg-teal-700 text-white',
           ratingCls: 'bg-[#22C55E] text-white',
           emoji: '💊'
+        },
+        {
+          id: 'v5',
+          name: 'Eappikkad Trends',
+          dist: '1.5 km',
+          cat: 'fashion',
+          tag: 'Fashion & Style',
+          rating: '4.8',
+          cardBg: 'from-[#F3E8FF] to-white',
+          borderCls: 'border-purple-200/90',
+          iconBg: 'bg-purple-700 text-white',
+          ratingCls: 'bg-[#22C55E] text-white',
+          emoji: '👗'
         }
       ];
 
@@ -1936,6 +1965,255 @@
           ],
           highlights: ['Raw forest honey infused with dry ginger', 'Wishlist restock notification ready'],
           desc: 'Raw forest honey infused with dry ginger for throat soothing and daily wellness. Save to Wishlist for immediate restock alerts.'
+        },
+        {
+          id: 'p_fsh_sneakers',
+          title: "Men's Urban Classic Sneakers",
+          category: 'fashion',
+          sub: 'Footwear',
+          vendor: 'Eappikkad Trends',
+          badge: 'Trending',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '👟',
+          imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=85', icon: '👟', label: 'Cushioned Everyday Sole' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=800&q=85', icon: '👟', label: 'Breathable Knit Finish' }
+          ],
+          colors: [
+            { name: 'Classic White & Navy', hex: '#F3F4F6', border: '#1E3A8A' },
+            { name: 'Triple Black', hex: '#111827', border: '#000000' },
+            { name: 'Ash Grey', hex: '#9CA3AF', border: '#4B5563' }
+          ],
+          variants: [
+            { label: 'IND 6 (UK 6 • EU 40)', price: 799, mrp: 1299, detail: 'Comfort fit • Memory foam' },
+            { label: 'IND 7 (UK 7 • EU 41)', price: 799, mrp: 1299, detail: 'Comfort fit • Memory foam' },
+            { label: 'IND 8 (UK 8 • EU 42)', price: 799, mrp: 1299, detail: 'Popular size • Anti-skid sole' },
+            { label: 'IND 9 (UK 9 • EU 43)', price: 849, mrp: 1399, detail: 'Popular size • Anti-skid sole' },
+            { label: 'IND 10 (UK 10 • EU 44)', price: 849, mrp: 1399, detail: 'Wide fit • High durability' }
+          ],
+          highlights: ['Breathable mesh upper with memory insole', 'Flexible slip-resistant rubber outsole', 'Lightweight design for all-day comfort'],
+          desc: 'Versatile everyday casual sneakers engineered for effortless walking and smart casual styling. Features high-resilience foam cushioning and breathable knit lining.'
+        },
+        {
+          id: 'p_fsh_heels',
+          title: "Women's Block Heel Comfort Sandals",
+          category: 'fashion',
+          sub: 'Footwear',
+          vendor: 'Eappikkad Trends',
+          badge: 'Best Seller',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '👠',
+          imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=85', icon: '👠', label: 'Chic 2-Inch Block Heel' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?auto=format&fit=crop&w=800&q=85', icon: '👠', label: 'Soft Cushion Footbed' }
+          ],
+          colors: [
+            { name: 'Nude Beige', hex: '#D2B48C', border: '#B8976C' },
+            { name: 'Rose Gold', hex: '#B76E79', border: '#96535D' },
+            { name: 'Jet Black', hex: '#111827', border: '#000000' },
+            { name: 'Wine Red', hex: '#722F37', border: '#4E1F25' }
+          ],
+          variants: [
+            { label: 'IND 5 (UK 3 • EU 36)', price: 599, mrp: 999, detail: '2-inch block heel • Padded footbed' },
+            { label: 'IND 6 (UK 4 • EU 37)', price: 599, mrp: 999, detail: '2-inch block heel • Padded footbed' },
+            { label: 'IND 7 (UK 5 • EU 38)', price: 599, mrp: 999, detail: '2-inch block heel • Padded footbed' },
+            { label: 'IND 8 (UK 6 • EU 39)', price: 599, mrp: 999, detail: '2-inch block heel • Padded footbed' },
+            { label: 'IND 9 (UK 7 • EU 40)', price: 649, mrp: 1099, detail: '2-inch block heel • Padded footbed' }
+          ],
+          highlights: ['Stable 2-inch block heel for comfortable posture', 'Soft padded insole with ankle buckle strap', 'Ideal for festive occasions & office wear'],
+          desc: 'Elegant block-heel sandals crafted with premium vegan leather straps and a cushioned footbed for fatigue-free wear at weddings, parties, or daily work.'
+        },
+        {
+          id: 'p_fsh_kurti',
+          title: 'Pure Cotton Floral Anarkali Kurti',
+          category: 'fashion',
+          sub: 'Dress / Apparel',
+          vendor: 'Eappikkad Trends',
+          badge: 'Festival Special',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '👗',
+          imageUrl: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85', icon: '👗', label: '100% Breathable Cotton' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85', icon: '👗', label: 'Intricate Floral Yoke Print' }
+          ],
+          colors: [
+            { name: 'Maroon', hex: '#800000', border: '#4A0000' },
+            { name: 'Navy Blue', hex: '#000080', border: '#00004D' },
+            { name: 'Black', hex: '#1F2937', border: '#111827' },
+            { name: 'Sage Green', hex: '#87A96B', border: '#556B2F' },
+            { name: 'Cream', hex: '#FDFBF7', border: '#D4C5B9' }
+          ],
+          variants: [
+            { label: 'Size S (Bust 36")', price: 649, mrp: 1199, detail: 'Indian Standard S • Pure Cotton' },
+            { label: 'Size M (Bust 38")', price: 649, mrp: 1199, detail: 'Indian Standard M • Pure Cotton' },
+            { label: 'Size L (Bust 40")', price: 699, mrp: 1299, detail: 'Indian Standard L • Pure Cotton' },
+            { label: 'Size XL (Bust 42")', price: 699, mrp: 1299, detail: 'Indian Standard XL • Pure Cotton' },
+            { label: 'Size XXL (Bust 44")', price: 749, mrp: 1399, detail: 'Indian Standard XXL • Pure Cotton' }
+          ],
+          highlights: ['100% combed breathable cotton fabric', 'Color-fast artisanal floral block print', 'Calf-length flare with 3/4 sleeves'],
+          desc: 'Soft and breezy pure cotton Anarkali kurti adorned with ethnic botanical prints and delicate border accents. Tailored for comfort in hot and humid weather.'
+        },
+        {
+          id: 'p_fsh_shirt',
+          title: "Men's Classic Linen-Blend Casual Shirt",
+          category: 'fashion',
+          sub: 'Dress / Apparel',
+          vendor: 'Eappikkad Trends',
+          badge: 'Hot Deal',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '👔',
+          imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=85', icon: '👔', label: 'Premium Cotton-Linen Weave' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=85', icon: '👔', label: 'Mandarin Collar Styling' }
+          ],
+          colors: [
+            { name: 'Sky Blue', hex: '#87CEEB', border: '#4682B4' },
+            { name: 'Classic Navy', hex: '#1E3A8A', border: '#1E3A8A' },
+            { name: 'Black', hex: '#111827', border: '#000000' },
+            { name: 'Olive Green', hex: '#556B2F', border: '#3B4D20' },
+            { name: 'Crisp White', hex: '#FFFFFF', border: '#D1D5DB' }
+          ],
+          variants: [
+            { label: 'Size 38 (Chest 38" • M)', price: 749, mrp: 1399, detail: 'Indian Slim Fit • Breathable Linen' },
+            { label: 'Size 40 (Chest 40" • L)', price: 749, mrp: 1399, detail: 'Indian Slim Fit • Breathable Linen' },
+            { label: 'Size 42 (Chest 42" • XL)', price: 799, mrp: 1499, detail: 'Indian Regular Fit • Breathable Linen' },
+            { label: 'Size 44 (Chest 44" • XXL)', price: 799, mrp: 1499, detail: 'Indian Regular Fit • Breathable Linen' }
+          ],
+          highlights: ['Lightweight pre-washed linen-cotton blend', 'Modern mandarin collar & curved hemline', 'Breathable and sweat-wicking texture'],
+          desc: 'Premium casual shirt woven with breathable linen and cotton yarns. Features a tailored fit, wooden buttons, and a clean modern collar perfect for celebrations or Friday casuals.'
+        },
+        {
+          id: 'p_fsh_jhumka',
+          title: 'Antique Gold-Tone Temple Jhumka Earrings',
+          category: 'fashion',
+          sub: 'Fancy Items',
+          vendor: 'Eappikkad Trends',
+          badge: '1+1 Offer',
+          todaysOffer: false,
+          bogo: true,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '✨',
+          imageUrl: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=85', icon: '✨', label: 'Traditional Matte Gold Finish' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=85', icon: '✨', label: 'Hanging Pearl Cluster' }
+          ],
+          colors: [
+            { name: 'Antique Gold & Ruby', hex: '#D4AF37', border: '#991B1B' },
+            { name: 'Pearl & Emerald Drop', hex: '#F0EAD6', border: '#065F46' },
+            { name: 'Matte Rose Gold', hex: '#C5837C', border: '#83433C' }
+          ],
+          variants: [
+            { label: 'Standard Temple Drop (BOGO 1+1)', price: 299, mrp: 599, detail: 'Buy 1 Get 1 Free • Pair of 2' },
+            { label: 'Grand Festive Flare (BOGO 1+1)', price: 349, mrp: 699, detail: 'Buy 1 Get 1 Free • Pair of 2' }
+          ],
+          highlights: ['Micro gold plated with anti-tarnish coating', 'Lightweight design that does not pull earlobes', 'Buy 1 Get 1 Free festive promo'],
+          desc: 'Exquisite traditional antique gold-plated jhumkas adorned with ruby stones and hanging pearl drops. Comes in a protective gift velvet pouch.'
+        },
+        {
+          id: 'p_fsh_watch',
+          title: 'Rose Gold Minimalist Watch & Bangle Combo',
+          category: 'fashion',
+          sub: 'Fancy Items',
+          vendor: 'Eappikkad Trends',
+          badge: 'Gift Combo',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '⌚',
+          imageUrl: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=800&q=85', icon: '⌚', label: 'Mesh Metal Strap Quartz' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=85', icon: '⌚', label: 'Matching Open Cuff Bangle' }
+          ],
+          colors: [
+            { name: 'Rose Gold Shimmer', hex: '#B76E79', border: '#96535D' },
+            { name: 'Silver Moon', hex: '#C0C0C0', border: '#9E9E9E' },
+            { name: 'Matte Black Mesh', hex: '#1F2937', border: '#111827' }
+          ],
+          variants: [
+            { label: 'Watch + Bangle Gift Box Combo', price: 699, mrp: 1499, detail: 'Ultra-slim watch + 1 open cuff bangle' },
+            { label: 'Watch + 2 Bangles Festive Set', price: 799, mrp: 1699, detail: 'Ultra-slim watch + 2 matching crystal bangles' }
+          ],
+          highlights: ['Precision quartz movement with water resistance', 'Adjustable stainless steel mesh magnet strap', 'Includes matching designer open cuff bangle'],
+          desc: 'A gorgeous wristwear gift combo featuring an ultra-slim mesh watch and a complementary crystal-accented bangle. Packaged in a hard gift box.'
+        },
+        {
+          id: 'p_fsh_handbag',
+          title: 'Textured Vegan Leather Shoulder Handbag',
+          category: 'fashion',
+          sub: 'Bags & Wallets (Accessories)',
+          vendor: 'Eappikkad Trends',
+          badge: '50% OFF',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '👜',
+          imageUrl: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=85', icon: '👜', label: 'Spacious Multi-Pocket Design' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=85', icon: '👜', label: 'Water-Resistant Grain PU' }
+          ],
+          colors: [
+            { name: 'Tan Brown', hex: '#8B4513', border: '#5C2D0C' },
+            { name: 'Midnight Black', hex: '#111827', border: '#000000' },
+            { name: 'Blush Pink', hex: '#E8C5C8', border: '#B58E92' },
+            { name: 'Olive Green', hex: '#556B2F', border: '#3B4D20' }
+          ],
+          variants: [
+            { label: 'Large 3-Zip Shoulder Tote', price: 899, mrp: 1799, detail: 'Spacious 3 zip compartments • Shoulder handle' },
+            { label: 'Compact Crossbody Sling', price: 749, mrp: 1499, detail: 'Long adjustable strap • 2 zip compartments' }
+          ],
+          highlights: ['Heavy-duty gold-plated metal zippers', '3 zippered main compartments + mobile slot', 'Water-resistant textured vegan leather'],
+          desc: 'Sophisticated and spacious shoulder handbag designed for working professionals and weekend outings. Easily fits tablet, makeup pouch, wallet, and water bottle.'
+        },
+        {
+          id: 'p_fsh_wallet',
+          title: "Men's Genuine Leather Bi-Fold Wallet & Key Fob",
+          category: 'fashion',
+          sub: 'Bags & Wallets (Accessories)',
+          vendor: 'Eappikkad Trends',
+          badge: 'RFID Protected',
+          todaysOffer: false,
+          bogo: false,
+          rxRequired: false,
+          outOfStock: false,
+          emoji: '👛',
+          imageUrl: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=640&q=85',
+          slides: [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=85', icon: '👛', label: 'RFID Blocking Top-Grain Leather' },
+            { type: 'image', url: 'https://images.unsplash.com/photo-1606503825008-909a67e753bf?auto=format&fit=crop&w=800&q=85', icon: '👛', label: '8 Card Slots + Currency Sleeves' }
+          ],
+          colors: [
+            { name: 'Vintage Dark Brown', hex: '#4A2E18', border: '#2B1A0E' },
+            { name: 'Matte Charcoal Black', hex: '#1F2937', border: '#111827' },
+            { name: 'Cognac Tan', hex: '#9E5B26', border: '#633917' }
+          ],
+          variants: [
+            { label: 'RFID Bi-Fold Wallet + Key Fob', price: 499, mrp: 999, detail: '8 Card slots + Brass key loop combo' },
+            { label: 'RFID Slim Card Case + Key Fob', price: 449, mrp: 899, detail: '6 Card slots + Money clip + Key loop' }
+          ],
+          highlights: ['Certified RFID-blocking technology for contactless cards', '8 quick-access card slots & coin pocket', 'Hand-stitched genuine grain leather'],
+          desc: "Slim bi-fold men's wallet handcrafted in top-grain leather with built-in RFID shielding to protect your cards from wireless theft. Packed in an attractive matte gift box."
         }
       ];
 
@@ -2133,7 +2411,103 @@
         window.__toastTimer = setTimeout(() => el.classList.add('hidden'), 2400);
       }
 
+      // ==================== DYNAMIC FASHION THEME & BACKEND CONFIGURATION ====================
+      const FASHION_THEME_CONFIG = {
+        accent: '#7C3AED',              // Royal Purple Accent
+        tint: '#F5F3FF',                // Soft lavender-purple background tint
+        btnPrimaryBg: '#6D28D9',        // Deep purple for primary action buttons
+        btnPrimaryText: '#FFFFFF',      // White text for primary action buttons
+        btnSecondaryBg: '#FAF5FF',      // Light purple tint for secondary buttons
+        btnSecondaryBorder: '#DDD6FE',  // Border for secondary action buttons
+        btnSecondaryText: '#6D28D9',    // Text color for secondary buttons
+        badgeBg: '#FBBF24',             // Vibrant Amber for offer badges
+        badgeText: '#4C1D95',           // Dark purple text on offer badges
+        cardBorder: '#EDE9FE',          // Subtle border for fashion cards
+        highlightAccent: '#EC4899',     // Pink highlight accent
+        heroGradient: 'linear-gradient(135deg, #4C1D95 0%, #7C3AED 55%, #DB2777 100%)'
+      };
+
+      function applyFashionTheme(customConfig = {}) {
+        if (customConfig && typeof customConfig === 'object') {
+          Object.assign(FASHION_THEME_CONFIG, customConfig);
+        }
+        const root = document.documentElement;
+        root.style.setProperty('--fashion-accent', FASHION_THEME_CONFIG.accent);
+        root.style.setProperty('--fashion-tint', FASHION_THEME_CONFIG.tint);
+        root.style.setProperty('--fashion-btn-primary-bg', FASHION_THEME_CONFIG.btnPrimaryBg);
+        root.style.setProperty('--fashion-btn-primary-text', FASHION_THEME_CONFIG.btnPrimaryText);
+        root.style.setProperty('--fashion-btn-secondary-bg', FASHION_THEME_CONFIG.btnSecondaryBg);
+        root.style.setProperty('--fashion-btn-secondary-border', FASHION_THEME_CONFIG.btnSecondaryBorder);
+        root.style.setProperty('--fashion-btn-secondary-text', FASHION_THEME_CONFIG.btnSecondaryText);
+        root.style.setProperty('--fashion-badge-bg', FASHION_THEME_CONFIG.badgeBg);
+        root.style.setProperty('--fashion-badge-text', FASHION_THEME_CONFIG.badgeText);
+        root.style.setProperty('--fashion-card-border', FASHION_THEME_CONFIG.cardBorder);
+        root.style.setProperty('--fashion-highlight', FASHION_THEME_CONFIG.highlightAccent);
+        root.style.setProperty('--fashion-hero-gradient', FASHION_THEME_CONFIG.heroGradient);
+      }
+      applyFashionTheme();
+
+      window.setFashionThemeConfig = function (customConfig) {
+        applyFashionTheme(customConfig);
+        if (state.activeCategory === 'fashion' || state.browseCategory === 'fashion') {
+          applyThemeForCategory('fashion');
+        }
+        if (state.activeScreen === 'categories' && state.browseCategory === 'fashion') {
+          renderCategoryScreen();
+        } else if (state.activeScreen === 'home' && state.activeCategory === 'fashion') {
+          renderBannersAndCatalog();
+        } else if (state.activeScreen === 'pdp') {
+          const prod = PRODUCTS.find(x => x.id === state.pdpProductId);
+          if (prod && prod.category === 'fashion') renderPDP();
+        }
+      };
+
+      // ==================== INTERACTIVE FASHION OFFER BANNERS ====================
+      window.handleFashionHeroOfferClick = function () {
+        state.browseCategory = 'fashion';
+        state.categoryDirectoryMode = false;
+        state.activeSubCategory = 'all';
+        applyThemeForCategory('fashion');
+        if (state.activeScreen !== 'categories') {
+          window.switchScreen('categories');
+        } else {
+          renderSubCategoryBar('fashion');
+          renderCategoryScreen();
+        }
+        showToast('🎟️ Code TRENDS20 Activated! Up to 60% Off Fashion Drops');
+        setTimeout(() => {
+          const grid = document.getElementById('categoryScreenProductGrid') || document.getElementById('catalogSection');
+          if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 120);
+      };
+
+      window.handleFashionOfferClick = function (subCatName, toastMsg) {
+        state.browseCategory = 'fashion';
+        state.categoryDirectoryMode = false;
+        state.activeSubCategory = subCatName;
+        applyThemeForCategory('fashion');
+        if (state.activeScreen !== 'categories') {
+          window.switchScreen('categories');
+        } else {
+          renderSubCategoryBar('fashion');
+          renderCategoryScreen();
+        }
+        showToast(toastMsg || `Showing ${subCatName}`);
+        setTimeout(() => {
+          const grid = document.getElementById('categoryScreenProductGrid') || document.getElementById('catalogSection');
+          if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 120);
+      };
+
       function applyThemeForCategory(catId) {
+        if (catId === 'fashion') {
+          applyFashionTheme();
+          document.documentElement.style.setProperty('--active-accent', FASHION_THEME_CONFIG.accent);
+          document.documentElement.style.setProperty('--active-tint', FASHION_THEME_CONFIG.tint);
+          const mh = document.getElementById('mainHeader');
+          if (mh) mh.style.backgroundColor = FASHION_THEME_CONFIG.tint;
+          return;
+        }
         const cat = CATEGORIES.find(c => c.id === catId) || CATEGORIES[0];
         document.documentElement.style.setProperty('--active-accent', cat.accent);
         document.documentElement.style.setProperty('--active-tint', cat.tint);
@@ -2755,6 +3129,7 @@
           const qMatch = !state.searchQuery ||
             p.title.toLowerCase().includes(state.searchQuery) ||
             p.vendor.toLowerCase().includes(state.searchQuery) ||
+            p.sub.toLowerCase().includes(state.searchQuery) ||
             p.category.toLowerCase().includes(state.searchQuery);
           return catMatch && vendorMatch && bogoMatch && qMatch;
         });
@@ -2800,6 +3175,165 @@
         `;
       }
 
+      function renderFashionOffersSection() {
+        return `
+          <div class="space-y-3 pb-1">
+            <!-- Main Fashion Festival Hero Banner (Interactive) -->
+            <div onclick="window.handleFashionHeroOfferClick()" role="button" tabindex="0" class="cursor-pointer rounded-3xl p-4 text-white card-shadow relative overflow-hidden active:scale-[0.99] hover:opacity-95 transition-all" style="background: var(--fashion-hero-gradient, linear-gradient(135deg, #4C1D95 0%, #7C3AED 55%, #DB2777 100%));">
+              <div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none"></div>
+              <div class="relative z-10">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shadow-xs" style="background-color: var(--fashion-badge-bg, #FBBF24); color: var(--fashion-badge-text, #4C1D95);">
+                    <span>⚡</span> FASHION FESTIVAL EXCLUSIVE
+                  </span>
+                  <span class="text-[10px] font-extrabold text-pink-200">Tap to Explore Drops ›</span>
+                </div>
+                <h2 class="text-base font-black tracking-tight leading-tight mt-1">Eappikkad Style &amp; Trends Drop</h2>
+                <p class="text-[11px] text-purple-100 mt-0.5">Up to 60% Off on Footwear, Apparel, Jewelry &amp; Accessories</p>
+                
+                <div class="mt-3 flex items-center gap-2 flex-wrap">
+                  <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/15 backdrop-blur-xs border border-white/20 text-white text-[10px] font-extrabold">
+                    <span>🎟️</span>
+                    <span>Use Code: <strong style="color: var(--fashion-badge-bg, #FCD34D);">TRENDS20</strong> for Extra ₹100 Off</span>
+                  </div>
+                  <div class="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 text-[10px] font-bold">
+                    <span>✓</span> Fast Local Zone Dispatch
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Sub-Category Deal Shortcuts (Interactive) -->
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+              <button type="button" onclick="window.handleFashionOfferClick('Footwear', '👟 Footwear Special: Flat ₹200 OFF applied!')" class="shrink-0 bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200/90 rounded-2xl p-2.5 min-w-[145px] text-left card-shadow hover:scale-[1.02] active:scale-[0.98] transition-all">
+                <div class="flex items-center gap-2">
+                  <span class="text-xl">👟</span>
+                  <div>
+                    <span class="text-[9px] font-black uppercase" style="color: var(--fashion-btn-primary-bg, #6D28D9);">Footwear Deal</span>
+                    <div class="text-[11px] font-black text-gray-900">Flat ₹200 OFF</div>
+                  </div>
+                </div>
+                <p class="text-[9px] font-semibold text-purple-700 mt-1">Sneakers &amp; Block Heels ›</p>
+              </button>
+
+              <button type="button" onclick="window.handleFashionOfferClick('Dress / Apparel', '👗 Apparel Drop: Starting ₹599!')" class="shrink-0 bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-200/90 rounded-2xl p-2.5 min-w-[145px] text-left card-shadow hover:scale-[1.02] active:scale-[0.98] transition-all">
+                <div class="flex items-center gap-2">
+                  <span class="text-xl">👗</span>
+                  <div>
+                    <span class="text-[9px] font-black uppercase text-rose-800">Apparel Drop</span>
+                    <div class="text-[11px] font-black text-gray-900">Starting ₹599</div>
+                  </div>
+                </div>
+                <p class="text-[9px] font-semibold text-rose-700 mt-1">Kurtis &amp; Casual Shirts ›</p>
+              </button>
+
+              <button type="button" onclick="window.handleFashionOfferClick('Fancy Items', '✨ Fancy Items: Buy 1 Get 1 Free active!')" class="shrink-0 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/90 rounded-2xl p-2.5 min-w-[145px] text-left card-shadow hover:scale-[1.02] active:scale-[0.98] transition-all">
+                <div class="flex items-center gap-2">
+                  <span class="text-xl">✨</span>
+                  <div>
+                    <span class="text-[9px] font-black uppercase text-amber-800">Fancy Items</span>
+                    <div class="text-[11px] font-black text-gray-900">Buy 1 Get 1 Free</div>
+                  </div>
+                </div>
+                <p class="text-[9px] font-semibold text-amber-700 mt-1">Jhumkas &amp; Watch Sets ›</p>
+              </button>
+
+              <button type="button" onclick="window.handleFashionOfferClick('Bags & Wallets (Accessories)', '👜 Bags & Wallets: Up to 50% OFF active!')" class="shrink-0 bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-200/90 rounded-2xl p-2.5 min-w-[155px] text-left card-shadow hover:scale-[1.02] active:scale-[0.98] transition-all">
+                <div class="flex items-center gap-2">
+                  <span class="text-xl">👜</span>
+                  <div>
+                    <span class="text-[9px] font-black uppercase text-blue-800">Bags &amp; Wallets</span>
+                    <div class="text-[11px] font-black text-gray-900">Up to 50% OFF</div>
+                  </div>
+                </div>
+                <p class="text-[9px] font-semibold text-blue-700 mt-1">Totes &amp; RFID Wallets ›</p>
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderFashionProductCard(p) {
+        const v0 = p.variants[0];
+        const defaultColor = (p.colors && p.colors.length > 0) ? p.colors[0].name : '';
+        const inCart = state.cart.find(c => c.id === p.id && c.variantIdx === 0 && (defaultColor ? c.selectedColor === defaultColor : true));
+        const qty = inCart ? inCart.qty : 0;
+        const isSaved = state.wishlist.some(w => w.prodId === p.id);
+        const discountPercent = v0.mrp > v0.price ? Math.round(((v0.mrp - v0.price) / v0.mrp) * 100) : 0;
+
+        return `
+          <div class="bg-white rounded-3xl p-3 card-shadow flex flex-col justify-between hover:shadow-md transition-shadow group" style="border: 1px solid var(--fashion-card-border, #EDE9FE);">
+            <div onclick="window.openPDP('${p.id}')" class="cursor-pointer">
+              <!-- Larger Fashion Image Container (Aspect 3/4 or tall h-48 format) -->
+              <div class="relative w-full h-48 rounded-2xl overflow-hidden bg-gradient-to-b from-[#F3E8FF] to-[#FAF5FF] flex items-center justify-center mb-2.5">
+                <img src="${p.imageUrl}" alt="${p.title}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" />
+                <span class="hidden text-5xl">${p.emoji}</span>
+                
+                <!-- Top Badges -->
+                <div class="absolute top-2 left-2 flex flex-col gap-1 items-start">
+                  ${p.bogo ? `<span class="text-[9px] font-black px-2 py-0.5 rounded-full shadow-xs uppercase tracking-wider" style="background-color: var(--fashion-badge-bg, #FBBF24); color: var(--fashion-badge-text, #4C1D95);">1+1 Deal</span>` : ''}
+                  ${p.badge ? `<span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full text-white shadow-xs" style="background-color: var(--fashion-btn-primary-bg, #6D28D9);">${p.badge}</span>` : ''}
+                </div>
+
+                <!-- Wishlist Heart Button -->
+                <button type="button" onclick="event.stopPropagation(); window.toggleWishlistItem('${p.id}')" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-xs shadow-xs flex items-center justify-center text-xs font-bold ${isSaved ? 'text-rose-600' : 'text-gray-500 hover:text-rose-600'} transition-colors" aria-label="Wishlist">
+                  ${isSaved ? '♥' : '♡'}
+                </button>
+
+                <!-- Discount Pill on Image -->
+                ${discountPercent > 0 ? `
+                  <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md text-white text-[9px] font-extrabold shadow-xs" style="background-color: var(--fashion-btn-primary-bg, #6D28D9);">
+                    ${discountPercent}% OFF
+                  </div>
+                ` : ''}
+                
+                <div class="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[8px] font-bold">
+                  ${p.colors ? `${p.colors.length} Colors • ` : ''}${p.variants.length} Sizes
+                </div>
+              </div>
+
+              <!-- Fashion Sub-Category & Title -->
+              <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-0.5" style="color: var(--fashion-accent, #7C3AED);">
+                <span>${p.sub}</span>
+                <span class="text-gray-400 font-normal">★ 4.8</span>
+              </div>
+              <h4 class="text-xs font-extrabold text-gray-900 line-clamp-2 leading-snug min-h-[32px]">${p.title}</h4>
+              
+              <!-- Active Variant & Color Pill -->
+              <div class="mt-1 flex items-center justify-between gap-1 text-[10px] font-semibold text-gray-500">
+                <span class="truncate px-2 py-0.5 rounded-lg border font-bold" style="background-color: var(--fashion-tint, #F5F3FF); color: var(--fashion-btn-primary-bg, #6D28D9); border-color: var(--fashion-card-border, #EDE9FE);">
+                  ${defaultColor ? `${defaultColor} • ` : ''}${v0.label}
+                </span>
+                <button type="button" onclick="event.stopPropagation(); window.openShareModal('${p.id}')" class="text-[10px] font-extrabold hover:underline shrink-0" style="color: var(--fashion-accent, #7C3AED);">Share</button>
+              </div>
+            </div>
+
+            <!-- Price & Add/Qty Actions -->
+            <div class="mt-2.5 pt-2 border-t flex items-center justify-between gap-2" style="border-color: var(--fashion-card-border, #EDE9FE);">
+              <div>
+                <div class="flex items-baseline gap-1">
+                  <span class="text-sm font-black text-gray-950">₹${v0.price}</span>
+                  ${v0.mrp > v0.price ? `<span class="text-[10px] font-semibold text-gray-400 line-through">₹${v0.mrp}</span>` : ''}
+                </div>
+                <span class="text-[9px] font-bold text-emerald-700 leading-none">In Stock</span>
+              </div>
+
+              ${p.outOfStock
+                ? `<button type="button" onclick="window.toggleWishlistItem('${p.id}')" class="px-3 py-1.5 rounded-xl ${isSaved ? 'bg-amber-100 text-amber-900' : 'bg-gray-100 text-gray-700'} text-[10px] font-extrabold">${isSaved ? 'Saved' : 'Notify'}</button>`
+                : (qty === 0
+                    ? `<button type="button" onclick="window.addToCart('${p.id}', false, 0, false, '${defaultColor}')" class="px-3.5 py-1.5 rounded-xl text-white text-xs font-black shadow-xs active:scale-95 transition-all" style="background-color: var(--fashion-btn-primary-bg, #6D28D9);">+ ADD</button>`
+                    : `<div class="flex items-center gap-1.5 text-white rounded-xl px-2.5 py-1 text-xs font-black shadow-xs" style="background-color: var(--fashion-btn-primary-bg, #6D28D9);">
+                         <button type="button" onclick="window.changeQty('${p.id}', -1, 0, '${defaultColor}')" class="px-1 text-sm font-bold active:scale-90">−</button>
+                         <span class="px-1">${qty}</span>
+                         <button type="button" onclick="window.changeQty('${p.id}', 1, 0, '${defaultColor}')" class="px-1 text-sm font-bold active:scale-90">+</button>
+                       </div>`
+                  )
+              }
+            </div>
+          </div>
+        `;
+      }
+
       function renderCatalogSections(isHomeDefault) {
         const groupedEl = document.getElementById('homeGroupedCatalog');
         const singleEl = document.getElementById('singleCategoryCatalogSection');
@@ -2811,7 +3345,8 @@
 
           const domainCats = CATEGORIES.filter(c => c.id !== 'all');
           groupedEl.innerHTML = domainCats.map((cat, idx) => {
-            const items = PRODUCTS.filter(p => p.category === cat.id).slice(0, 6);
+            const isFashionSec = (cat.id === 'fashion');
+            const items = PRODUCTS.filter(p => p.category === cat.id).slice(0, isFashionSec ? 4 : 6);
             const midAd = idx === 1 ? `
               <div class="rounded-2xl bg-gradient-to-r from-[#FDF8F8] to-[#FFF7ED] border border-[#7A1C24]/15 p-3.5 flex items-center justify-between">
                 <div>
@@ -2827,10 +3362,10 @@
               <section class="space-y-2.5">
                 <div class="flex items-center justify-between">
                   <h3 class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">${cat.name}</h3>
-                  <button type="button" onclick="window.selectCategory('${cat.id}')" class="text-[11px] font-bold text-[#7A1C24]">View All ›</button>
+                  <button type="button" onclick="window.selectCategory('${cat.id}')" class="text-[11px] font-bold" style="color: ${cat.accent};">View All ›</button>
                 </div>
-                <div class="grid grid-cols-3 gap-2">
-                  ${items.map(renderProductCard).join('')}
+                <div class="${isFashionSec ? 'grid grid-cols-2 gap-3.5' : 'grid grid-cols-3 gap-2'}">
+                  ${items.map(isFashionSec ? renderFashionProductCard : renderProductCard).join('')}
                 </div>
               </section>
               ${midAd}
@@ -2840,9 +3375,14 @@
           groupedEl.classList.add('hidden');
           singleEl.classList.remove('hidden');
           const items = getFilteredProducts();
-          document.getElementById('productGrid').innerHTML = items.length
-            ? items.map(renderProductCard).join('')
-            : `<div class="col-span-3 bg-white rounded-2xl p-6 text-center text-xs text-gray-500">No items match your filter.</div>`;
+          const pGrid = document.getElementById('productGrid');
+          if (pGrid) {
+            const isFashion = (state.activeCategory === 'fashion');
+            pGrid.className = isFashion ? "grid grid-cols-2 gap-3.5" : "grid grid-cols-3 gap-2";
+            pGrid.innerHTML = items.length
+              ? items.map(isFashion ? renderFashionProductCard : renderProductCard).join('')
+              : `<div class="col-span-${isFashion ? '2' : '3'} bg-white rounded-2xl p-6 text-center text-xs text-gray-500">No items match your filter.</div>`;
+          }
         }
       }
 
@@ -2944,11 +3484,31 @@
         const countBadge = document.getElementById('categoryScreenCount');
         if (countBadge) countBadge.textContent = `${items.length} items`;
 
+        const isFashion = (activeCat.id === 'fashion');
+        const offersContainer = document.getElementById('categoryScreenOffersWrapper');
+        if (offersContainer) {
+          if (isFashion) {
+            offersContainer.innerHTML = renderFashionOffersSection();
+            offersContainer.classList.remove('hidden');
+          } else {
+            offersContainer.innerHTML = '';
+            offersContainer.classList.add('hidden');
+          }
+        }
+
         const gridEl = document.getElementById('categoryScreenProductGrid');
         if (gridEl) {
-          gridEl.innerHTML = items.length
-            ? items.map(renderProductCard).join('')
-            : `<div class="col-span-3 bg-white rounded-2xl p-6 text-center text-xs text-gray-500">No items match this sub-category filter.</div>`;
+          if (isFashion) {
+            gridEl.className = "grid grid-cols-2 gap-3.5";
+            gridEl.innerHTML = items.length
+              ? items.map(renderFashionProductCard).join('')
+              : `<div class="col-span-2 bg-white rounded-2xl p-6 text-center text-xs text-gray-500">No fashion items match this sub-category filter.</div>`;
+          } else {
+            gridEl.className = "grid grid-cols-3 gap-2";
+            gridEl.innerHTML = items.length
+              ? items.map(renderProductCard).join('')
+              : `<div class="col-span-3 bg-white rounded-2xl p-6 text-center text-xs text-gray-500">No items match this sub-category filter.</div>`;
+          }
         }
       }
 
@@ -2974,7 +3534,18 @@
         state.pdpQty = 1;
         state.pdpSlideIdx = 0;
         state.pdpDescExpanded = false;
+        const p = PRODUCTS.find(x => x.id === prodId);
+        if (p && p.colors && p.colors.length > 0) {
+          state.pdpSelectedColor = p.colors[0].name;
+        } else {
+          state.pdpSelectedColor = '';
+        }
         window.switchScreen('pdp');
+      };
+
+      window.selectPdpColor = function (colorName) {
+        state.pdpSelectedColor = colorName;
+        renderPDP();
       };
 
       window.setPdpSlide = function (idx) {
@@ -3012,7 +3583,8 @@
       window.buyNowFromPDP = function () {
         const p = PRODUCTS.find(x => x.id === state.pdpProductId);
         if (!p || p.outOfStock) return;
-        const res = window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, true);
+        const color = (p.category === 'fashion' && state.pdpSelectedColor) ? state.pdpSelectedColor : '';
+        const res = window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, true, color);
         if (res !== false) {
           window.switchScreen('cart');
         }
@@ -3121,11 +3693,18 @@
         const stickyBar = document.getElementById('pdpStickyActionBar');
         if (!p || !wrap || !stickyBar) return;
 
+        const isFashion = (p.category === 'fashion');
         const v = p.variants[state.pdpVariantIdx] || p.variants[0];
         const slide = p.slides[state.pdpSlideIdx] || p.slides[0];
         const isSaved = state.wishlist.some(w => w.prodId === p.id);
-        const suggested = PRODUCTS.filter(item => item.id !== p.id && !item.outOfStock).slice(0, 3);
-        const cartItem = state.cart.find(c => c.id === p.id && c.variantIdx === state.pdpVariantIdx);
+        const chosenColor = (isFashion && state.pdpSelectedColor) ? state.pdpSelectedColor : (p.colors && p.colors[0] ? p.colors[0].name : '');
+        
+        // Strict Fashion-only suggestions on Fashion PDP
+        const suggested = isFashion
+          ? PRODUCTS.filter(item => item.category === 'fashion' && item.id !== p.id && !item.outOfStock).slice(0, 4)
+          : PRODUCTS.filter(item => item.category !== 'fashion' && item.id !== p.id && !item.outOfStock).slice(0, 3);
+
+        const cartItem = state.cart.find(c => c.id === p.id && c.variantIdx === state.pdpVariantIdx && (chosenColor ? c.selectedColor === chosenColor : true));
         const inCartQty = cartItem ? cartItem.qty : 0;
         const weightSummary = inCartQty > 0 ? getVariantWeightSummary(v, inCartQty) : '';
 
@@ -3143,14 +3722,14 @@
                 <button type="button" onclick="window.toggleWishlistItem('${p.id}')" class="w-7 h-7 rounded-full ${isSaved ? 'bg-rose-100 text-[#D90429]' : 'bg-gray-100 text-gray-600'} flex items-center justify-center text-xs font-extrabold" aria-label="Wishlist">
                   ${isSaved ? '♥' : '♡'}
                 </button>
-                <button type="button" onclick="window.openShareModal('${p.id}')" class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-[#FDF8F8] text-[#7A1C24] border border-[#7A1C24]/20">
+                <button type="button" onclick="window.openShareModal('${p.id}')" class="text-[10px] font-extrabold px-2.5 py-1 rounded-full ${isFashion ? 'border' : 'bg-[#FDF8F8] text-[#7A1C24] border border-[#7A1C24]/20'}" style="${isFashion ? 'background-color: var(--fashion-tint, #F5F3FF); color: var(--fashion-accent, #7C3AED); border-color: var(--fashion-card-border, #EDE9FE);' : ''}">
                   Share
                 </button>
               </div>
             </div>
 
             <!-- Interactive Gallery Slider -->
-            <div class="relative h-52 rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDF8F8] to-[#FFF7ED] flex flex-col items-center justify-center">
+            <div class="relative h-56 rounded-2xl overflow-hidden bg-gradient-to-br ${isFashion ? 'from-[#FAF5FF] to-[#F3E8FF]' : 'from-[#FDF8F8] to-[#FFF7ED]'} flex flex-col items-center justify-center">
               <img src="${slide.url || p.imageUrl}" alt="${p.title}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover" />
               <div class="hidden text-6xl">${slide.icon || p.emoji}</div>
               <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-xs text-white text-[10px] font-extrabold whitespace-nowrap">
@@ -3164,52 +3743,89 @@
 
             <div class="flex justify-center gap-1.5">
               ${p.slides.map((_, i) => `
-                <button type="button" onclick="window.setPdpSlide(${i})" class="h-1.5 rounded-full transition-all ${i === state.pdpSlideIdx ? 'w-5 bg-[#7A1C24]' : 'w-1.5 bg-gray-300'}"></button>
+                <button type="button" onclick="window.setPdpSlide(${i})" class="h-1.5 rounded-full transition-all ${i === state.pdpSlideIdx ? (isFashion ? 'w-5 bg-purple-700' : 'w-5 bg-[#7A1C24]') : 'w-1.5 bg-gray-300'}" style="${isFashion && i === state.pdpSlideIdx ? 'background-color: var(--fashion-btn-primary-bg, #6D28D9);' : ''}"></button>
               `).join('')}
             </div>
 
             <div class="flex items-center justify-between pt-1">
-              <span class="text-xs font-bold text-gray-700">${p.vendor} • ${p.sub}</span>
-              <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${p.outOfStock ? 'bg-gray-100 text-gray-600' : 'bg-[#22C55E]/15 text-emerald-800'}">
-                ${p.outOfStock ? 'Out of Stock' : 'In Stock'}
+              <span class="text-xs font-bold ${isFashion ? 'text-purple-900 font-extrabold' : 'text-gray-700'}">${p.vendor} • ${p.sub}</span>
+              <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${p.outOfStock ? 'bg-gray-100 text-gray-600' : (isFashion ? 'bg-purple-100 text-purple-900' : 'bg-[#22C55E]/15 text-emerald-800')}">
+                ${p.outOfStock ? 'Out of Stock' : (isFashion ? '⚡ In Stock • Express Dispatch' : 'In Stock')}
               </span>
             </div>
 
             <div>
               <h2 class="text-lg font-extrabold text-gray-900">${p.title}</h2>
               <div class="flex items-baseline gap-2 mt-0.5">
-                <span class="text-xl font-extrabold text-[#7A1C24]">₹${v.price}</span>
+                <span class="text-xl font-extrabold ${isFashion ? 'text-purple-950 font-black' : 'text-[#7A1C24]'}" style="${isFashion ? 'color: var(--fashion-btn-primary-bg, #6D28D9);' : ''}">₹${v.price}</span>
                 <span class="text-xs font-semibold text-gray-500 line-through">₹${v.mrp}</span>
-                <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-[#22C55E]/15 text-emerald-800">Save ₹${v.mrp - v.price}</span>
+                <span class="text-[11px] font-extrabold px-2 py-0.5 rounded ${isFashion ? 'bg-purple-100 text-purple-900 font-bold' : 'bg-[#22C55E]/15 text-emerald-800'}">Save ₹${v.mrp - v.price} (${Math.round(((v.mrp - v.price) / v.mrp) * 100)}% OFF)</span>
               </div>
             </div>
 
-            <!-- High-Contrast Variant Selector Cards -->
-            <div class="pt-2.5 border-t border-gray-100 space-y-2.5">
+            ${isFashion && p.colors && p.colors.length > 0 ? `
+              <!-- Select Color Strip for Fashion -->
+              <div class="pt-2.5 border-t space-y-2" style="border-color: var(--fashion-card-border, #EDE9FE);">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-gray-800">Select Color: <strong style="color: var(--fashion-btn-primary-bg, #6D28D9);">${chosenColor}</strong></span>
+                  <span class="text-[10px] font-semibold text-gray-500">${p.colors.length} Available</span>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  ${p.colors.map(c => `
+                    <button type="button" onclick="window.selectPdpColor('${c.name}')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border-2 transition-all ${chosenColor === c.name ? 'shadow-xs' : 'border-gray-200 bg-white hover:border-gray-300'}" style="${chosenColor === c.name ? `border-color: var(--fashion-btn-primary-bg, #6D28D9); background-color: var(--fashion-tint, #F5F3FF);` : ''}">
+                      <span class="w-3.5 h-3.5 rounded-full border border-black/20 shadow-2xs inline-block shrink-0" style="background-color: ${c.hex};"></span>
+                      <span class="text-xs font-bold ${chosenColor === c.name ? 'font-black text-purple-950' : 'text-gray-700'}">${c.name}</span>
+                      ${chosenColor === c.name ? `<span class="text-xs font-black leading-none" style="color: var(--fashion-btn-primary-bg, #6D28D9);">✓</span>` : ''}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- Variant / Sizing Selector -->
+            <div class="pt-2.5 border-t space-y-2.5" style="${isFashion ? 'border-color: var(--fashion-card-border, #EDE9FE);' : 'border-color: #F3F4F6;'}">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-extrabold uppercase tracking-wider text-gray-800">Select Variant (${p.variants.length})</span>
-                <span class="text-[11px] font-semibold text-gray-500">Live price update</span>
+                <span class="text-xs font-extrabold uppercase tracking-wider text-gray-800">
+                  ${isFashion ? (p.sub.includes('Footwear') ? 'Select Indian Footwear Size' : (p.sub.includes('Dress') ? 'Select Indian Size' : 'Select Variant / Size')) : 'Select Variant'} (${p.variants.length})
+                </span>
+                <span class="text-[11px] font-semibold ${isFashion ? 'text-purple-700 font-bold' : 'text-gray-500'}">${isFashion ? 'Standard Indian Fit' : 'Live price update'}</span>
               </div>
               <div class="grid grid-cols-2 gap-2.5">
                 ${p.variants.map((vr, idx) => `
-                  <button type="button" onclick="window.selectPdpVariant(${idx})" class="p-3 rounded-2xl border-2 text-left transition-all ${idx === state.pdpVariantIdx ? 'border-[#7A1C24] bg-[#FDF8F8] shadow-2xs' : 'border-gray-200 bg-white'}">
-                    <div class="text-sm font-extrabold text-gray-900 leading-snug">${vr.label}</div>
+                  <button type="button" onclick="window.selectPdpVariant(${idx})" class="p-3 rounded-2xl border-2 text-left transition-all ${idx === state.pdpVariantIdx ? (isFashion ? 'shadow-xs ring-1 ring-purple-600' : 'border-[#7A1C24] bg-[#FDF8F8] shadow-2xs') : 'border-gray-200 bg-white hover:border-gray-300'}" style="${isFashion && idx === state.pdpVariantIdx ? 'border-color: var(--fashion-btn-primary-bg, #6D28D9); background-color: var(--fashion-tint, #F5F3FF);' : ''}">
+                    <div class="text-xs font-extrabold text-gray-900 leading-snug">${vr.label}</div>
                     <div class="flex items-center gap-1.5 mt-1">
-                      <span class="text-sm font-extrabold text-[#7A1C24]">₹${vr.price}</span>
-                      <span class="text-xs font-semibold text-gray-500 line-through">₹${vr.mrp}</span>
+                      <span class="text-sm font-extrabold ${isFashion ? 'font-black' : 'text-[#7A1C24]'}" style="${isFashion ? 'color: var(--fashion-btn-primary-bg, #6D28D9);' : ''}">₹${vr.price}</span>
+                      <span class="text-xs font-semibold text-gray-400 line-through">₹${vr.mrp}</span>
                     </div>
-                    ${vr.detail ? `<div class="text-[11px] font-semibold text-gray-600 mt-1">${vr.detail}</div>` : ''}
+                    ${vr.detail ? `<div class="text-[10px] font-semibold text-gray-500 mt-0.5">${vr.detail}</div>` : ''}
                   </button>
                 `).join('')}
               </div>
             </div>
 
             <!-- Action Buttons Directly Underneath Variant Selector (Above Description) -->
-            <div class="pt-3 border-t border-gray-100">
+            <div class="pt-3 border-t" style="${isFashion ? 'border-color: var(--fashion-card-border, #EDE9FE);' : 'border-color: #F3F4F6;'}">
               ${p.outOfStock ? `
                 <button type="button" onclick="window.toggleWishlistItem('${p.id}')" class="w-full py-3 rounded-2xl ${isSaved ? 'bg-amber-100 text-amber-900' : 'bg-gray-900 text-white'} text-xs font-extrabold">
                   ${isSaved ? 'Saved in Wishlist • Restock Alert Active' : 'Save to Wishlist & Notify When Back in Stock'}
                 </button>
+              ` : (isFashion ? `
+                <div class="flex items-center gap-2">
+                  <div class="flex flex-col items-center justify-center ${inCartQty > 0 ? 'bg-purple-100/70 border border-purple-300' : 'bg-gray-100 border border-transparent'} rounded-2xl px-2.5 py-1.5 shrink-0 text-center select-none min-h-[44px]">
+                    <div class="flex items-center justify-center gap-1 leading-none">
+                      <span class="text-[10px] font-extrabold uppercase tracking-wider ${inCartQty > 0 ? 'text-purple-800' : 'text-gray-400'}">In Cart:</span>
+                      <span class="text-xs font-black ${inCartQty > 0 ? 'text-purple-950' : 'text-gray-500'}">${inCartQty}</span>
+                    </div>
+                    ${inCartQty > 0 ? `<div class="text-[9px] font-bold text-purple-900 leading-tight mt-0.5 whitespace-nowrap">${chosenColor ? `${chosenColor}` : 'Added'}</div>` : ''}
+                  </div>
+                  <button type="button" onclick="window.addOneFromPDP()" class="flex-1 py-3 rounded-2xl border font-extrabold text-xs active:scale-[0.99] transition-transform" style="background-color: var(--fashion-btn-secondary-bg, #FAF5FF); border-color: var(--fashion-btn-secondary-border, #DDD6FE); color: var(--fashion-btn-secondary-text, #6D28D9);">
+                    Add to Cart
+                  </button>
+                  <button type="button" onclick="window.buyNowFromPDP()" class="flex-1 py-3 rounded-2xl text-white text-xs font-extrabold shadow-md active:scale-[0.99] transition-transform" style="background-color: var(--fashion-btn-primary-bg, #6D28D9);">
+                    Buy Now • ₹${v.price}
+                  </button>
+                </div>
               ` : `
                 <div class="flex items-center gap-2">
                   <div class="flex flex-col items-center justify-center ${inCartQty > 0 ? 'bg-emerald-50 border border-emerald-300' : 'bg-gray-100 border border-transparent'} rounded-2xl px-2.5 py-1.5 shrink-0 text-center select-none min-h-[44px]">
@@ -3226,7 +3842,7 @@
                     Buy Now • ₹${v.price}
                   </button>
                 </div>
-              `}
+              `)}
             </div>
           </div>
 
@@ -3234,7 +3850,7 @@
           <div class="bg-white rounded-3xl p-4 card-shadow space-y-2.5">
             <h3 class="text-[11px] font-extrabold uppercase tracking-wider text-gray-800">Product Description</h3>
             <p class="text-xs text-gray-600 leading-relaxed ${state.pdpDescExpanded ? '' : 'desc-clamp-5'}">${p.desc}</p>
-            <button type="button" onclick="window.togglePdpDesc()" class="text-xs font-extrabold text-[#7A1C24] hover:underline">
+            <button type="button" onclick="window.togglePdpDesc()" class="text-xs font-extrabold ${isFashion ? 'text-purple-700' : 'text-[#7A1C24]'} hover:underline">
               ${state.pdpDescExpanded ? 'Show less' : 'Show more'}
             </button>
             <ul class="pt-2 border-t border-gray-100 space-y-1">
@@ -3242,14 +3858,14 @@
             </ul>
           </div>
 
-          <!-- Suggested Products Section -->
+          <!-- Suggested Products Section (Strict Fashion-Only on Fashion PDP) -->
           <div class="space-y-2.5">
             <div class="flex items-center justify-between">
-              <h3 class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">Suggested Products</h3>
-              <span class="text-[10px] font-semibold text-gray-400">Frequently bought together</span>
+              <h3 class="text-xs font-extrabold text-gray-800 uppercase tracking-wider">${isFashion ? 'Suggested Fashion Styles' : 'Suggested Products'}</h3>
+              <span class="text-[10px] font-semibold ${isFashion ? 'text-purple-700 font-bold' : 'text-gray-400'}">${isFashion ? 'Frequently styled together' : 'Frequently bought together'}</span>
             </div>
-            <div class="grid grid-cols-3 gap-2">
-              ${suggested.map(renderProductCard).join('')}
+            <div class="${isFashion ? 'grid grid-cols-2 gap-2.5' : 'grid grid-cols-3 gap-2'}">
+              ${suggested.map(isFashion ? renderFashionProductCard : renderProductCard).join('')}
             </div>
           </div>
         `;
@@ -3261,7 +3877,8 @@
       window.addOneFromPDP = function () {
         const p = PRODUCTS.find(x => x.id === state.pdpProductId);
         if (!p || p.outOfStock) return;
-        const res = window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, false);
+        const color = (p.category === 'fashion' && state.pdpSelectedColor) ? state.pdpSelectedColor : '';
+        const res = window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, false, color);
         if (res !== false && state.activeScreen === 'pdp') {
           renderPDP();
         }
@@ -3396,7 +4013,7 @@
         }
       };
 
-      window.addToCart = function (prodId, isDailyCap, variantIdx = 0, silent = false) {
+      window.addToCart = function (prodId, isDailyCap, variantIdx = 0, silent = false, color = '') {
         const p = PRODUCTS.find(x => x.id === prodId);
         if (!p || p.outOfStock) return false;
 
@@ -3412,7 +4029,8 @@
         }
 
         const v = p.variants[variantIdx] || p.variants[0];
-        const existing = state.cart.find(c => c.id === prodId && c.variantIdx === variantIdx);
+        const chosenColor = color || (p.category === 'fashion' && state.activeScreen === 'pdp' ? state.pdpSelectedColor : (p.colors && p.colors[0] ? p.colors[0].name : ''));
+        const existing = state.cart.find(c => c.id === prodId && c.variantIdx === variantIdx && (chosenColor ? c.selectedColor === chosenColor : true));
         if (isDailyCap && existing && existing.qty >= 1) {
           if (!silent) showToast("Today's Offer is limited to 1 unit per day");
           return false;
@@ -3420,6 +4038,7 @@
         if (existing) {
           existing.qty += 1;
         } else {
+          const variantLabel = (p.category === 'fashion' && chosenColor) ? `${chosenColor} • ${v.label}` : v.label;
           state.cart.push({
             id: p.id,
             title: p.title,
@@ -3429,7 +4048,8 @@
             vendor: p.vendor,
             rxRequired: Boolean(p.rxRequired),
             variantIdx,
-            variantLabel: v.label,
+            selectedColor: chosenColor || '',
+            variantLabel: variantLabel,
             price: v.price,
             qty: 1,
             isDailyCap: Boolean(isDailyCap)
@@ -3444,8 +4064,8 @@
         return true;
       };
 
-      window.changeQty = function (prodId, delta, variantIdx = 0) {
-        const idx = state.cart.findIndex(c => c.id === prodId && c.variantIdx === variantIdx);
+      window.changeQty = function (prodId, delta, variantIdx = 0, color = '') {
+        const idx = state.cart.findIndex(c => c.id === prodId && c.variantIdx === variantIdx && (color ? c.selectedColor === color : true));
         if (idx === -1) return;
         const item = state.cart[idx];
         if (delta > 0 && item.isDailyCap && item.qty >= 1) {
@@ -3462,8 +4082,8 @@
         if (state.activeScreen === 'pdp') renderPDP();
       };
 
-      window.removeCartItem = function (prodId, variantIdx = 0) {
-        const idx = state.cart.findIndex(c => c.id === prodId && c.variantIdx === variantIdx);
+      window.removeCartItem = function (prodId, variantIdx = 0, color = '') {
+        const idx = state.cart.findIndex(c => c.id === prodId && c.variantIdx === variantIdx && (color ? c.selectedColor === color : true));
         if (idx === -1) return;
         const item = state.cart[idx];
         const title = item ? item.title : 'Item';
@@ -4024,11 +4644,11 @@
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
                   <div class="flex items-center gap-2 bg-gray-100 rounded-xl px-2 py-1 text-xs font-extrabold text-gray-900">
-                    <button type="button" onclick="window.changeQty('${item.id}', -1, ${item.variantIdx})" class="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-black active:scale-90 transition-transform">-</button>
+                    <button type="button" onclick="window.changeQty('${item.id}', -1, ${item.variantIdx}, '${item.selectedColor || ''}')" class="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-black active:scale-90 transition-transform">-</button>
                     <span class="min-w-[14px] text-center">${item.qty}</span>
-                    <button type="button" onclick="window.changeQty('${item.id}', 1, ${item.variantIdx})" class="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-black active:scale-90 transition-transform">+</button>
+                    <button type="button" onclick="window.changeQty('${item.id}', 1, ${item.variantIdx}, '${item.selectedColor || ''}')" class="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-black active:scale-90 transition-transform">+</button>
                   </div>
-                  <button type="button" onclick="window.removeCartItem('${item.id}', ${item.variantIdx})" class="w-7 h-7 rounded-xl bg-red-50 text-[#D90429] hover:bg-red-100 active:scale-90 transition-all flex items-center justify-center" aria-label="Remove ${item.title}" title="Remove item">
+                  <button type="button" onclick="window.removeCartItem('${item.id}', ${item.variantIdx}, '${item.selectedColor || ''}')" class="w-7 h-7 rounded-xl bg-red-50 text-[#D90429] hover:bg-red-100 active:scale-90 transition-all flex items-center justify-center" aria-label="Remove ${item.title}" title="Remove item">
                     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="3 6 5 6 21 6"></polyline>
                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -4547,7 +5167,13 @@
         const targetScreen = (savedRoute && savedRoute.screen && savedRoute.screen !== 'home') ? savedRoute.screen : 'home';
 
         if (targetScreen !== 'home' && state.isLoggedIn) {
-          if (savedRoute.pdpProductId) state.pdpProductId = savedRoute.pdpProductId;
+          if (savedRoute.pdpProductId) {
+            state.pdpProductId = savedRoute.pdpProductId;
+            const p = PRODUCTS.find(x => x.id === state.pdpProductId);
+            if (p && p.colors && p.colors.length > 0) {
+              state.pdpSelectedColor = p.colors[0].name;
+            }
+          }
           if (savedRoute.pdpVariantIdx !== undefined) state.pdpVariantIdx = savedRoute.pdpVariantIdx;
           if (savedRoute.browseCategory) state.browseCategory = savedRoute.browseCategory;
           if (savedRoute.activeCategory) state.activeCategory = savedRoute.activeCategory;
