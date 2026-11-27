@@ -3004,16 +3004,8 @@
       window.buyNowFromPDP = function () {
         const p = PRODUCTS.find(x => x.id === state.pdpProductId);
         if (!p || p.outOfStock) return;
-        let added = false;
-        for (let i = 0; i < state.pdpQty; i++) {
-          const res = window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, true);
-          if (res !== false) {
-            added = true;
-          } else {
-            return;
-          }
-        }
-        if (added) {
+        const res = window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, true);
+        if (res !== false) {
           window.switchScreen('cart');
         }
       };
@@ -3069,6 +3061,52 @@
         reader.readAsDataURL(file);
       };
 
+      function getVariantWeightSummary(variant, qty) {
+        if (!qty || qty <= 0 || !variant) return '';
+        const text = `${variant.label || ''} ${variant.detail || ''}`;
+        const match = text.match(/(\d+(?:\.\d+)?)\s*(kg|g|gm|gram|grams|litres?|liters?|ltr|l|ml|pcs?|pieces?|tabs?|tablets?|capsules?|fruits?|plates?)/i);
+        if (!match) return '';
+
+        const val = parseFloat(match[1]);
+        const rawUnit = match[2].toLowerCase();
+
+        if (rawUnit === 'g' || rawUnit === 'gm' || rawUnit === 'gram' || rawUnit === 'grams') {
+          const totalGrams = val * qty;
+          const totalStr = totalGrams >= 1000
+            ? `${(totalGrams / 1000).toFixed(totalGrams % 1000 === 0 ? 0 : 2).replace(/\.00$/, '')} kg`
+            : `${totalGrams}g`;
+          return `${qty} x ${val}g = ${totalStr}`;
+        }
+
+        if (rawUnit === 'kg') {
+          const totalKg = (val * qty).toFixed((val * qty) % 1 === 0 ? 0 : 2).replace(/\.00$/, '');
+          return `${qty} x ${val}kg = ${totalKg} kg`;
+        }
+
+        if (rawUnit === 'ml') {
+          const totalMl = val * qty;
+          const totalStr = totalMl >= 1000
+            ? `${(totalMl / 1000).toFixed(totalMl % 1000 === 0 ? 0 : 2).replace(/\.00$/, '')} L`
+            : `${totalMl}ml`;
+          return `${qty} x ${val}ml = ${totalStr}`;
+        }
+
+        if (rawUnit.startsWith('l') || rawUnit.startsWith('litre') || rawUnit.startsWith('liter')) {
+          const totalL = (val * qty).toFixed((val * qty) % 1 === 0 ? 0 : 2).replace(/\.00$/, '');
+          return `${qty} x ${val}L = ${totalL} L`;
+        }
+
+        let shortUnit = rawUnit;
+        if (shortUnit.startsWith('cap')) shortUnit = 'caps';
+        else if (shortUnit.startsWith('tab')) shortUnit = 'tabs';
+        else if (shortUnit.startsWith('pc')) shortUnit = 'pcs';
+        else if (shortUnit.startsWith('fruit')) shortUnit = 'fruits';
+        else if (shortUnit.startsWith('plate')) shortUnit = 'plates';
+
+        const totalUnits = val * qty;
+        return `${qty} x ${val} = ${totalUnits} ${shortUnit}`;
+      }
+
       function renderPDP() {
         const p = PRODUCTS.find(x => x.id === state.pdpProductId);
         const wrap = document.getElementById('pdpContent');
@@ -3079,6 +3117,9 @@
         const slide = p.slides[state.pdpSlideIdx] || p.slides[0];
         const isSaved = state.wishlist.some(w => w.prodId === p.id);
         const suggested = PRODUCTS.filter(item => item.id !== p.id && !item.outOfStock).slice(0, 3);
+        const cartItem = state.cart.find(c => c.id === p.id && c.variantIdx === state.pdpVariantIdx);
+        const inCartQty = cartItem ? cartItem.qty : 0;
+        const weightSummary = inCartQty > 0 ? getVariantWeightSummary(v, inCartQty) : '';
 
         wrap.innerHTML = `
           <div class="bg-white rounded-3xl p-4 card-shadow space-y-3">
@@ -3163,16 +3204,18 @@
                 </button>
               ` : `
                 <div class="flex items-center gap-2">
-                  <div class="flex items-center gap-2.5 bg-gray-100 rounded-2xl px-3 py-2.5 text-xs font-extrabold text-gray-900 shrink-0">
-                    <button type="button" onclick="window.adjustPdpQty(-1)">−</button>
-                    <span>${state.pdpQty}</span>
-                    <button type="button" onclick="window.adjustPdpQty(1)">+</button>
+                  <div class="flex flex-col items-center justify-center ${inCartQty > 0 ? 'bg-emerald-50 border border-emerald-300' : 'bg-gray-100 border border-transparent'} rounded-2xl px-2.5 py-1.5 shrink-0 text-center select-none min-h-[44px]">
+                    <div class="flex items-center justify-center gap-1 leading-none">
+                      <span class="text-[10px] font-extrabold uppercase tracking-wider ${inCartQty > 0 ? 'text-emerald-700' : 'text-gray-400'}">In Cart:</span>
+                      <span class="text-xs font-black ${inCartQty > 0 ? 'text-emerald-900' : 'text-gray-500'}">${inCartQty}</span>
+                    </div>
+                    ${inCartQty > 0 && weightSummary ? `<div class="text-[9px] font-bold text-emerald-800 leading-tight mt-0.5 whitespace-nowrap">${weightSummary}</div>` : ''}
                   </div>
-                  <button type="button" onclick="window.addBulkFromPDP()" class="flex-1 py-3 rounded-2xl bg-[#FDF8F8] border border-[#7A1C24]/25 text-[#7A1C24] text-xs font-extrabold active:scale-[0.99] transition-transform">
+                  <button type="button" onclick="window.addOneFromPDP()" class="flex-1 py-3 rounded-2xl bg-[#FDF8F8] border border-[#7A1C24]/25 text-[#7A1C24] text-xs font-extrabold active:scale-[0.99] transition-transform">
                     Add to Cart
                   </button>
                   <button type="button" onclick="window.buyNowFromPDP()" class="flex-1 py-3 rounded-2xl bg-[#7A1C24] text-white text-xs font-extrabold shadow-md active:scale-[0.99] transition-transform">
-                    Buy Now • ₹${v.price * state.pdpQty}
+                    Buy Now • ₹${v.price}
                   </button>
                 </div>
               `}
@@ -3207,14 +3250,15 @@
         stickyBar.classList.add('hidden');
       }
 
-      window.addBulkFromPDP = function () {
+      window.addOneFromPDP = function () {
         const p = PRODUCTS.find(x => x.id === state.pdpProductId);
         if (!p || p.outOfStock) return;
-        for (let i = 0; i < state.pdpQty; i++) {
-          const res = window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, i > 0);
-          if (res === false) break;
+        const res = window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, false);
+        if (res !== false && state.activeScreen === 'pdp') {
+          renderPDP();
         }
       };
+      window.addBulkFromPDP = window.addOneFromPDP;
 
       // ==================== SHARE PRODUCT MODAL ====================
       window.openShareModal = function (prodId) {
@@ -3387,6 +3431,7 @@
         updateFloatingCartBar();
         if (state.activeScreen === 'home') renderBannersAndCatalog();
         if (state.activeScreen === 'categories') renderCategoryScreen();
+        if (state.activeScreen === 'pdp') renderPDP();
         if (!silent) showToast(`Added ${p.title}`);
         return true;
       };
@@ -3406,6 +3451,7 @@
         if (state.activeScreen === 'home') renderBannersAndCatalog();
         if (state.activeScreen === 'categories') renderCategoryScreen();
         if (state.activeScreen === 'cart') renderCart();
+        if (state.activeScreen === 'pdp') renderPDP();
       };
 
       window.removeCartItem = function (prodId, variantIdx = 0) {
@@ -3419,6 +3465,7 @@
         if (state.activeScreen === 'home') renderBannersAndCatalog();
         if (state.activeScreen === 'categories') renderCategoryScreen();
         if (state.activeScreen === 'cart') renderCart();
+        if (state.activeScreen === 'pdp') renderPDP();
         showToast(`Removed ${title} from cart`);
       };
 
@@ -3431,6 +3478,7 @@
         updateFloatingCartBar();
         renderBannersAndCatalog();
         renderCart();
+        if (state.activeScreen === 'pdp') renderPDP();
         showToast('Cart cleared');
       };
 
