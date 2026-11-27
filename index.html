@@ -1337,6 +1337,57 @@
         } catch (e) {}
       }
 
+      // ==================== SESSIONSTORAGE ROUTE / ACTIVE SCREEN PERSISTENCE ====================
+      const ROUTE_STORAGE_KEY = 'dailyshopi_active_route_v1';
+
+      function pushHomeDummyState() {
+        if (window.history && window.history.pushState) {
+          try {
+            window.history.pushState({ screen: 'home', isDummy: true }, '');
+          } catch (e) {}
+        }
+      }
+
+      function saveCurrentRoute() {
+        try {
+          if (!state.isLoggedIn) return;
+          const routeData = {
+            screen: state.activeScreen || 'home',
+            screenStack: state.screenStack || ['home'],
+            pdpProductId: state.pdpProductId || 'p_tomato',
+            pdpVariantIdx: state.pdpVariantIdx || 0,
+            browseCategory: state.browseCategory || 'groceries',
+            activeCategory: state.activeCategory || 'all',
+            activeSubCategory: state.activeSubCategory || 'all',
+            categoryDirectoryMode: Boolean(state.categoryDirectoryMode),
+            cameFromDirectory: Boolean(state.cameFromDirectory)
+          };
+          sessionStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify(routeData));
+          if (window.location && window.history && window.history.replaceState) {
+            const hashStr = routeData.screen === 'home' ? '' : `#${routeData.screen}`;
+            window.history.replaceState(window.history.state, '', hashStr || window.location.pathname);
+          }
+        } catch (e) {}
+      }
+
+      function loadSavedRoute() {
+        try {
+          const raw = sessionStorage.getItem(ROUTE_STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.screen) return parsed;
+          }
+          if (window.location && window.location.hash) {
+            const h = window.location.hash.replace(/^#/, '').trim();
+            const valid = ['home', 'categories', 'pdp', 'cart', 'orders', 'wallet', 'profile', 'wishlist', 'support', 'orderConfirmed'];
+            if (valid.includes(h)) {
+              return { screen: h };
+            }
+          }
+        } catch (e) {}
+        return null;
+      }
+
       function checkUserFirstOrderEligibility(phone) {
         if (hasPhoneClaimedWelcome(phone)) return false;
         try {
@@ -2059,6 +2110,7 @@
         state.isLoggedIn = false;
         state.isEditingProfile = false;
         persistSession();
+        try { sessionStorage.removeItem(ROUTE_STORAGE_KEY); } catch (e) {}
         const nameEl = document.getElementById('firstLoginNameInput');
         const phoneEl = document.getElementById('firstLoginPhoneInput');
         if (nameEl) nameEl.value = state.userName;
@@ -2185,6 +2237,7 @@
         updateFloatingCartBar();
         window.closeThreeDotMenu();
         resetAllScrollContainers();
+        saveCurrentRoute();
       }
 
       function closeAnyOpenModal() {
@@ -2237,17 +2290,12 @@
         if (searchEl) searchEl.value = '';
         renderCategoryBar();
         activateScreenDOM('home');
-        if (window.history && window.history.pushState) {
-          window.history.pushState({ screen: 'home', depth: 1 }, '');
-        }
+        pushHomeDummyState();
       };
 
       window.goBack = function () {
         // 1. If any modal is currently open, close it cleanly without changing screen or exiting
         if (closeAnyOpenModal()) {
-          if (window.history && window.history.pushState) {
-            window.history.pushState({ screen: state.activeScreen, depth: state.screenStack.length }, '');
-          }
           return;
         }
 
@@ -2256,12 +2304,17 @@
           state.categoryDirectoryMode = true;
           state.cameFromDirectory = false;
           renderCategoryScreen();
+          saveCurrentRoute();
           return;
         }
 
         // 3. Sub-pages (Grocery, categories, cart, profile, pdp, orders, wallet, etc.):
         // Returns cleanly to previous screen or Home screen. NEVER triggers exit from sub-pages!
         if (state.activeScreen !== 'home') {
+          if (window.history && window.history.length > 1) {
+            window.history.back();
+            return;
+          }
           if (state.screenStack.length > 1 && state.screenStack[state.screenStack.length - 1] === state.activeScreen) {
             state.screenStack.pop();
           }
@@ -2288,23 +2341,94 @@
         // 4. Main Home Screen ONLY: Trigger Double-Tap to Exit
         const now = Date.now();
         if (now - state.lastExitTapTime < 2000) {
-          showToast('Exiting...');
+          showToast('Exiting DailyShopi...');
           if (window.history.length > 1) {
             window.history.go(-1);
           } else {
-            window.close();
+            try { window.close(); } catch (e) {}
           }
         } else {
           state.lastExitTapTime = now;
+          pushHomeDummyState();
           showToast('Press back again to exit');
-          if (window.history && window.history.pushState) {
-            window.history.pushState({ screen: 'home', depth: 1 }, '');
-          }
         }
       };
 
       window.addEventListener('popstate', function () {
-        window.goBack();
+        // 1. If any modal is currently open, close it cleanly without changing screen or exiting
+        if (closeAnyOpenModal()) {
+          if (state.activeScreen === 'home') {
+            pushHomeDummyState();
+          } else if (window.history && window.history.pushState) {
+            window.history.pushState({ screen: state.activeScreen }, '');
+          }
+          return;
+        }
+
+        // 2. If viewing a specific category and user came from category directory, return to directory
+        if (state.activeScreen === 'categories' && !state.categoryDirectoryMode && state.cameFromDirectory) {
+          state.categoryDirectoryMode = true;
+          state.cameFromDirectory = false;
+          renderCategoryScreen();
+          saveCurrentRoute();
+          if (window.history && window.history.pushState) {
+            window.history.pushState({ screen: 'categories' }, '');
+          }
+          return;
+        }
+
+        // 3. Sub-pages (Grocery, categories, cart, profile, pdp, orders, wallet, etc.):
+        // A single back press/swipe navigates back to previous screen inside app. NEVER triggers exit from sub-pages!
+        if (state.activeScreen !== 'home') {
+          if (state.screenStack.length > 1 && state.screenStack[state.screenStack.length - 1] === state.activeScreen) {
+            state.screenStack.pop();
+          }
+
+          let prev = state.screenStack[state.screenStack.length - 1];
+          while (prev === state.activeScreen && state.screenStack.length > 1) {
+            state.screenStack.pop();
+            prev = state.screenStack[state.screenStack.length - 1];
+          }
+
+          if (!prev || prev === state.activeScreen) {
+            prev = 'home';
+            state.screenStack = ['home'];
+          }
+
+          if (prev === 'home') {
+            state.activeCategory = 'all';
+            state.activeSubCategory = 'all';
+            state.categoryDirectoryMode = false;
+            state.cameFromDirectory = false;
+            const searchEl = document.getElementById('searchInput');
+            if (searchEl) searchEl.value = '';
+            renderCategoryBar();
+            activateScreenDOM('home');
+            pushHomeDummyState();
+          } else {
+            activateScreenDOM(prev);
+            if (window.history && window.history.pushState) {
+              window.history.pushState({ screen: prev }, '');
+            }
+          }
+          return;
+        }
+
+        // 4. Main Home Screen ONLY: Intercept back swipe / button and require double-tap within 2s
+        const now = Date.now();
+        if (now - state.lastExitTapTime < 2000) {
+          showToast('Exiting DailyShopi...');
+          if (window.history.length > 1) {
+            window.history.go(-1);
+          } else {
+            try { window.close(); } catch (e) {}
+          }
+        } else {
+          state.lastExitTapTime = now;
+          // Immediately push the dummy state again so the next back press is also intercepted!
+          pushHomeDummyState();
+          showToast('Press back again to exit');
+        }
       });
 
       window.handleBottomNav = function (target) {
@@ -2446,6 +2570,7 @@
           renderSubCategoryBar(state.browseCategory);
           renderCategoryScreen();
           resetAllScrollContainers();
+          saveCurrentRoute();
         }
       };
 
@@ -2855,6 +2980,7 @@
       window.selectPdpVariant = function (idx) {
         state.pdpVariantIdx = idx;
         renderPDP();
+        saveCurrentRoute();
       };
 
       window.adjustPdpQty = function (delta) {
@@ -2956,7 +3082,7 @@
 
         wrap.innerHTML = `
           <div class="bg-white rounded-3xl p-4 card-shadow space-y-3">
-            <!-- Top Back Button + Photo Tools + Wishlist + Share -->
+            <!-- Top Back Button + Wishlist + Share -->
             <div class="flex items-center justify-between gap-1.5 flex-wrap">
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="window.goBack()" class="w-8 h-8 rounded-xl bg-gray-100 text-gray-800 font-extrabold flex items-center justify-center" aria-label="Back">‹</button>
@@ -2965,13 +3091,6 @@
                 </span>
               </div>
               <div class="flex items-center gap-1.5 flex-wrap">
-                <button type="button" onclick="window.downloadActiveProductImage()" class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-[#22C55E]/15 text-emerald-800 border border-[#22C55E]/30 hover:bg-[#22C55E] hover:text-white transition-colors">
-                  ⬇ Download Image
-                </button>
-                <label class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-[#38BDF8]/15 text-sky-900 border border-[#38BDF8]/40 hover:bg-[#38BDF8] hover:text-gray-950 transition-colors cursor-pointer">
-                  ⬆ Upload Photo
-                  <input type="file" accept="image/*" onchange="window.uploadCustomProductPhoto(event)" class="hidden" />
-                </label>
                 <button type="button" onclick="window.toggleWishlistItem('${p.id}')" class="w-7 h-7 rounded-full ${isSaved ? 'bg-rose-100 text-[#D90429]' : 'bg-gray-100 text-gray-600'} flex items-center justify-center text-xs font-extrabold" aria-label="Wishlist">
                   ${isSaved ? '♥' : '♡'}
                 </button>
@@ -4367,10 +4486,36 @@
         syncOnboardingOverlay();
         syncUserIdentityUI();
         renderCategoryBar();
-        activateScreenDOM('home');
-        if (window.history && window.history.pushState) {
-          window.history.replaceState({ screen: 'home', depth: 0 }, '');
-          window.history.pushState({ screen: 'home', depth: 1 }, '');
+
+        const savedRoute = loadSavedRoute();
+        const targetScreen = (savedRoute && savedRoute.screen && savedRoute.screen !== 'home') ? savedRoute.screen : 'home';
+
+        if (targetScreen !== 'home' && state.isLoggedIn) {
+          if (savedRoute.pdpProductId) state.pdpProductId = savedRoute.pdpProductId;
+          if (savedRoute.pdpVariantIdx !== undefined) state.pdpVariantIdx = savedRoute.pdpVariantIdx;
+          if (savedRoute.browseCategory) state.browseCategory = savedRoute.browseCategory;
+          if (savedRoute.activeCategory) state.activeCategory = savedRoute.activeCategory;
+          if (savedRoute.activeSubCategory) state.activeSubCategory = savedRoute.activeSubCategory;
+          if (savedRoute.categoryDirectoryMode !== undefined) state.categoryDirectoryMode = savedRoute.categoryDirectoryMode;
+          if (savedRoute.cameFromDirectory !== undefined) state.cameFromDirectory = savedRoute.cameFromDirectory;
+          state.screenStack = Array.isArray(savedRoute.screenStack) && savedRoute.screenStack.length > 0
+            ? savedRoute.screenStack
+            : ['home', targetScreen];
+
+          activateScreenDOM(targetScreen);
+
+          if (window.history && window.history.pushState) {
+            window.history.replaceState({ screen: 'home', isBase: true }, '');
+            window.history.pushState({ screen: 'home', isDummy: true }, '');
+            window.history.pushState({ screen: targetScreen }, '');
+          }
+        } else {
+          state.screenStack = ['home'];
+          activateScreenDOM('home');
+          if (window.history && window.history.pushState) {
+            window.history.replaceState({ screen: 'home', isBase: true }, '');
+            pushHomeDummyState();
+          }
         }
       }
 
