@@ -1445,6 +1445,7 @@
         screenStack: ['home'],
         cameFromDirectory: false,
         lastExitTapTime: 0,
+        isExiting: false,
         coins: 140,
         isFirstOrder: checkUserFirstOrderEligibility(initialUserPhone),
         redeemCoins: false,
@@ -2267,6 +2268,10 @@
 
       window.switchScreen = function (screenName) {
         if (state.activeScreen !== screenName) {
+          if (screenName === 'home') {
+            window.goMainHome();
+            return;
+          }
           if (state.screenStack[state.screenStack.length - 1] !== screenName) {
             state.screenStack.push(screenName);
           }
@@ -2301,6 +2306,10 @@
 
         // 2. If viewing a specific category and user came from category directory, return to directory
         if (state.activeScreen === 'categories' && !state.categoryDirectoryMode && state.cameFromDirectory) {
+          if (window.history && window.history.length > 1) {
+            window.history.back();
+            return;
+          }
           state.categoryDirectoryMode = true;
           state.cameFromDirectory = false;
           renderCategoryScreen();
@@ -2319,15 +2328,10 @@
             state.screenStack.pop();
           }
 
-          let prev = state.screenStack[state.screenStack.length - 1];
+          let prev = state.screenStack[state.screenStack.length - 1] || 'home';
           while (prev === state.activeScreen && state.screenStack.length > 1) {
             state.screenStack.pop();
-            prev = state.screenStack[state.screenStack.length - 1];
-          }
-
-          if (!prev || prev === state.activeScreen) {
-            prev = 'home';
-            state.screenStack = ['home'];
+            prev = state.screenStack[state.screenStack.length - 1] || 'home';
           }
 
           if (prev === 'home') {
@@ -2342,8 +2346,9 @@
         const now = Date.now();
         if (now - state.lastExitTapTime < 2000) {
           showToast('Exiting DailyShopi...');
+          state.isExiting = true;
           if (window.history.length > 1) {
-            window.history.go(-1);
+            window.history.back();
           } else {
             try { window.close(); } catch (e) {}
           }
@@ -2355,12 +2360,14 @@
       };
 
       window.addEventListener('popstate', function () {
+        if (state.isExiting) return;
+
         // 1. If any modal is currently open, close it cleanly without changing screen or exiting
         if (closeAnyOpenModal()) {
           if (state.activeScreen === 'home') {
             pushHomeDummyState();
           } else if (window.history && window.history.pushState) {
-            window.history.pushState({ screen: state.activeScreen }, '');
+            window.history.pushState({ screen: state.activeScreen, depth: state.screenStack.length }, '');
           }
           return;
         }
@@ -2371,23 +2378,21 @@
           state.cameFromDirectory = false;
           renderCategoryScreen();
           saveCurrentRoute();
-          if (window.history && window.history.pushState) {
-            window.history.pushState({ screen: 'categories' }, '');
-          }
           return;
         }
 
         // 3. Sub-pages (Grocery, categories, cart, profile, pdp, orders, wallet, etc.):
-        // A single back press/swipe navigates back to previous screen inside app. NEVER triggers exit from sub-pages!
+        // A single back press/swipe navigates back step-by-step through the in-app navigation history until reaching Home.
+        // NEVER triggers exit from sub-pages!
         if (state.activeScreen !== 'home') {
           if (state.screenStack.length > 1 && state.screenStack[state.screenStack.length - 1] === state.activeScreen) {
             state.screenStack.pop();
           }
 
-          let prev = state.screenStack[state.screenStack.length - 1];
+          let prev = state.screenStack[state.screenStack.length - 1] || 'home';
           while (prev === state.activeScreen && state.screenStack.length > 1) {
             state.screenStack.pop();
-            prev = state.screenStack[state.screenStack.length - 1];
+            prev = state.screenStack[state.screenStack.length - 1] || 'home';
           }
 
           if (!prev || prev === state.activeScreen) {
@@ -2396,6 +2401,7 @@
           }
 
           if (prev === 'home') {
+            state.screenStack = ['home'];
             state.activeCategory = 'all';
             state.activeSubCategory = 'all';
             state.categoryDirectoryMode = false;
@@ -2407,9 +2413,6 @@
             pushHomeDummyState();
           } else {
             activateScreenDOM(prev);
-            if (window.history && window.history.pushState) {
-              window.history.pushState({ screen: prev }, '');
-            }
           }
           return;
         }
@@ -2418,8 +2421,9 @@
         const now = Date.now();
         if (now - state.lastExitTapTime < 2000) {
           showToast('Exiting DailyShopi...');
+          state.isExiting = true;
           if (window.history.length > 1) {
-            window.history.go(-1);
+            window.history.back();
           } else {
             try { window.close(); } catch (e) {}
           }
@@ -2957,6 +2961,10 @@
         renderSubCategoryBar(catId);
         renderCategoryScreen();
         resetAllScrollContainers();
+        saveCurrentRoute();
+        if (window.history && window.history.pushState) {
+          window.history.pushState({ screen: 'categories', subView: 'singleCategory' }, '');
+        }
       };
 
       // ==================== PRODUCT DETAIL PAGE (PDP) ====================
@@ -4554,8 +4562,10 @@
 
           if (window.history && window.history.pushState) {
             window.history.replaceState({ screen: 'home', isBase: true }, '');
-            window.history.pushState({ screen: 'home', isDummy: true }, '');
-            window.history.pushState({ screen: targetScreen }, '');
+            pushHomeDummyState();
+            for (let i = 1; i < state.screenStack.length; i++) {
+              window.history.pushState({ screen: state.screenStack[i], depth: i + 1 }, '');
+            }
           }
         } else {
           state.screenStack = ['home'];
