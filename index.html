@@ -1097,6 +1097,32 @@
       </div>
     </div>
 
+    <!-- ==================== MEDICINE SEPARATE CART CONFLICT MODAL ==================== -->
+    <div id="medicineConflictModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="window.closeMedicineConflictModal()">
+      <div class="bg-white w-full max-w-sm rounded-t-3xl sm:rounded-3xl p-5 space-y-3.5 card-shadow text-center" onclick="event.stopPropagation()">
+        <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 mx-auto flex items-center justify-center text-2xl font-bold border border-teal-200">
+          💊
+        </div>
+        <div>
+          <h3 class="text-sm font-extrabold text-gray-900">Separate Medicine Ordering</h3>
+          <p class="text-xs text-gray-600 mt-1.5 leading-relaxed font-medium">
+            Medicines must be ordered separately. Please complete or clear your current cart before ordering medicines.
+          </p>
+        </div>
+        <div class="space-y-2 pt-1">
+          <button type="button" onclick="window.closeMedicineConflictModal(); window.switchScreen('cart');" class="w-full py-2.5 rounded-xl bg-[#7A1C24] text-white text-xs font-extrabold shadow-sm active:scale-95 transition-transform">
+            View Current Cart
+          </button>
+          <button type="button" onclick="window.clearCartAndRetryAdd();" class="w-full py-2.5 rounded-xl bg-red-50 text-[#D90429] text-xs font-extrabold hover:bg-red-100 active:scale-95 transition-transform">
+            Clear Current Cart &amp; Start Fresh
+          </button>
+          <button type="button" onclick="window.closeMedicineConflictModal()" class="w-full py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold active:scale-95 transition-transform">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== TOAST NOTIFICATION ==================== -->
     <div id="toastBanner" class="hidden fixed top-14 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg z-50 whitespace-nowrap"></div>
 
@@ -1201,57 +1227,84 @@
         } catch (e) {}
       }
 
-      function loadSavedSession() {
-        try {
-          const raw = localStorage.getItem(SESSION_STORAGE_KEY);
-          if (!raw) return null;
-          const parsed = JSON.parse(raw);
-          if (parsed && parsed.name && parsed.phone) return parsed;
-        } catch (e) {}
-        return null;
+      // ==================== LOCALSTORAGE PERSISTENCE & WELCOME OFFER TRACKING ====================
+      const CLAIMED_WELCOME_OFFERS_KEY = 'dailyshopi_claimed_welcome_offers_v1';
+
+      function normalizePhone(phone) {
+        if (!phone) return '';
+        const digits = String(phone).replace(/\D/g, '');
+        return digits.length >= 10 ? digits.slice(-10) : digits;
       }
 
-      const savedSession = loadSavedSession();
-      const initialUserPhone = savedSession ? savedSession.phone : '+91 98470 12345';
+      function getClaimedWelcomePhoneList() {
+        try {
+          const raw = localStorage.getItem(CLAIMED_WELCOME_OFFERS_KEY);
+          if (raw) {
+            const arr = JSON.parse(raw);
+            if (Array.isArray(arr)) return arr;
+          }
+        } catch (e) {}
+        return [];
+      }
 
-      const state = {
-        isLoggedIn: Boolean(savedSession),
-        zone: 'Eappikkad Zone',
-        activeCategory: 'all',
-        browseCategory: 'groceries',
-        categoryDirectoryMode: true,
-        activeSubCategory: 'all',
-        activeVendor: 'all',
-        bogoOnly: false,
-        searchQuery: '',
-        activeScreen: 'home',
-        screenStack: ['home'],
-        cameFromDirectory: false,
-        lastExitTapTime: 0,
-        coins: 140,
-        isFirstOrder: true,
-        redeemCoins: false,
-        paymentMethod: 'online',
-        rxFileName: '',
-        rxApproved: false,
-        userName: savedSession ? savedSession.name : 'Yoonas',
-        userPhone: initialUserPhone,
-        userPhotoUrl: savedSession && savedSession.photoUrl ? savedSession.photoUrl : '',
-        isEditingProfile: false,
-        offerSecondsRemaining: 4 * 3600 + 32 * 60 + 18,
-        bannerSlide: 0,
-        pdpProductId: 'p_tomato',
-        pdpVariantIdx: 0,
-        pdpQty: 1,
-        pdpSlideIdx: 0,
-        pdpDescExpanded: false,
-        cart: [],
-        wishlist: [
-          { prodId: 'p10', notify: true },
-          { prodId: 'p11', notify: true }
-        ],
-        addresses: loadUserAddresses(initialUserPhone),
-        orders: [
+      function hasPhoneClaimedWelcome(phone) {
+        const norm = normalizePhone(phone);
+        if (!norm) return false;
+        const list = getClaimedWelcomePhoneList();
+        return list.includes(norm);
+      }
+
+      function markPhoneWelcomeClaimed(phone) {
+        const norm = normalizePhone(phone);
+        if (!norm) return;
+        const list = getClaimedWelcomePhoneList();
+        if (!list.includes(norm)) {
+          list.push(norm);
+          try {
+            localStorage.setItem(CLAIMED_WELCOME_OFFERS_KEY, JSON.stringify(list));
+          } catch (e) {}
+        }
+      }
+
+      function getCartStorageKey(phone) {
+        const norm = normalizePhone(phone) || 'guest';
+        return `dailyshopi_cart_${norm}`;
+      }
+
+      function loadCartFromStorage(phone) {
+        try {
+          const key = getCartStorageKey(phone);
+          const raw = localStorage.getItem(key);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) return parsed;
+          }
+        } catch (e) {}
+        return [];
+      }
+
+      function saveCartToStorage() {
+        try {
+          const key = getCartStorageKey(state.userPhone);
+          localStorage.setItem(key, JSON.stringify(state.cart));
+        } catch (e) {}
+      }
+
+      function getOrdersStorageKey(phone) {
+        const norm = normalizePhone(phone) || 'guest';
+        return `dailyshopi_orders_${norm}`;
+      }
+
+      function loadUserOrders(phone) {
+        try {
+          const key = getOrdersStorageKey(phone);
+          const raw = localStorage.getItem(key);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          }
+        } catch (e) {}
+        return [
           {
             id: 'DS-8042',
             date: 'Today, 11:40 AM',
@@ -1274,7 +1327,97 @@
             rider: 'Completed',
             step: 4
           }
+        ];
+      }
+
+      function saveUserOrders() {
+        try {
+          const key = getOrdersStorageKey(state.userPhone);
+          localStorage.setItem(key, JSON.stringify(state.orders));
+        } catch (e) {}
+      }
+
+      function checkUserFirstOrderEligibility(phone) {
+        if (hasPhoneClaimedWelcome(phone)) return false;
+        try {
+          const raw = localStorage.getItem(getOrdersStorageKey(phone));
+          if (raw) {
+            const list = JSON.parse(raw);
+            if (Array.isArray(list) && list.some(o => o.date === 'Just now' || (o.id && o.id.startsWith('DS-81')))) {
+              markPhoneWelcomeClaimed(phone);
+              return false;
+            }
+          }
+        } catch (e) {}
+        return true;
+      }
+
+      function loadSavedSession() {
+        try {
+          const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.name && parsed.phone) {
+              return {
+                ...parsed,
+                isLoggedIn: parsed.isLoggedIn !== false
+              };
+            }
+          }
+        } catch (e) {}
+        const defaultSession = {
+          name: 'Yoonas',
+          phone: '+91 98470 12345',
+          photoUrl: '',
+          isLoggedIn: true
+        };
+        try {
+          localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(defaultSession));
+        } catch (e) {}
+        return defaultSession;
+      }
+
+      const savedSession = loadSavedSession();
+      const initialUserPhone = savedSession ? savedSession.phone : '+91 98470 12345';
+
+      const state = {
+        isLoggedIn: Boolean(savedSession && savedSession.isLoggedIn !== false),
+        zone: 'Eappikkad Zone',
+        activeCategory: 'all',
+        browseCategory: 'groceries',
+        categoryDirectoryMode: true,
+        activeSubCategory: 'all',
+        activeVendor: 'all',
+        bogoOnly: false,
+        searchQuery: '',
+        activeScreen: 'home',
+        screenStack: ['home'],
+        cameFromDirectory: false,
+        lastExitTapTime: 0,
+        coins: 140,
+        isFirstOrder: checkUserFirstOrderEligibility(initialUserPhone),
+        redeemCoins: false,
+        paymentMethod: 'online',
+        rxFileName: '',
+        rxApproved: false,
+        userName: savedSession ? savedSession.name : 'Yoonas',
+        userPhone: initialUserPhone,
+        userPhotoUrl: savedSession && savedSession.photoUrl ? savedSession.photoUrl : '',
+        isEditingProfile: false,
+        offerSecondsRemaining: 4 * 3600 + 32 * 60 + 18,
+        bannerSlide: 0,
+        pdpProductId: 'p_tomato',
+        pdpVariantIdx: 0,
+        pdpQty: 1,
+        pdpSlideIdx: 0,
+        pdpDescExpanded: false,
+        cart: loadCartFromStorage(initialUserPhone),
+        wishlist: [
+          { prodId: 'p10', notify: true },
+          { prodId: 'p11', notify: true }
         ],
+        addresses: loadUserAddresses(initialUserPhone),
+        orders: loadUserOrders(initialUserPhone),
         latestConfirmedOrderId: 'DS-8042',
         coinHistory: [
           { id: 1, title: 'Welcome Bonus Coins', date: 'Nov 2026', delta: '+140 ★' }
@@ -1676,8 +1819,8 @@
           variants: [
             { label: '10 Capsules Strip', price: 115, mrp: 130, detail: 'Rx required • 1 Strip (10 caps)' }
           ],
-          highlights: ['Doctor prescription required', 'Auto-split into Rx cart group', 'Pharmacist verification before dispatch'],
-          desc: 'Prescription antibiotic medicine. Automatically separated into a dedicated Rx fulfillment group at checkout and unlocked once a valid prescription is uploaded and approved.'
+          highlights: ['Doctor prescription required', 'Separate medicine cart required', 'Pharmacist verification before dispatch'],
+          desc: 'Prescription antibiotic medicine. Must be ordered separately with prescription upload and verified by licensed pharmacist before dispatch.'
         },
         {
           id: 'p8',
@@ -1789,15 +1932,12 @@
       // ==================== SESSION & ONBOARDING ====================
       function persistSession() {
         try {
-          if (state.isLoggedIn) {
-            localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
-              name: state.userName,
-              phone: state.userPhone,
-              photoUrl: state.userPhotoUrl
-            }));
-          } else {
-            localStorage.removeItem(SESSION_STORAGE_KEY);
-          }
+          localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
+            name: state.userName,
+            phone: state.userPhone,
+            photoUrl: state.userPhotoUrl,
+            isLoggedIn: state.isLoggedIn
+          }));
         } catch (e) {}
       }
 
@@ -1897,11 +2037,15 @@
         state.userName = nameVal;
         state.userPhone = `+91 ${phoneDigits.slice(0, 5)} ${phoneDigits.slice(5, 10)}`;
         state.isLoggedIn = true;
+        state.isFirstOrder = checkUserFirstOrderEligibility(state.userPhone);
+        state.cart = loadCartFromStorage(state.userPhone);
+        state.orders = loadUserOrders(state.userPhone);
         state.addresses = loadUserAddresses(state.userPhone);
         persistSession();
         saveUserAddresses();
         syncOnboardingOverlay();
         syncUserIdentityUI();
+        updateFloatingCartBar();
         if (state.activeScreen === 'cart') renderCart();
         if (state.activeScreen === 'profile') renderProfile();
         window.goMainHome();
@@ -1910,6 +2054,8 @@
 
       window.logoutUserSession = function () {
         saveUserAddresses();
+        saveCartToStorage();
+        saveUserOrders();
         state.isLoggedIn = false;
         state.isEditingProfile = false;
         persistSession();
@@ -2049,6 +2195,7 @@
           { id: 'addressEditorModal', close: window.closeAddressEditorModal },
           { id: 'mapPickerModal', close: window.closeMapPickerModal },
           { id: 'shareProductModal', close: window.closeShareModal },
+          { id: 'medicineConflictModal', close: window.closeMedicineConflictModal },
           { id: 'orderCongratsModal', close: window.closeOrderCongratsToHome }
         ];
         for (const m of modals) {
@@ -2141,13 +2288,15 @@
         // 4. Main Home Screen ONLY: Trigger Double-Tap to Exit
         const now = Date.now();
         if (now - state.lastExitTapTime < 2000) {
-          showToast('Exiting DailyShopi...');
+          showToast('Exiting...');
           if (window.history.length > 1) {
             window.history.go(-1);
+          } else {
+            window.close();
           }
         } else {
           state.lastExitTapTime = now;
-          showToast('Press back again to exit DailyShopi');
+          showToast('Press back again to exit');
           if (window.history && window.history.pushState) {
             window.history.pushState({ screen: 'home', depth: 1 }, '');
           }
@@ -2729,10 +2878,18 @@
       window.buyNowFromPDP = function () {
         const p = PRODUCTS.find(x => x.id === state.pdpProductId);
         if (!p || p.outOfStock) return;
+        let added = false;
         for (let i = 0; i < state.pdpQty; i++) {
-          window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, true);
+          const res = window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, true);
+          if (res !== false) {
+            added = true;
+          } else {
+            return;
+          }
         }
-        window.switchScreen('cart');
+        if (added) {
+          window.switchScreen('cart');
+        }
       };
 
       window.downloadActiveProductImage = function () {
@@ -2878,6 +3035,29 @@
                 `).join('')}
               </div>
             </div>
+
+            <!-- Action Buttons Directly Underneath Variant Selector (Above Description) -->
+            <div class="pt-3 border-t border-gray-100">
+              ${p.outOfStock ? `
+                <button type="button" onclick="window.toggleWishlistItem('${p.id}')" class="w-full py-3 rounded-2xl ${isSaved ? 'bg-amber-100 text-amber-900' : 'bg-gray-900 text-white'} text-xs font-extrabold">
+                  ${isSaved ? 'Saved in Wishlist • Restock Alert Active' : 'Save to Wishlist & Notify When Back in Stock'}
+                </button>
+              ` : `
+                <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-2.5 bg-gray-100 rounded-2xl px-3 py-2.5 text-xs font-extrabold text-gray-900 shrink-0">
+                    <button type="button" onclick="window.adjustPdpQty(-1)">−</button>
+                    <span>${state.pdpQty}</span>
+                    <button type="button" onclick="window.adjustPdpQty(1)">+</button>
+                  </div>
+                  <button type="button" onclick="window.addBulkFromPDP()" class="flex-1 py-3 rounded-2xl bg-[#FDF8F8] border border-[#7A1C24]/25 text-[#7A1C24] text-xs font-extrabold active:scale-[0.99] transition-transform">
+                    Add to Cart
+                  </button>
+                  <button type="button" onclick="window.buyNowFromPDP()" class="flex-1 py-3 rounded-2xl bg-[#7A1C24] text-white text-xs font-extrabold shadow-md active:scale-[0.99] transition-transform">
+                    Buy Now • ₹${v.price * state.pdpQty}
+                  </button>
+                </div>
+              `}
+            </div>
           </div>
 
           <!-- Product Description (5-Line Clamp + Show more / Show less) -->
@@ -2904,36 +3084,16 @@
           </div>
         `;
 
-        if (p.outOfStock) {
-          stickyBar.innerHTML = `
-            <button type="button" onclick="window.toggleWishlistItem('${p.id}')" class="w-full py-3 rounded-2xl ${isSaved ? 'bg-amber-100 text-amber-900' : 'bg-gray-900 text-white'} text-xs font-extrabold">
-              ${isSaved ? 'Saved in Wishlist • Restock Alert Active' : 'Save to Wishlist & Notify When Back in Stock'}
-            </button>
-          `;
-        } else {
-          stickyBar.innerHTML = `
-            <div class="flex items-center gap-2">
-              <div class="flex items-center gap-2.5 bg-gray-100 rounded-2xl px-3 py-2.5 text-xs font-extrabold text-gray-900 shrink-0">
-                <button type="button" onclick="window.adjustPdpQty(-1)">−</button>
-                <span>${state.pdpQty}</span>
-                <button type="button" onclick="window.adjustPdpQty(1)">+</button>
-              </div>
-              <button type="button" onclick="window.addBulkFromPDP()" class="flex-1 py-3 rounded-2xl bg-[#FDF8F8] border border-[#7A1C24]/25 text-[#7A1C24] text-xs font-extrabold active:scale-[0.99] transition-transform">
-                Add to Cart
-              </button>
-              <button type="button" onclick="window.buyNowFromPDP()" class="flex-1 py-3 rounded-2xl bg-[#7A1C24] text-white text-xs font-extrabold shadow-md active:scale-[0.99] transition-transform">
-                Buy Now • ₹${v.price * state.pdpQty}
-              </button>
-            </div>
-          `;
-        }
+        stickyBar.innerHTML = '';
+        stickyBar.classList.add('hidden');
       }
 
       window.addBulkFromPDP = function () {
         const p = PRODUCTS.find(x => x.id === state.pdpProductId);
         if (!p || p.outOfStock) return;
         for (let i = 0; i < state.pdpQty; i++) {
-          window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, i > 0);
+          const res = window.addToCart(p.id, p.todaysOffer, state.pdpVariantIdx, i > 0);
+          if (res === false) break;
         }
       };
 
@@ -3043,14 +3203,48 @@
       }
 
       // ==================== CART, RX GATE & CHECKOUT ====================
+      window.showMedicineConflictModal = function (pendingItem) {
+        state._pendingConflictedItem = pendingItem || null;
+        const modal = document.getElementById('medicineConflictModal');
+        if (modal) modal.classList.remove('hidden');
+        showToast("Medicines must be ordered separately. Please complete or clear your current cart before ordering medicines.");
+      };
+
+      window.closeMedicineConflictModal = function () {
+        const modal = document.getElementById('medicineConflictModal');
+        if (modal) modal.classList.add('hidden');
+        state._pendingConflictedItem = null;
+      };
+
+      window.clearCartAndRetryAdd = function () {
+        const pending = state._pendingConflictedItem;
+        window.clearCart();
+        window.closeMedicineConflictModal();
+        if (pending) {
+          window.addToCart(pending.prodId, pending.isDailyCap, pending.variantIdx, false);
+        }
+      };
+
       window.addToCart = function (prodId, isDailyCap, variantIdx = 0, silent = false) {
         const p = PRODUCTS.find(x => x.id === prodId);
-        if (!p || p.outOfStock) return;
+        if (!p || p.outOfStock) return false;
+
+        const isMedicine = (p.category === 'medicines');
+        if (state.cart.length > 0) {
+          const hasMedicinesInCart = state.cart.some(item => item.category === 'medicines');
+          const hasRegularInCart = state.cart.some(item => item.category !== 'medicines');
+
+          if ((isMedicine && hasRegularInCart) || (!isMedicine && hasMedicinesInCart)) {
+            window.showMedicineConflictModal({ prodId, isDailyCap, variantIdx });
+            return false;
+          }
+        }
+
         const v = p.variants[variantIdx] || p.variants[0];
         const existing = state.cart.find(c => c.id === prodId && c.variantIdx === variantIdx);
         if (isDailyCap && existing && existing.qty >= 1) {
           if (!silent) showToast("Today's Offer is limited to 1 unit per day");
-          return;
+          return false;
         }
         if (existing) {
           existing.qty += 1;
@@ -3058,10 +3252,11 @@
           state.cart.push({
             id: p.id,
             title: p.title,
+            category: p.category,
             emoji: p.emoji,
             imageUrl: p.imageUrl,
             vendor: p.vendor,
-            rxRequired: p.rxRequired,
+            rxRequired: Boolean(p.rxRequired),
             variantIdx,
             variantLabel: v.label,
             price: v.price,
@@ -3069,10 +3264,12 @@
             isDailyCap: Boolean(isDailyCap)
           });
         }
+        saveCartToStorage();
         updateFloatingCartBar();
         if (state.activeScreen === 'home') renderBannersAndCatalog();
         if (state.activeScreen === 'categories') renderCategoryScreen();
         if (!silent) showToast(`Added ${p.title}`);
+        return true;
       };
 
       window.changeQty = function (prodId, delta, variantIdx = 0) {
@@ -3085,6 +3282,7 @@
         }
         item.qty += delta;
         if (item.qty <= 0) state.cart.splice(idx, 1);
+        saveCartToStorage();
         updateFloatingCartBar();
         if (state.activeScreen === 'home') renderBannersAndCatalog();
         if (state.activeScreen === 'categories') renderCategoryScreen();
@@ -3097,6 +3295,7 @@
         const item = state.cart[idx];
         const title = item ? item.title : 'Item';
         state.cart.splice(idx, 1);
+        saveCartToStorage();
         updateFloatingCartBar();
         if (state.activeScreen === 'home') renderBannersAndCatalog();
         if (state.activeScreen === 'categories') renderCategoryScreen();
@@ -3109,6 +3308,7 @@
         state.redeemCoins = false;
         state.rxFileName = '';
         state.rxApproved = false;
+        saveCartToStorage();
         updateFloatingCartBar();
         renderBannersAndCatalog();
         renderCart();
@@ -3599,20 +3799,40 @@
           return;
         }
 
-        const regularItems = state.cart.filter(i => !i.rxRequired);
-        const rxItems = state.cart.filter(i => i.rxRequired);
-        const hasRx = rxItems.length > 0;
-        const rxBlocked = hasRx && !state.rxApproved;
+        const isMedicineCart = state.cart.every(i => i.category === 'medicines');
         const primaryAddr = state.addresses.find(a => a.active) || state.addresses[0];
         const { subtotal, firstOrderDiscount, coinDiscount, maxCoinDiscount, deliveryFee, payable, distanceKm } = getCartTotals();
+        const rxGateUnlocked = isMedicineCart ? Boolean(state.rxFileName && state.rxApproved) : true;
+        const placeOrderLocked = isMedicineCart && !rxGateUnlocked;
 
-        const renderGroup = (title, badgeText, list, isRx) => !list.length ? '' : `
-          <div class="bg-white rounded-2xl p-3.5 card-shadow space-y-2.5 ${isRx ? 'border border-teal-200' : ''}">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-xs font-extrabold text-gray-900">${title}</span>
-              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full shrink-0 ${isRx ? 'bg-teal-50 text-teal-700' : 'bg-[#FDF8F8] text-[#7A1C24]'}">${badgeText}</span>
+        wrap.innerHTML = `
+          <!-- Delivery Address & Hub Distance Card -->
+          <div class="bg-white rounded-2xl p-3.5 card-shadow flex items-start justify-between gap-3 border border-gray-100">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#FDF8F8] text-[#7A1C24]">${primaryAddr.tag}</span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800">
+                  ⚡ ${primaryAddr.distanceKm || calculateDistanceKm(primaryAddr.lat, primaryAddr.lng)} km from Epikad Hub
+                </span>
+                ${isMedicineCart ? '<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-teal-50 text-teal-800">Pharmacy Order</span>' : ''}
+              </div>
+              <div class="text-xs font-bold text-gray-900 mt-1.5">${primaryAddr.line}</div>
+              ${primaryAddr.landmark ? `<div class="text-[11px] text-gray-500 mt-0.5">Near ${primaryAddr.landmark}</div>` : ''}
             </div>
-            ${list.map(item => `
+            <button type="button" onclick="window.openAddressModal()" class="px-3 py-1.5 rounded-xl bg-[#FDF8F8] text-[#7A1C24] text-xs font-extrabold hover:bg-[#7A1C24] hover:text-white transition-colors shrink-0">
+              Change
+            </button>
+          </div>
+
+          <!-- Cart Items Group (Unified - No Order Splitting) -->
+          <div class="bg-white rounded-2xl p-3.5 card-shadow space-y-2.5 ${isMedicineCart ? 'border border-teal-200' : ''}">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-extrabold text-gray-900">${isMedicineCart ? 'Prescription &amp; Medicine Items' : 'Standard Order Items'}</span>
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full shrink-0 ${isMedicineCart ? 'bg-teal-50 text-teal-700' : 'bg-[#FDF8F8] text-[#7A1C24]'}">
+                ${isMedicineCart ? 'Dedicated Medicine Cart' : `${state.cart.length} items`}
+              </span>
+            </div>
+            ${state.cart.map(item => `
               <div class="flex items-center justify-between gap-2 py-2 border-t border-gray-100 first:border-t-0">
                 <div class="flex items-center gap-2.5 min-w-0">
                   <div class="w-11 h-11 rounded-xl overflow-hidden bg-[#FDF8F8] flex items-center justify-center text-lg shrink-0">
@@ -3643,47 +3863,34 @@
               </div>
             `).join('')}
           </div>
-        `;
 
-        wrap.innerHTML = `
-          <!-- Delivery Address & Hub Distance Card -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow flex items-start justify-between gap-3 border border-gray-100">
-            <div class="min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#FDF8F8] text-[#7A1C24]">${primaryAddr.tag}</span>
-                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800">
-                  ⚡ ${primaryAddr.distanceKm || calculateDistanceKm(primaryAddr.lat, primaryAddr.lng)} km from Epikad Hub
-                </span>
-              </div>
-              <div class="text-xs font-bold text-gray-900 mt-1.5">${primaryAddr.line}</div>
-              ${primaryAddr.landmark ? `<div class="text-[11px] text-gray-500 mt-0.5">Near ${primaryAddr.landmark}</div>` : ''}
-            </div>
-            <button type="button" onclick="window.openAddressModal()" class="px-3 py-1.5 rounded-xl bg-[#FDF8F8] text-[#7A1C24] text-xs font-extrabold hover:bg-[#7A1C24] hover:text-white transition-colors shrink-0">
-              Change
-            </button>
-          </div>
-
-          ${renderGroup('Standard Order', `${regularItems.length} items`, regularItems, false)}
-          ${renderGroup('Prescription Medicine Group (Rx Required)', 'Auto-Split Rx', rxItems, true)}
-
-          <!-- Prescription Upload & Approval Gate -->
-          ${hasRx ? `
+          <!-- Prescription Upload & Admin Approval Gate for Medicine Orders -->
+          ${isMedicineCart ? `
             <div class="bg-white rounded-2xl p-3.5 card-shadow border border-teal-200 space-y-2.5">
               <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-extrabold text-gray-900">Prescription Upload &amp; Approval Gate</span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-base">📋</span>
+                  <span class="text-xs font-extrabold text-gray-900">Prescription Upload &amp; Approval Gate</span>
+                </div>
                 <button type="button" onclick="window.toggleDemoRxApproval()" class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${state.rxApproved ? 'bg-[#22C55E]/20 text-emerald-900' : 'bg-amber-100 text-amber-900'}">
-                  ${state.rxApproved ? 'Approved ✓' : 'Approval Pending ↻'}
+                  ${state.rxApproved ? 'Approved by Admin/Supplier ✓' : 'Awaiting Approval ↻'}
                 </button>
               </div>
+              <p class="text-[11px] text-gray-600">
+                Prescription upload and admin/supplier verification are strictly required before confirming medicine orders.
+              </p>
               <div class="bg-gray-50 rounded-xl p-2.5 flex items-center justify-between gap-2">
-                <span class="text-[11px] font-semibold text-gray-600 truncate">${state.rxFileName || 'No prescription uploaded'}</span>
+                <span class="text-[11px] font-semibold text-gray-700 truncate">${state.rxFileName || 'No prescription uploaded yet'}</span>
                 <div class="flex items-center gap-1.5 shrink-0">
-                  <button type="button" onclick="window.useQuickSampleRx()" class="px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-gray-800 text-[10px] font-extrabold">Quick Sample Rx</button>
-                  <label class="px-2.5 py-1 rounded-lg bg-[#7A1C24] text-white text-[10px] font-extrabold cursor-pointer">
+                  <button type="button" onclick="window.useQuickSampleRx()" class="px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-gray-800 text-[10px] font-extrabold hover:bg-gray-100">Demo Sample Rx</button>
+                  <label class="px-2.5 py-1 rounded-lg bg-[#0F766E] text-white text-[10px] font-extrabold cursor-pointer hover:bg-[#0D655E]">
                     Upload Rx
                     <input type="file" accept="image/*,.pdf" onchange="window.handleRxFileUpload(event)" class="hidden" />
                   </label>
                 </div>
+              </div>
+              <div class="text-[10px] font-semibold ${rxGateUnlocked ? 'text-emerald-700' : 'text-amber-700'}">
+                ${rxGateUnlocked ? '✓ Prescription verified & approved by pharmacy supplier. Order unlocked!' : '⚠ Upload prescription and obtain admin/supplier approval to unlock checkout.'}
               </div>
             </div>
           ` : ''}
@@ -3745,17 +3952,26 @@
             </div>
           </div>
 
-          <button type="button" onclick="window.placeOrder(${payable})" class="w-full py-3.5 rounded-2xl ${rxBlocked ? 'bg-gray-300 text-gray-600' : 'bg-[#7A1C24] text-white shadow-lg'} text-xs font-extrabold active:scale-[0.99] transition-transform">
-            ${rxBlocked ? 'Approve Prescription to Unlock Place Order' : `Place Order • ₹${payable}`}
+          <button type="button" onclick="window.placeOrder(${payable})" class="w-full py-3.5 rounded-2xl ${placeOrderLocked ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : (isMedicineCart ? 'bg-[#0F766E] text-white shadow-lg' : 'bg-[#7A1C24] text-white shadow-lg')} text-xs font-extrabold active:scale-[0.99] transition-transform">
+            ${placeOrderLocked
+              ? (!state.rxFileName ? 'Upload Prescription to Unlock Order' : 'Awaiting Admin/Supplier Approval')
+              : (isMedicineCart ? `Confirm Medicine Order • ₹${payable}` : `Place Order • ₹${payable}`)}
           </button>
         `;
       }
 
       window.placeOrder = function (payable) {
-        const hasRx = state.cart.some(i => i.rxRequired);
-        if (hasRx && !state.rxApproved) {
-          showToast('Upload and approve prescription before placing order');
-          return;
+        if (state.cart.length === 0) return;
+        const isMedicineCart = state.cart.every(i => i.category === 'medicines');
+        if (isMedicineCart) {
+          if (!state.rxFileName) {
+            showToast('Please upload a prescription before placing your medicine order');
+            return;
+          }
+          if (!state.rxApproved) {
+            showToast('Prescription pending admin/supplier approval');
+            return;
+          }
         }
         const paymentMap = {
           online: 'Online Payment (UPI / Cards)',
@@ -3767,18 +3983,25 @@
         const newOrder = {
           id: newId,
           date: 'Just now',
-          status: 'Out for Delivery',
-          eta: '15–20 mins',
+          status: isMedicineCart ? 'Prescription Approved • Processing' : 'Out for Delivery',
+          eta: isMedicineCart ? '20–25 mins' : '15–20 mins',
           total: payable,
           paymentLabel: paymentMap[state.paymentMethod] || 'Online Payment',
           items: state.cart.map(i => `${i.title} (${i.variantLabel}) x${i.qty}`),
-          rider: 'Arjun K. • Bike KL-11-XX-4021',
+          rider: isMedicineCart ? 'GreenCare Pharmacy • Pharmacist Verified' : 'Arjun K. • Bike KL-11-XX-4021',
+          isMedicineOrder: isMedicineCart,
+          rxFileName: isMedicineCart ? state.rxFileName : '',
           step: 3
         };
         state.orders.unshift(newOrder);
+        saveUserOrders();
         state.latestConfirmedOrderId = newId;
         state.coins += earnedCoins;
+
+        // Permanently record that this mobile number has claimed the welcome offer
+        markPhoneWelcomeClaimed(state.userPhone);
         state.isFirstOrder = false;
+
         state.coinHistory.unshift({
           id: Date.now(),
           title: `Earned on Order #${newId}`,
@@ -3786,6 +4009,7 @@
           delta: `+${earnedCoins} ★`
         });
         state.cart = [];
+        saveCartToStorage();
         state.redeemCoins = false;
         state.rxFileName = '';
         state.rxApproved = false;
@@ -3990,9 +4214,13 @@
         }
         state.userName = newName;
         state.userPhone = newPhone;
+        state.isFirstOrder = checkUserFirstOrderEligibility(state.userPhone);
+        state.cart = loadCartFromStorage(state.userPhone);
+        state.orders = loadUserOrders(state.userPhone);
         state.isEditingProfile = false;
         persistSession();
         syncUserIdentityUI();
+        updateFloatingCartBar();
         renderProfile();
         showToast('Profile details updated!');
       };
@@ -4140,8 +4368,9 @@
         syncUserIdentityUI();
         renderCategoryBar();
         activateScreenDOM('home');
-        if (window.history && window.history.replaceState) {
-          window.history.replaceState({ screen: 'home', depth: 1 }, '');
+        if (window.history && window.history.pushState) {
+          window.history.replaceState({ screen: 'home', depth: 0 }, '');
+          window.history.pushState({ screen: 'home', depth: 1 }, '');
         }
       }
 
