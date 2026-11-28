@@ -4,12 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DailyShopi — Customer App UI Prototype</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
+    /* ==========================================================================
+       01. CSS VARIABLES & DESIGN TOKENS
+       Centralized branding tokens, theme tints, and backend-ready Fashion variables
+       ========================================================================== */
     :root {
+      /* Brand Color System */
       --brand-maroon: #7A1C24;
       --brand-maroon-dark: #581118;
       --brand-red: #D90429;
@@ -17,6 +22,13 @@
       --brand-sky: #38BDF8;
       --active-accent: #7A1C24;
       --active-tint: #FDF8F8;
+
+      /* Dynamic Fashion Theme Tokens (Overridable via APP_CONFIG.FASHION_THEME_CONFIG) */
+      --fashion-primary: #7C3AED;
+      --fashion-secondary: #DB2777;
+      --fashion-badge: #F59E0B;
+      --fashion-highlight: #F59E0B;
+      --fashion-hero-gradient: linear-gradient(135deg, #4C1D95 0%, #7C3AED 55%, #DB2777 100%);
     }
 
     * {
@@ -25,6 +37,10 @@
       box-sizing: border-box;
     }
 
+    /* ==========================================================================
+       02. BASE & LAYOUT SHELL
+       Desktop centering wrapper, mobile frame viewport, and scrollbar resets
+       ========================================================================== */
     body {
       background: radial-gradient(circle at top left, #F6EFEF 0%, #E7DFDF 100%);
       min-height: 100vh;
@@ -32,14 +48,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
     }
 
     .phone-frame {
@@ -65,6 +73,14 @@
       }
     }
 
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
     .theme-transition {
       transition: background-color 0.28s ease, color 0.28s ease, border-color 0.28s ease;
     }
@@ -73,11 +89,20 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     }
 
-    .glass-cart {
-      background: rgba(122, 28, 36, 0.96);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 12px 28px -6px rgba(122, 28, 36, 0.45);
+    /* ==========================================================================
+       03. HEADER, SEARCH & CATEGORY CHIPS
+       Transitions, search focus rings, and horizontal category chip scroll tracks
+       ========================================================================== */
+    #mainHeader {
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* ==========================================================================
+       04. HOME BANNERS & YOUR FASHION STORE STRIP
+       Hero promo carousel cards, audio wave animations, and prominent ad slots
+       ========================================================================== */
+    .ad-slot-prominent {
+      height: 164px;
     }
 
     @keyframes pulseVideoWave {
@@ -89,11 +114,44 @@
       animation: pulseVideoWave 0.9s ease-in-out infinite;
     }
 
-    @keyframes dashMove {
-      to { stroke-dashoffset: -24; }
+    /* ==========================================================================
+       05. PRODUCT CARDS & FASHION LARGE VIEW
+       Aspect ratio management, card shadow elevations, and fashion highlight badges
+       ========================================================================== */
+    /* Fashion & grocery card layout handled via Tailwind utility grid & aspect containers */
+
+    /* ==========================================================================
+       06. PRODUCT DETAILS, VARIANTS & ONE-CLICK CART BAR
+       Multi-line description clamping and product detail page styling
+       ========================================================================== */
+    .desc-clamp-5 {
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
-    .route-dash {
-      animation: dashMove 1.2s linear infinite;
+
+    /* ==========================================================================
+       07. CART, CHECKOUT & MODALS/TOASTS
+       Floating bottom cart bar, modal bounce animations, pulse rings & confetti
+       ========================================================================== */
+    .glass-cart {
+      background: rgba(122, 28, 36, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 12px 28px -6px rgba(122, 28, 36, 0.45);
+    }
+
+    #floatingCartBar {
+      position: fixed;
+      bottom: 66px;
+      left: 0;
+      right: 0;
+      width: calc(100% - 32px);
+      max-width: 386px;
+      margin-left: auto;
+      margin-right: auto;
+      z-index: 40;
     }
 
     @keyframes popScaleBounce {
@@ -125,17 +183,17 @@
       animation: confettiFall 2.4s ease-out infinite;
     }
 
-    .ad-slot-prominent {
-      height: 164px;
+    @keyframes dashMove {
+      to { stroke-dashoffset: -24; }
+    }
+    .route-dash {
+      animation: dashMove 1.2s linear infinite;
     }
 
-    .desc-clamp-5 {
-      display: -webkit-box;
-      -webkit-line-clamp: 5;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
+    /* ==========================================================================
+       08. BOTTOM NAVIGATION
+       Fixed bottom tab bar shell and active indicators
+       ========================================================================== */
     #bottomNavBar {
       position: fixed;
       bottom: 0;
@@ -143,18 +201,6 @@
       right: 0;
       width: 100%;
       max-width: 418px;
-      margin-left: auto;
-      margin-right: auto;
-      z-index: 40;
-    }
-
-    #floatingCartBar {
-      position: fixed;
-      bottom: 66px;
-      left: 0;
-      right: 0;
-      width: calc(100% - 32px);
-      max-width: 386px;
       margin-left: auto;
       margin-right: auto;
       z-index: 40;
@@ -1162,25 +1208,68 @@
 
   <script>
     (function () {
-      const SESSION_STORAGE_KEY = 'dailyshopi_user_session_v6';
-
-      // ==================== EPIKAD HUB CONFIGURATION & GEO UTILS ====================
-      const DELIVERY_HUB = {
-        name: 'Epikad Central Franchise Hub',
-        locality: 'Epikad Junction, Kerala',
-        lat: 11.0542,
-        lng: 76.2736
+      try {
+      /* ==========================================================================
+         01. APP_CONFIG & FEATURE FLAGS
+         Centralized application configuration, zone parameters & feature flags
+         ========================================================================== */
+      const APP_CONFIG = {
+        APP_NAME: 'DailyShopi',
+        ZONE: 'Eappikkad Zone',
+        ENABLE_PRESCRIPTION_UPLOAD: false, // OTC medicine model: direct checkout, prescription upload disabled
+        ORDER_SPLITTING_ENABLED: false,    // No split orders: unified single cart, medicines isolated from grocery
+        DELIVERY_HUB: {
+          name: 'Epikad Central Franchise Hub',
+          locality: 'Epikad Junction, Kerala',
+          lat: 11.0542,
+          lng: 76.2736
+        },
+        ZONE_LOCALITIES: [
+          { name: 'Epikad Junction', detail: 'Market Road, Central Epikad', lat: 11.0542, lng: 76.2736 },
+          { name: 'CEE YEM Building', detail: 'Epikad Main Road', lat: 11.0580, lng: 76.2780 },
+          { name: 'Epikad South Road', detail: 'Near School & Masjid', lat: 11.0490, lng: 76.2690 },
+          { name: 'Melattur Road Crossing', detail: 'Epikad-Melattur Border', lat: 11.0630, lng: 76.2890 },
+          { name: 'Alanallur Road Junction', detail: 'Epikad East Zone', lat: 11.0420, lng: 76.2950 },
+          { name: 'Vellinezhi Link Road', detail: 'South-East Zone', lat: 11.0310, lng: 76.2620 },
+          { name: 'Melattur Town Centre', detail: 'Melattur Station area', lat: 11.0720, lng: 76.3050 }
+        ],
+        STORAGE_KEYS: {
+          SESSION: 'dailyshopi_user_session_v6',
+          CLAIMED_WELCOME_OFFERS: 'dailyshopi_claimed_welcome_offers_v1',
+          ROUTE: 'dailyshopi_active_route_v1'
+        },
+        FASHION_THEME: {
+          accent: '#7C3AED',              // Royal Purple Accent
+          tint: '#F5F3FF',                // Soft lavender-purple background tint
+          btnPrimaryBg: '#6D28D9',        // Deep purple for primary action buttons
+          btnPrimaryText: '#FFFFFF',      // White text for primary action buttons
+          btnSecondaryBg: '#FAF5FF',      // Light purple tint for secondary buttons
+          btnSecondaryBorder: '#DDD6FE',  // Border for secondary action buttons
+          btnSecondaryText: '#6D28D9',    // Text color for secondary buttons
+          badgeBg: '#FBBF24',             // Vibrant Amber for offer badges
+          badgeText: '#4C1D95',           // Dark purple text on offer badges
+          cardBorder: '#EDE9FE',          // Subtle border for fashion cards
+          highlightAccent: '#EC4899',     // Pink highlight accent
+          heroGradient: 'linear-gradient(135deg, #4C1D95 0%, #7C3AED 55%, #DB2777 100%)'
+        }
       };
 
-      const ZONE_LOCALITIES = [
-        { name: 'Epikad Junction', detail: 'Market Road, Central Epikad', lat: 11.0542, lng: 76.2736 },
-        { name: 'CEE YEM Building', detail: 'Epikad Main Road', lat: 11.0580, lng: 76.2780 },
-        { name: 'Epikad South Road', detail: 'Near School & Masjid', lat: 11.0490, lng: 76.2690 },
-        { name: 'Melattur Road Crossing', detail: 'Epikad-Melattur Border', lat: 11.0630, lng: 76.2890 },
-        { name: 'Alanallur Road Junction', detail: 'Epikad East Zone', lat: 11.0420, lng: 76.2950 },
-        { name: 'Vellinezhi Link Road', detail: 'South-East Zone', lat: 11.0310, lng: 76.2620 },
-        { name: 'Melattur Town Centre', detail: 'Melattur Station area', lat: 11.0720, lng: 76.3050 }
-      ];
+      // Global window exports for developer inspection & backend hooks
+      window.APP_CONFIG = APP_CONFIG;
+      window.FASHION_THEME_CONFIG = APP_CONFIG.FASHION_THEME;
+
+      // Shorthand references for backward compatibility
+      const DELIVERY_HUB = APP_CONFIG.DELIVERY_HUB;
+      const ZONE_LOCALITIES = APP_CONFIG.ZONE_LOCALITIES;
+      const SESSION_STORAGE_KEY = APP_CONFIG.STORAGE_KEYS.SESSION;
+      const CLAIMED_WELCOME_OFFERS_KEY = APP_CONFIG.STORAGE_KEYS.CLAIMED_WELCOME_OFFERS;
+      const ROUTE_STORAGE_KEY = APP_CONFIG.STORAGE_KEYS.ROUTE;
+      const FASHION_THEME_CONFIG = APP_CONFIG.FASHION_THEME;
+
+      /* ==========================================================================
+         02. STORE & STORAGE SERVICE
+         Persistent state, addresses, cart items, order history & session handling
+         ========================================================================== */
 
       function calculateDistanceKm(lat1, lon1, lat2 = DELIVERY_HUB.lat, lon2 = DELIVERY_HUB.lng) {
         if (!lat1 || !lon1) return 1.8;
@@ -1260,8 +1349,6 @@
       }
 
       // ==================== LOCALSTORAGE PERSISTENCE & WELCOME OFFER TRACKING ====================
-      const CLAIMED_WELCOME_OFFERS_KEY = 'dailyshopi_claimed_welcome_offers_v1';
-
       function normalizePhone(phone) {
         if (!phone) return '';
         const digits = String(phone).replace(/\D/g, '');
@@ -1370,8 +1457,6 @@
       }
 
       // ==================== SESSIONSTORAGE ROUTE / ACTIVE SCREEN PERSISTENCE ====================
-      const ROUTE_STORAGE_KEY = 'dailyshopi_active_route_v1';
-
       const ROOT_HOME_STATE = {
         screen: 'home',
         activeCategory: 'all',
@@ -1538,6 +1623,10 @@
       };
       window._appState = state;
 
+      /* ==========================================================================
+         03. CATALOG DATA
+         Categories, franchise stores, catalog products & promotional banners
+         ========================================================================== */
       const CATEGORIES = [
         {
           id: 'all',
@@ -2294,6 +2383,16 @@
         }
       ];
 
+      // Expose Catalog Data to window for developer inspection and API hooks
+      window.CATEGORIES = CATEGORIES;
+      window.VENDORS = VENDORS;
+      window.PRODUCTS = PRODUCTS;
+      window.PROMO_SLIDES = PROMO_SLIDES;
+
+      /* ==========================================================================
+         06. UI RENDERERS & EVENT HANDLERS
+         Dynamic screens, PDP, category directories, address editor & profile views
+         ========================================================================== */
       // ==================== SCROLL RESET HELPER ====================
       function resetAllScrollContainers() {
         const scrollIds = [
@@ -2468,21 +2567,7 @@
       }
 
       // ==================== DYNAMIC FASHION THEME & BACKEND CONFIGURATION ====================
-      const FASHION_THEME_CONFIG = {
-        accent: '#7C3AED',              // Royal Purple Accent
-        tint: '#F5F3FF',                // Soft lavender-purple background tint
-        btnPrimaryBg: '#6D28D9',        // Deep purple for primary action buttons
-        btnPrimaryText: '#FFFFFF',      // White text for primary action buttons
-        btnSecondaryBg: '#FAF5FF',      // Light purple tint for secondary buttons
-        btnSecondaryBorder: '#DDD6FE',  // Border for secondary action buttons
-        btnSecondaryText: '#6D28D9',    // Text color for secondary buttons
-        badgeBg: '#FBBF24',             // Vibrant Amber for offer badges
-        badgeText: '#4C1D95',           // Dark purple text on offer badges
-        cardBorder: '#EDE9FE',          // Subtle border for fashion cards
-        highlightAccent: '#EC4899',     // Pink highlight accent
-        heroGradient: 'linear-gradient(135deg, #4C1D95 0%, #7C3AED 55%, #DB2777 100%)'
-      };
-
+      // FASHION_THEME_CONFIG is initialized in APP_CONFIG (01. APP_CONFIG & FEATURE FLAGS)
       function applyFashionTheme(customConfig = {}) {
         if (customConfig && typeof customConfig === 'object') {
           Object.assign(FASHION_THEME_CONFIG, customConfig);
@@ -2649,6 +2734,10 @@
         }
       }
 
+      /* ==========================================================================
+         04. ROUTER & NAVIGATION MANAGER
+         Multi-step back stack, dummy history guard, double-tap exit & screen router
+         ========================================================================== */
       // ==================== NAVIGATION & BACK STACK ====================
       function activateScreenDOM(screenName) {
         state.activeScreen = screenName;
@@ -4150,6 +4239,10 @@
         }).join('');
       }
 
+      /* ==========================================================================
+         05. CART SERVICE & BUSINESS RULES
+         One-click cart addition, quantity stepper, medicine isolation & checkout
+         ========================================================================== */
       // ==================== CART, RX GATE & CHECKOUT ====================
       window.showMedicineConflictModal = function (pendingItem) {
         state._pendingConflictedItem = pendingItem || null;
@@ -5242,6 +5335,10 @@
         }, 600);
       };
 
+      /* ==========================================================================
+         07. APPLICATION INITIALIZATION
+         App bootstrap, restored route hydration, tickers & event listeners
+         ========================================================================== */
       // ==================== INIT ====================
       function updateOfferCountdownDisplay() {
         const el = document.getElementById('todaysOfferCountdown');
@@ -5311,6 +5408,10 @@
       }, 5000);
 
       initApp();
+      } catch (err) {
+        window.__scriptError = (err && err.stack) ? err.stack : String(err);
+        console.error('DailyShopi initialization error:', err);
+      }
     })();
   </script>
 </body>
