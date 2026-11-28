@@ -374,7 +374,37 @@
     </header>
 
     <!-- ==================== 3. SCREEN 1: HOME & DISCOVERY ==================== -->
-    <div id="screenHome" class="flex-1 overflow-y-auto no-scrollbar px-4 pt-3.5 pb-32 space-y-5">
+    <div id="screenHome" class="flex-1 overflow-y-auto no-scrollbar px-4 pt-3.5 pb-32 space-y-4">
+
+      <!-- Compact Highlighted "Your Fashion Store" Strip -->
+      <div
+        id="homeFashionStoreStrip"
+        onclick="window.selectCategory('fashion')"
+        role="button"
+        tabindex="0"
+        onkeydown="if(event.key==='Enter'||event.key===' ')window.selectCategory('fashion')"
+        class="cursor-pointer rounded-2xl px-3.5 py-2.5 card-shadow bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 border border-purple-200/80 hover:border-purple-300 flex items-center justify-between gap-3 active:scale-[0.99] transition-all"
+        aria-label="Open Your Fashion Store"
+      >
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-[#7C3AED] via-[#9333EA] to-[#DB2777] text-white flex items-center justify-center text-xs shrink-0 shadow-xs ring-1 ring-purple-200">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+          </div>
+          <div class="min-w-0 flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-black text-gray-900 tracking-tight">Your Fashion Store</span>
+            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-gradient-to-r from-[#7C3AED] to-[#DB2777] text-white shadow-2xs">New Trends</span>
+            <span class="text-[10px] text-gray-500 font-semibold truncate hidden xs:inline">• Footwear, Apparel &amp; Bags</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/80 border border-purple-200/70 text-[11px] font-extrabold text-[#7C3AED] shrink-0 shadow-2xs">
+          <span>Explore</span>
+          <span class="text-xs">›</span>
+        </div>
+      </div>
 
       <!-- Auto-Hiding First-Order Promo Card -->
       <div id="homeGreetingBanner" class="bg-white rounded-2xl px-3.5 py-2.5 card-shadow border border-[#7A1C24]/15 flex items-center justify-between gap-2">
@@ -3076,7 +3106,9 @@
         const homeBannerWrap = document.getElementById('homeBannerWrapper');
         const catBannerWrap = document.getElementById('categoryBannerWrapper');
         const offerSpotlight = document.getElementById('todaysOfferSpotlightSection');
+        const fashionStrip = document.getElementById('homeFashionStoreStrip');
 
+        if (fashionStrip) fashionStrip.classList.toggle('hidden', !isHomeDefault);
         if (homeBannerWrap) homeBannerWrap.classList.toggle('hidden', !isHomeDefault);
         if (catBannerWrap) catBannerWrap.classList.toggle('hidden', isHomeDefault);
         if (offerSpotlight) offerSpotlight.classList.toggle('hidden', !isHomeDefault);
